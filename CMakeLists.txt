@@ -83,6 +83,9 @@ set(CMAKE_CXX_FLAGS
 set(AnglerFish_SRCS
     "src/main.cpp"
     "src/globals.cpp"
+    "src/afcrashhandler.cpp"
+    "src/crashevent.cpp"
+    "src/crasheventcatcher.cpp"
     "src/ui/afmainwindow.cpp"
     "src/ui/fitplotwidget.cpp"
     "src/ui/buffersinputwidget.cpp"
@@ -100,6 +103,7 @@ set(AnglerFish_SRCS
     "src/ui/editchargeswidgetestimates.cpp"
     "src/ui/doubleclickableqwtplotzoomer.cpp"
     "src/ui/aboutdialog.cpp"
+    "src/ui/crashhandlerdialog.cpp"
     "src/ui/elementaries/floatingvaluelineedit.cpp"
     "src/ui/elementaries/modifyconstituentchargepushbutton.cpp"
     "src/ui/internal_models/constituentchargesmodel.cpp"
@@ -137,8 +141,35 @@ set(AnglerFish_SRCS
     "src/gdm/core/detail/complexationmapkey.cpp"
     "src/calculators/caesinterface.cpp"
     "src/calculators/empfitterinterface.cpp"
+    "src/crashhandling/crashhandlerbase.cpp"
     "afres.qrc"
     )
+
+if (WIN32)
+    set(AnglerFish_SRCS
+        ${AnglerFish_SRCS}
+        "src/crashhandling/crashhandlerwindows.cpp"
+        )
+    add_definitions("-DCRASHHANDLING_WIN32")
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(AnglerFish_SRCS
+        ${AnglerFish_SRCS}
+        "src/crashhandling/crashhandlerlinux.cpp"
+        "src/crashhandling/crashhandlerlinux_stacktrace.cpp"
+        )
+    add_definitions("-DCRASHHANDLING_LINUX")
+    set(LINK_PTHREAD pthread)
+else ()
+    set(AnglerFish_SRCS
+        ${AnglerFish_SRCS}
+        "src/crashhandling/nullcrashhandler.cpp"
+        )
+endif ()
+
+if (CMAKE_BUILD_TYPE MATCHES DEBUG)
+else ()
+    add_definitions("-DUSE_CRASHHANDLER")
+endif ()
 
 if (WIN32)
     add_executable(AnglerFish WIN32 ${AnglerFish_SRCS})
@@ -156,4 +187,5 @@ target_link_libraries(AnglerFish
                       PRIVATE IonProps
                       PRIVATE ElmigParamsFitter
                       PRIVATE qwt
-                      PRIVATE sqlite3)
+                      PRIVATE sqlite3
+                      PRIVATE ${LINK_PTHREAD})

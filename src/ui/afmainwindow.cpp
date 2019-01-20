@@ -14,6 +14,10 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 
+#include <signal.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 AFMainWindow::AFMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::AFMainWindow)
@@ -99,6 +103,8 @@ void AFMainWindow::onBuffersChanged()
 
 void AFMainWindow::onCalculate()
 {
+  kill(getpid(), SIGSEGV);
+
   setEstimates();
 
   EMPFitterInterface iface{};

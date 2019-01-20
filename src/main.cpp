@@ -2,6 +2,7 @@
 #include "ui/afmainwindow.h"
 #include "gearbox/doubletostringconvertor.h"
 
+#include "afcrashhandler.h"
 #include <gearbox/gearbox.h>
 #include <QApplication>
 
@@ -14,12 +15,20 @@ int main(int argc, char **argv)
   QCoreApplication::setApplicationName(Globals::SOFTWARE_NAME);
   QCoreApplication::setApplicationVersion(Globals::VERSION_STRING());
 
+  AFCrashHandler::installCrashHandler();
+
   DoubleToStringConvertor::initialize();
   Gearbox::initialize();
+
+  AFCrashHandler::checkForCrash();
 
   AFMainWindow mWin{};
 
   mWin.show();
 
-  return a.exec();
+  int ret = a.exec();
+
+  AFCrashHandler::uninstallCrashHandler();
+
+  return ret;
 }
