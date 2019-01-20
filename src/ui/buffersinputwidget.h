@@ -1,0 +1,43 @@
+#ifndef BUFFERSINPUTWIDGET_H
+#define BUFFERSINPUTWIDGET_H
+
+#include <QWidget>
+
+namespace Ui {
+class BuffersInputWidget;
+}
+
+class BufferWidget;
+class ChemicalBuffer;
+class QVBoxLayout;
+
+class BuffersInputWidget : public QWidget {
+  Q_OBJECT
+public:
+  explicit BuffersInputWidget(QWidget *parent = nullptr);
+  ~BuffersInputWidget();
+
+private:
+  void setupIcons();
+
+  Ui::BuffersInputWidget *ui;
+
+  QWidget *m_scrollWidget;
+  QVBoxLayout *m_scrollLayout;
+
+private slots:
+  void onBufferChanged(const BufferWidget *w);
+  void onCloneBuffer(const BufferWidget *w);
+
+public slots:
+  void onBufferAdded(ChemicalBuffer &buffer);
+  void onRemoveBuffer(BufferWidget *w);
+
+signals:
+  void addBuffer();
+  void addBuffer(const ChemicalBuffer &buffer);
+  void removeBuffer(const ChemicalBuffer &buffer);
+  void buffersChanged();
+};
+
+#endif // BUFFERSINPUTWIDGET_H
