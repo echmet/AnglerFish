@@ -142,6 +142,8 @@ set(AnglerFish_SRCS
     "src/calculators/caesinterface.cpp"
     "src/calculators/empfitterinterface.cpp"
     "src/crashhandling/crashhandlerbase.cpp"
+    "src/persistence/persistence.cpp"
+    "src/persistence/peakmastercompatibility.cpp"
     "afres.qrc"
     )
 

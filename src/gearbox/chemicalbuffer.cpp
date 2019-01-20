@@ -5,9 +5,18 @@
 #include <gdm/core/gdm.h>
 #include <calculators/caesinterface.h>
 
+static const double MIN_CONCENTRATION{1.0e-11};
+
 ChemicalBuffer::ChemicalBuffer() :
   m_gdmModel{new gdm::GDM{}},
-  m_composition{new GDMProxyImpl{*m_gdmModel, 1.0e-11}},
+  m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
+  m_needsRecalculation{true}
+{
+}
+
+ChemicalBuffer::ChemicalBuffer(gdm::GDM *model) :
+  m_gdmModel{model},
+  m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
   m_needsRecalculation{true}
 {
 }

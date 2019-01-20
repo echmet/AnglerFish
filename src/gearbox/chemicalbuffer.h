@@ -18,6 +18,7 @@ public:
   };
 
   ChemicalBuffer();
+  ChemicalBuffer(gdm::GDM *model);
   ChemicalBuffer(const ChemicalBuffer &other);
   ChemicalBuffer(ChemicalBuffer &&other) noexcept;
   ~ChemicalBuffer();

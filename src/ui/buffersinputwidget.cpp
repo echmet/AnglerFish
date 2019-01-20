@@ -3,13 +3,15 @@
 
 #include "bufferwidget.h"
 
+#include <persistence/persistence.h>
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include <cassert>
 
 BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
-  QWidget(parent),
-  ui(new Ui::BuffersInputWidget)
+  QWidget{parent},
+  ui{new Ui::BuffersInputWidget},
+  m_loadBufferDlg{this, tr("Load buffer from PeakMaster 6"), {}, "PeakMaster 6 JSON file (*.json)"}
 {
   ui->setupUi(this);
 
@@ -25,6 +27,7 @@ BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
   setupIcons();
 
   connect(ui->qpb_addBuffer, &QPushButton::clicked, this, [this]() { emit this->addBuffer(); });
+  connect(ui->qpb_loadBuffer, &QPushButton::clicked, this, &BuffersInputWidget::onLoadBuffer);
 }
 
 BuffersInputWidget::~BuffersInputWidget()
@@ -55,6 +58,21 @@ void BuffersInputWidget::onBufferChanged(const BufferWidget *)
 void BuffersInputWidget::onCloneBuffer(const BufferWidget *w)
 {
   emit addBuffer(w->buffer());
+}
+
+void BuffersInputWidget::onLoadBuffer()
+{
+  if (m_loadBufferDlg.exec() == QDialog::Accepted) {
+    if (m_loadBufferDlg.selectedFiles().empty())
+      return;
+
+    try {
+      persistence::loadPeakMasterBuffer(m_loadBufferDlg.selectedFiles().first());
+    } catch (const persistence::Exception &ex) {
+      QMessageBox mbox{QMessageBox::Warning, tr("Cannot load buffer"), ex.what()};
+      mbox.exec();
+    }
+  }
 }
 
 void BuffersInputWidget::onRemoveBuffer(BufferWidget *w)

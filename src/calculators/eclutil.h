@@ -1,17 +1,12 @@
 #ifndef ECLUTIL_H
 #define ECLUTIL_H
 
+#include <trstr.h>
 #include <gdm/core/gdm.h>
 #include <gdm/conversion/conversion.h>
 #include <echmetsyscomp.h>
 #include <QObject>
 #include <memory>
-
-inline
-std::string trstr(const char *str)
-{
-  return std::string{QObject::tr(str).toUtf8().data()};
-}
 
 inline
 std::string errstr(const ECHMET::RetCode tRet)

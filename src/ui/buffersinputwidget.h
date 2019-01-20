@@ -1,6 +1,7 @@
 #ifndef BUFFERSINPUTWIDGET_H
 #define BUFFERSINPUTWIDGET_H
 
+#include <QFileDialog>
 #include <QWidget>
 
 namespace Ui {
@@ -25,9 +26,12 @@ private:
   QWidget *m_scrollWidget;
   QVBoxLayout *m_scrollLayout;
 
+  QFileDialog m_loadBufferDlg;
+
 private slots:
   void onBufferChanged(const BufferWidget *w);
   void onCloneBuffer(const BufferWidget *w);
+  void onLoadBuffer();
 
 public slots:
   void onBufferAdded(ChemicalBuffer &buffer);
