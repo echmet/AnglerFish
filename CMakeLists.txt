@@ -146,6 +146,9 @@ set(AnglerFish_SRCS
     "src/persistence/peakmastercompatibility.cpp"
     "src/persistence/peakmastercompatibility_deserialize.cpp"
     "src/persistence/peakmastercompatibility_serialize.cpp"
+    "src/persistence/datakeys.cpp"
+    "src/persistence/serializecommon.cpp"
+    "src/persistence/deserializecommon.cpp"
     "afres.qrc"
     )
 
