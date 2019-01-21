@@ -40,15 +40,18 @@ private:
   BuffersInputWidget *m_bufInpWidget;
   AnalyteDataWidget *m_analDataWidget;
 
+  QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
 
+  QFileDialog m_loadDlg;
   QFileDialog m_saveDlg;
 
 private slots:
   void onBuffersChanged();
   void onAboutTriggered();
   void onCalculate();
+  void onLoad();
   void onSave();
 };
 

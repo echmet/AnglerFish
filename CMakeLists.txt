@@ -151,6 +151,7 @@ set(AnglerFish_SRCS
     "src/persistence/deserializecommon.cpp"
     "src/persistence/entiresetup.cpp"
     "src/persistence/entiresetup_serialize.cpp"
+    "src/persistence/entiresetup_deserialize.cpp"
     "afres.qrc"
     )
 

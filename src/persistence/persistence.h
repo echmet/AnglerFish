@@ -12,6 +12,7 @@ class ChemicalBuffersModel;
 
 namespace persistence {
 
+void loadEntireSetup(const QString &path);
 void saveEntireSetup(const QString &path, const ChemicalBuffersModel &buffers, const AnalyteInputParameters &analyte);
 void loadPeakMasterBuffer(const QString &path);
 void savePeakMasterBuffer(const QString &path, const ChemicalBuffer &buffer);

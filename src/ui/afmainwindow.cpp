@@ -18,7 +18,8 @@
 AFMainWindow::AFMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::AFMainWindow),
-  m_saveDlg{this, tr("Save system"), {}, tr("JSON file (*.json)")}
+  m_loadDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)},
+  m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)}
 {
   ui->setupUi(this);
 
@@ -40,9 +41,11 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   m_buffersAnalyte->layout()->addWidget(m_bufInpWidget);
   m_buffersAnalyte->layout()->addWidget(m_analDataWidget);
 
+  m_qpb_load = new QPushButton{tr("Load"), this};
   m_qpb_save = new QPushButton{tr("Save"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
 
+  ui->qtb_mainToolBar->addWidget(m_qpb_load);
   ui->qtb_mainToolBar->addWidget(m_qpb_save);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
 
@@ -52,6 +55,7 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
 
   setWindowTitle(Globals::VERSION_STRING());
 
+  connect(m_qpb_load, &QPushButton::clicked, this, &AFMainWindow::onLoad);
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
 
@@ -129,6 +133,20 @@ void AFMainWindow::onCalculate()
   }
 }
 
+void AFMainWindow::onLoad()
+{
+  if (m_loadDlg.exec() == QDialog::Accepted) {
+    if (!m_loadDlg.selectedFiles().empty()) {
+      try {
+        persistence::loadEntireSetup(m_loadDlg.selectedFiles().first());
+      } catch (const persistence::Exception &ex) {
+        QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
+        mbox.exec();
+      }
+    }
+  }
+}
+
 void AFMainWindow::onSave()
 {
   if (m_saveDlg.exec() == QDialog::Accepted) {
@@ -174,6 +192,7 @@ void AFMainWindow::setupIcons()
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
 
   /* Button bar */
+  m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else

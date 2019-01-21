@@ -7,6 +7,11 @@
 
 namespace persistence {
 
+void loadEntireSetup(const QString &path)
+{
+
+}
+
 void saveEntireSetup(const QString &path, const ChemicalBuffersModel &buffers, const AnalyteInputParameters &analyte)
 {
   EntireSetup::save(path, buffers, analyte);
