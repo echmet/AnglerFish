@@ -1,10 +1,16 @@
 #include "persistence.h"
 
+#include "entiresetup.h"
 #include "peakmastercompatibility.h"
 
 #include <gearbox/gearbox.h>
 
 namespace persistence {
+
+void saveEntireSetup(const QString &path, const ChemicalBuffersModel &buffers, const AnalyteInputParameters &analyte)
+{
+  EntireSetup::save(path, buffers, analyte);
+}
 
 void loadPeakMasterBuffer(const QString &path)
 {

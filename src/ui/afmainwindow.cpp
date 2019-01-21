@@ -8,6 +8,7 @@
 #include <globals.h>
 #include <gearbox/gearbox.h>
 #include <calculators/empfitterinterface.h>
+#include <persistence/persistence.h>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QPushButton>
@@ -16,7 +17,8 @@
 
 AFMainWindow::AFMainWindow(QWidget *parent) :
   QMainWindow(parent),
-  ui(new Ui::AFMainWindow)
+  ui(new Ui::AFMainWindow),
+  m_saveDlg{this, tr("Save system"), {}, tr("JSON file (*.json)")}
 {
   ui->setupUi(this);
 
@@ -38,15 +40,21 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   m_buffersAnalyte->layout()->addWidget(m_bufInpWidget);
   m_buffersAnalyte->layout()->addWidget(m_analDataWidget);
 
+  m_qpb_save = new QPushButton{tr("Save"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
 
+  ui->qtb_mainToolBar->addWidget(m_qpb_save);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
+
+  m_saveDlg.setAcceptMode(QFileDialog::AcceptSave);
 
   setupIcons();
 
   setWindowTitle(Globals::VERSION_STRING());
 
+  connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
+
   connect(ui->actionExit, &QAction::triggered, this, &AFMainWindow::close);
   connect(m_bufInpWidget, &BuffersInputWidget::buffersChanged, this, &AFMainWindow::onBuffersChanged);
   connect(ui->actionAbout, &QAction::triggered, this, &AFMainWindow::onAboutTriggered);
@@ -121,6 +129,26 @@ void AFMainWindow::onCalculate()
   }
 }
 
+void AFMainWindow::onSave()
+{
+  if (m_saveDlg.exec() == QDialog::Accepted) {
+    if (!m_saveDlg.selectedFiles().empty()) {
+      try {
+        const auto gbox = Gearbox::instance();
+
+        setEstimates();
+
+        persistence::saveEntireSetup(m_saveDlg.selectedFiles().first(),
+                                     gbox->chemicalBuffersModel(),
+                                     gbox->analyteInputParameters());
+      } catch (const persistence::Exception &ex) {
+        QMessageBox mbox{QMessageBox::Warning, tr("Failed to save setup"), ex.what()};
+        mbox.exec();
+      }
+    }
+  }
+}
+
 void AFMainWindow::setEstimates()
 {
   auto mobs = m_analDataWidget->estimatedMobilities();
@@ -146,6 +174,7 @@ void AFMainWindow::setupIcons()
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
 
   /* Button bar */
+  m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else
   /* Menu bar */

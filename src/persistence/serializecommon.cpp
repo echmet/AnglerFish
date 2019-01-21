@@ -6,8 +6,7 @@
 
 namespace persistence {
 
-inline
-QJsonArray generateFromDoubles(const std::vector<double> &src)
+QJsonArray SerializeCommon::generateFromDoubles(const std::vector<double> &src)
 {
   QJsonArray ret{};
 

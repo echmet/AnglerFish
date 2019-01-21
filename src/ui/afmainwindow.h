@@ -1,6 +1,7 @@
 #ifndef AFMAINWINDOW_H
 #define AFMAINWINDOW_H
 
+#include <QFileDialog>
 #include <QMainWindow>
 
 class AnalyteDataWidget;
@@ -39,12 +40,16 @@ private:
   BuffersInputWidget *m_bufInpWidget;
   AnalyteDataWidget *m_analDataWidget;
 
+  QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
+
+  QFileDialog m_saveDlg;
 
 private slots:
   void onBuffersChanged();
   void onAboutTriggered();
   void onCalculate();
+  void onSave();
 };
 
 #endif // AFMAINWINDOW_H
