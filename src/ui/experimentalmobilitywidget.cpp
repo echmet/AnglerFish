@@ -20,10 +20,7 @@ ExperimentalMobilityWidget::ExperimentalMobilityWidget(const int num, QWidget *p
   {
     const auto &fm = this->fontMetrics();
     const int w = qRound(fm.width("X") * 2.1);
-    auto rect = ui->qpb_remove->geometry();
-
-    rect.setWidth(w);
-    rect.setHeight(w);
+    ui->qpb_remove->resize(w, ui->qpb_remove->height());
   }
 }
 
