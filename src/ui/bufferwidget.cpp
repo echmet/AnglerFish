@@ -31,6 +31,10 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
 
   m_expValuesScrollLayout->addStretch();
 
+  ui->qpb_remove->setText("");
+  ui->qpb_clone->setText("");
+  ui->qpb_export->setText("");
+
   setupIcons();
 
   onAddExpValue();
@@ -44,6 +48,7 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
   connect(ui->qpb_remove, &QPushButton::clicked, this, [this]() { emit this->removeMe(this); });
   connect(m_compositionWidget, &BufferCompositionWidget::compositionChanged, this, &BufferWidget::onCompositionChanged);
   connect(ui->qpb_clone, &QPushButton::clicked, this, [this]() { emit this->cloneMe(this); });
+  connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
 }
 
 BufferWidget::~BufferWidget()
@@ -123,6 +128,7 @@ void BufferWidget::setupIcons()
   ui->qpb_addExpValue->setIcon(QIcon::fromTheme("list-add"));
   ui->qpb_remove->setIcon(QIcon::fromTheme("edit-delete"));
   ui->qpb_clone->setIcon(QIcon::fromTheme("edit-copy"));
+  ui->qpb_export->setIcon(QIcon::fromTheme("document-save"));
 #else
   ui->qpb_addExpValue->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
 #endif // Q_OS_

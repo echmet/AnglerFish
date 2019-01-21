@@ -150,18 +150,25 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="qvlay_controls" stretch="0,0,0">
+    <layout class="QVBoxLayout" name="qvlay_controls" stretch="0,0,0,0">
      <item>
       <widget class="QPushButton" name="qpb_remove">
        <property name="text">
-        <string/>
+        <string>&lt;DELETE&gt;</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="qpb_clone">
        <property name="text">
-        <string/>
+        <string>&lt;CLONE&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpb_export">
+       <property name="text">
+        <string>&lt;EXPORT&gt;</string>
        </property>
       </widget>
      </item>

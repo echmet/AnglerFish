@@ -3,6 +3,7 @@
 #include "types.h"
 
 #include <trstr.h>
+#include <gearbox/chemicalbuffer.h>
 #include <gdm/core/common/gdmexcept.h>
 #include <QFile>
 #include <QString>
@@ -233,6 +234,11 @@ gdm::GDM PeakMasterCompatibility::load(const QString &path)
   deserializeConcentrations(model, obj[ROOT_CONCENTRATIONS_BGE].toObject());
 
   return model;
+}
+
+void PeakMasterCompatibility::save(const QString &path, const ChemicalBuffer &buffer)
+{
+
 }
 
 } // namespace persistence

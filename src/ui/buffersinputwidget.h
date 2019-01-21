@@ -27,10 +27,12 @@ private:
   QVBoxLayout *m_scrollLayout;
 
   QFileDialog m_loadBufferDlg;
+  QFileDialog m_saveBufferDlg;
 
 private slots:
   void onBufferChanged(const BufferWidget *w);
   void onCloneBuffer(const BufferWidget *w);
+  void onExportBuffer(const BufferWidget *w);
   void onLoadBuffer();
   void onScrollToBottom(const int min, const int max);
 

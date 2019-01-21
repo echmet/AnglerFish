@@ -12,7 +12,8 @@
 BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
   QWidget{parent},
   ui{new Ui::BuffersInputWidget},
-  m_loadBufferDlg{this, tr("Load buffer from PeakMaster 6"), {}, "PeakMaster 6 JSON file (*.json)"}
+  m_loadBufferDlg{this, tr("Load buffer from PeakMaster 6"), {}, "PeakMaster 6 JSON file (*.json)"},
+  m_saveBufferDlg{this, tr("Save buffer as PeakMaster 6 file"), {}, "PeakMaster 6 JSON file (*.json)"}
 {
   ui->setupUi(this);
 
@@ -26,6 +27,9 @@ BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
   m_scrollLayout->addStretch();
 
   setupIcons();
+
+  m_loadBufferDlg.setAcceptMode(QFileDialog::AcceptOpen);
+  m_saveBufferDlg.setAcceptMode(QFileDialog::AcceptSave);
 
   connect(ui->qpb_addBuffer, &QPushButton::clicked, this, [this]() { emit this->addBuffer(); });
   connect(ui->qpb_loadBuffer, &QPushButton::clicked, this, &BuffersInputWidget::onLoadBuffer);
@@ -49,6 +53,7 @@ void BuffersInputWidget::onBufferAdded(ChemicalBuffer &buffer)
   connect(w, &BufferWidget::removeMe, this, &BuffersInputWidget::onRemoveBuffer);
   connect(w, &BufferWidget::cloneMe, this, &BuffersInputWidget::onCloneBuffer);
   connect(w, &BufferWidget::bufferChanged, this, &BuffersInputWidget::onBufferChanged);
+  connect(w, &BufferWidget::exportMe, this, &BuffersInputWidget::onExportBuffer);
 
   emit buffersChanged();
 }
@@ -61,6 +66,21 @@ void BuffersInputWidget::onBufferChanged(const BufferWidget *)
 void BuffersInputWidget::onCloneBuffer(const BufferWidget *w)
 {
   emit addBuffer(w->buffer());
+}
+
+void BuffersInputWidget::onExportBuffer(const BufferWidget *w)
+{
+  if (m_saveBufferDlg.exec() == QDialog::Accepted) {
+    if (m_saveBufferDlg.selectedFiles().empty())
+      return;
+
+    try {
+      persistence::savePeakMasterBuffer(m_saveBufferDlg.selectedFiles().first(), w->buffer());
+    } catch (const persistence::Exception &ex) {
+      QMessageBox mbox{QMessageBox::Warning, tr("Cannot save buffer"), ex.what()};
+      mbox.exec();
+    }
+  }
 }
 
 void BuffersInputWidget::onLoadBuffer()

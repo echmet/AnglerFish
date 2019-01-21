@@ -3,6 +3,7 @@
 
 #include <gdm/core/gdm.h>
 
+class ChemicalBuffer;
 class QJsonObject;
 class QString;
 
@@ -13,6 +14,7 @@ public:
   PeakMasterCompatibility() = delete;
 
   static gdm::GDM load(const QString &path);
+  static void save(const QString &path, const ChemicalBuffer &buffer);
 };
 
 } // namespace persistence

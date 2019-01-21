@@ -43,6 +43,7 @@ private slots:
 signals:
   void cloneMe(const BufferWidget *me);
   void bufferChanged(const BufferWidget *me);
+  void exportMe(const BufferWidget *me);
   void removeMe(BufferWidget *me);
 };
 
