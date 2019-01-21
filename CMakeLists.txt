@@ -144,6 +144,8 @@ set(AnglerFish_SRCS
     "src/crashhandling/crashhandlerbase.cpp"
     "src/persistence/persistence.cpp"
     "src/persistence/peakmastercompatibility.cpp"
+    "src/persistence/peakmastercompatibility_deserialize.cpp"
+    "src/persistence/peakmastercompatibility_serialize.cpp"
     "afres.qrc"
     )
 

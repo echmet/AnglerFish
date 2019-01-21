@@ -2,243 +2,60 @@
 
 #include "types.h"
 
-#include <trstr.h>
-#include <gearbox/chemicalbuffer.h>
-#include <gdm/core/common/gdmexcept.h>
-#include <QFile>
-#include <QString>
-#include <QJsonArray>
 #include <QJsonObject>
-#include <QJsonDocument>
+#include <QString>
+
 
 namespace persistence {
 
-static const QString ROOT_COMPOSITION_BGE{"compositionBGE"};
-static const QString ROOT_CONCENTRATIONS_BGE{"concentrationsBGE"};
+const QString PeakMasterCompatibility::ROOT_COMPOSITION_BGE{"compositionBGE"};
+const QString PeakMasterCompatibility::ROOT_COMPOSITION_SAMPLE{"compositionSample"};
+const QString PeakMasterCompatibility::ROOT_CONCENTRATIONS_BGE{"concentrationsBGE"};
+const QString PeakMasterCompatibility::ROOT_CONCENTRATIONS_SAMPLE{"concentrationsSample"};
+const QString PeakMasterCompatibility::ROOT_SYSTEM{"system"};
 
-static const QString CTUENT_CTUENTS{"constituents"};
-static const QString CTUENT_TYPE{"type"};
-static const QString CTUENT_NAME{"name"};
-static const QString CTUENT_CHARGE_LOW{"chargeLow"};
-static const QString CTUENT_CHARGE_HIGH{"chargeHigh"};
-static const QString CTUENT_PKAS{"pKas"};
-static const QString CTUENT_MOBILITIES{"mobilities"};
-static const QString CTUENT_VISCOSITY_COEFFICIENT{"viscosityCoefficient"};
+const QString PeakMasterCompatibility::CTUENT_CTUENTS{"constituents"};
+const QString PeakMasterCompatibility::CTUENT_TYPE{"type"};
+const QString PeakMasterCompatibility::CTUENT_NAME{"name"};
+const QString PeakMasterCompatibility::CTUENT_CHARGE_LOW{"chargeLow"};
+const QString PeakMasterCompatibility::CTUENT_CHARGE_HIGH{"chargeHigh"};
+const QString PeakMasterCompatibility::CTUENT_PKAS{"pKas"};
+const QString PeakMasterCompatibility::CTUENT_MOBILITIES{"mobilities"};
+const QString PeakMasterCompatibility::CTUENT_VISCOSITY_COEFFICIENT{"viscosityCoefficient"};
 
-static const QString CTUENT_TYPE_NUCLEUS{"N"};
-static const QString CTUENT_TYPE_LIGAND{"L"};
+const QString PeakMasterCompatibility::CTUENT_TYPE_NUCLEUS{"N"};
+const QString PeakMasterCompatibility::CTUENT_TYPE_LIGAND{"L"};
 
-static const QString CPX_COMPLEX_FORMS{"complexForms"};
-static const QString CPX_NUCLEUS_CHARGE{"nucleusCharge"};
-static const QString CPX_LIGAND_GROUPS{"ligandGroups"};
+const QString PeakMasterCompatibility::CPX_NAME{"name"};
+const QString PeakMasterCompatibility::CPX_CHARGE{"charge"};
+const QString PeakMasterCompatibility::CPX_MAX_COUNT{"maxCount"};
+const QString PeakMasterCompatibility::CPX_PBS{"pBs"};
+const QString PeakMasterCompatibility::CPX_MOBILITIES{"mobilities"};
 
-inline
-void checkIfContains(const QString &str, const QJsonObject &obj)
+const QString PeakMasterCompatibility::CPX_COMPLEX_FORMS{"complexForms"};
+const QString PeakMasterCompatibility::CPX_NUCLEUS_CHARGE{"nucleusCharge"};
+const QString PeakMasterCompatibility::CPX_LIGAND_GROUPS{"ligandGroups"};
+const QString PeakMasterCompatibility::CPX_LIGANDS{"ligands"};
+
+const QString PeakMasterCompatibility::SYS_TOTAL_LENGTH{"totalLength"};
+const QString PeakMasterCompatibility::SYS_DETECTOR_POSITION{"detectorPosition"};
+const QString PeakMasterCompatibility::SYS_DRIVING_VOLTAGE{"drivingVoltage"};
+const QString PeakMasterCompatibility::SYS_POSITIVE_VOLTAGE{"positiveVoltage"};
+const QString PeakMasterCompatibility::SYS_EOF_TYPE{"eofType"};
+const QString PeakMasterCompatibility::SYS_EOF_VALUE{"eofValue"};
+const QString PeakMasterCompatibility::SYS_CORRECT_FOR_DEBYE_HUCKEL{"correctForDebyeHuckel"};
+const QString PeakMasterCompatibility::SYS_CORRECT_FOR_ONSAGER_FUOSS{"correctForOnsagerFuoss"};
+const QString PeakMasterCompatibility::SYS_CORRECT_FOR_VISCOSITY{"correctForViscosity"};
+const QString PeakMasterCompatibility::SYS_INJECTION_ZONE_LENGTH{"injectionZoneLength"};
+
+const QString PeakMasterCompatibility::SYS_EOF_TYPE_NONE{"N"};
+const QString PeakMasterCompatibility::SYS_EOF_TYPE_MOBILITY{"U"};
+const QString PeakMasterCompatibility::SYS_EOF_TYPE_TIME{"T"};
+
+void PeakMasterCompatibility::checkIfContains(const QString &str, const QJsonObject &obj)
 {
   if (!obj.contains(str))
     throw Exception{std::string{"Missing "} + str.toStdString()};
-}
-
-inline
-std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJsonObject &obj, const int nucleusChargeLow, const int nucleusChargeHigh)
-{
-  std::map<std::string, gdm::Complexation> ret{};
-
-  checkIfContains(CPX_COMPLEX_FORMS, obj);
-  const QJsonArray cforms = obj[CPX_COMPLEX_FORMS].toArray();
-
-  for (const auto &item : cforms) {
-    const QJsonObject cf = item.toObject();
-    if (cf.isEmpty())
-      throw Exception{"Invalid complex form entry"};
-
-    /* Read nucleus charge */
-    int charge;
-    checkIfContains(CPX_NUCLEUS_CHARGE, cf);
-    charge = cf[CPX_NUCLEUS_CHARGE].toInt();
-
-    if (charge < nucleusChargeLow || charge > nucleusChargeHigh)
-      throw Exception{"Nucleus charge in complexForm definition is outside nucleus' charge range"};
-
-    /* Read ligand groups */
-    checkIfContains(CPX_LIGAND_GROUPS, cf);
-    const QJsonArray ligandGroups = cf[CPX_LIGAND_GROUPS].toArray();
-    if (!ligandGroups.empty())
-      throw Exception{"Complexing buffers are not supported"};
-  }
-
-  return ret;
-}
-
-inline
-std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>>> deserializeConstituents(const QJsonArray &arr)
-{
-  std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>>> ret{};
-
-  ret.reserve(arr.count());
-
-  for (const auto &item : arr) {
-    const QJsonObject ctuent = item.toObject();
-    if (ctuent.isEmpty())
-      throw Exception{"Invalid constituent object"};
-
-    /* Read type */
-    gdm::ConstituentType type;
-    checkIfContains(CTUENT_TYPE, ctuent);
-
-    auto inType = ctuent[CTUENT_TYPE];
-    if (inType == CTUENT_TYPE_NUCLEUS)
-      type = gdm::ConstituentType::Nucleus;
-    else if (inType == CTUENT_TYPE_LIGAND)
-      type = gdm::ConstituentType::Ligand;
-    else
-      throw Exception{"Invalid \"type\" value"};
-
-    /* Read name */
-    std::string name{};
-    checkIfContains(CTUENT_NAME, ctuent);
-    QString inName = ctuent[CTUENT_NAME].toString();
-    if (inName.isNull())
-      throw Exception{"Invalid \"name\""};
-    name = inName.toStdString();
-
-    /* Read chargeLow */
-    int chargeLow;
-    checkIfContains(CTUENT_CHARGE_LOW, ctuent);
-    chargeLow = ctuent[CTUENT_CHARGE_LOW].toInt();
-
-    /* Read chargeHigh */
-    int chargeHigh;
-    checkIfContains(CTUENT_CHARGE_HIGH, ctuent);
-    chargeHigh = ctuent[CTUENT_CHARGE_HIGH].toInt();
-
-    /* Read viscosityCoefficient */
-    double viscosityCoefficient;
-    checkIfContains(CTUENT_VISCOSITY_COEFFICIENT, ctuent);
-    viscosityCoefficient = ctuent[CTUENT_VISCOSITY_COEFFICIENT].toDouble();
-
-    if (chargeLow > chargeHigh)
-      throw Exception{"Invalid charge values"};
-
-    /* Read pKas */
-    std::vector<double> pKas{};
-    checkIfContains(CTUENT_PKAS, ctuent);
-    QJsonArray inpKas = ctuent[CTUENT_PKAS].toArray();
-    if (inpKas.size() != chargeHigh - chargeLow)
-      throw Exception{"Invalid pKa array size"};
-    for (const auto d : inpKas)
-      pKas.emplace_back(d.toDouble());
-
-    /* Read mobilities */
-    std::vector<double> mobilities{};
-    checkIfContains(CTUENT_MOBILITIES, ctuent);
-    QJsonArray inMobilities = ctuent[CTUENT_MOBILITIES].toArray();
-    if (inMobilities.size() != chargeHigh - chargeLow + 1)
-      throw Exception{"Invalid mobilities array size"};
-    for (const auto u : inMobilities)
-      mobilities.emplace_back(u.toDouble());
-
-    gdm::ChargeInterval charges{chargeLow, chargeHigh};
-    gdm::PhysicalProperties physProps{charges, pKas, mobilities, viscosityCoefficient};
-
-    if (type == gdm::ConstituentType::Nucleus) {
-      auto complexForms = deserializeNucleusComplexForms(ctuent, chargeLow, chargeHigh);
-      ret.emplace_back(std::make_pair<gdm::Constituent, std::map<std::string, gdm::Complexation>>({type, name, physProps}, std::move(complexForms)));
-    } else {
-      if (ctuent.contains(CPX_COMPLEX_FORMS))
-        throw Exception{"Ligands must not have \"complexForms\""};
-
-      ret.emplace_back(std::make_pair<gdm::Constituent, std::map<std::string, gdm::Complexation>>({type, name, physProps}, {}));
-    }
-  }
-
-  return ret;
-}
-
-inline
-void deserializeComposition(gdm::GDM &gdm, const QJsonObject &obj)
-{
-  checkIfContains(CTUENT_CTUENTS, obj);
-  try {
-    const auto constituents = deserializeConstituents(obj[CTUENT_CTUENTS].toArray());
-
-    /* Insert all constituents first*/
-    for (const auto &ctuent : constituents) {
-      bool inserted;
-      std::tie(std::ignore, inserted) = gdm.insert(ctuent.first);
-      if (!inserted)
-        throw Exception("Duplicit constituents");
-    }
-
-    /* Insert all complexations */
-    for (const auto & ctuent : constituents) {
-      auto nucleusIt = gdm.find(ctuent.first.name());
-      if (nucleusIt == gdm.end())
-        throw Exception{"Internal deserialization error"};
-
-      for (const auto &cf : ctuent.second) {
-        auto ligandIt = gdm.find(cf.first);
-        if (ligandIt == gdm.end())
-          throw Exception{"ComplexForm refers to missing ligand"};
-
-        if (gdm.haveComplexation(nucleusIt, ligandIt))
-          throw Exception{"Internal deserialization error"};
-
-        gdm.setComplexation(nucleusIt, ligandIt, cf.second);
-      }
-    }
-  } catch (const gdm::LogicError &ex) {
-    throw Exception{std::string{"Failed to parse constituents: "} + std::string{ex.what()}};
-  }
-}
-
-inline
-void deserializeConcentrations(gdm::GDM &gdm, const QJsonObject &obj)
-{
-  for (auto ctuentIt = gdm.begin(); ctuentIt != gdm.end(); ctuentIt++) {
-    const QString name = QString::fromStdString(ctuentIt->name());
-    checkIfContains(name, obj);
-
-    QJsonArray arr = obj[name].toArray();
-    if (arr.size() != 1)
-      throw Exception{"Invalid concentrations array size"};
-
-    gdm.setConcentrations(ctuentIt, { arr.first().toDouble() });
-  }
-
-}
-
-gdm::GDM PeakMasterCompatibility::load(const QString &path)
-{
-  gdm::GDM model;
-
-  QFile fh{path};
-
-  if (!fh.open(QIODevice::ReadOnly))
-    throw Exception{trstr("Cannot open input file")};
-
-
-  QJsonParseError parseError{};
-  QJsonDocument doc = QJsonDocument::fromJson(fh.readAll(), &parseError);
-  if (doc.isNull())
-    throw Exception{parseError.errorString().toStdString()};
-
-  QJsonObject obj = doc.object();
-  if (obj.isEmpty())
-    throw Exception{"Bad root object"};
-
-  checkIfContains(ROOT_COMPOSITION_BGE, obj);
-  deserializeComposition(model, obj[ROOT_COMPOSITION_BGE].toObject());
-
-  checkIfContains(ROOT_CONCENTRATIONS_BGE, obj);
-  deserializeConcentrations(model, obj[ROOT_CONCENTRATIONS_BGE].toObject());
-
-  return model;
-}
-
-void PeakMasterCompatibility::save(const QString &path, const ChemicalBuffer &buffer)
-{
-
 }
 
 } // namespace persistence

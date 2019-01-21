@@ -18,7 +18,7 @@ void loadPeakMasterBuffer(const QString &path)
 
 void savePeakMasterBuffer(const QString &path, const ChemicalBuffer &buffer)
 {
-  PeakMasterCompatibility::save(path, buffer);
+  PeakMasterCompatibility::save(path, buffer.model(), buffer.model());
 }
 
 } // namespace persistence
