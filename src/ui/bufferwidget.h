@@ -38,6 +38,7 @@ private slots:
   void onAddExpValue();
   void onCompositionChanged();
   void onRemoveExpValue(ExperimentalMobilityWidget *w);
+  void setExpValues();
   void updateExperimentalMobilities();
 
 signals:

@@ -37,7 +37,10 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
 
   setupIcons();
 
-  onAddExpValue();
+  if (!h_buffer.experimentalMobilities().empty())
+    setExpValues();
+  else
+    onAddExpValue();
 
   if (!h_buffer.empty()) {
     ui->qle_pH->setText(DoubleToStringConvertor::convert(h_buffer.pH()));
@@ -118,6 +121,24 @@ void BufferWidget::onRemoveExpValue(ExperimentalMobilityWidget *w)
 
   for (int idx = 0; idx < m_expValueWidgets.size(); idx++)
     m_expValueWidgets[idx]->setNumber(idx + 1);
+
+  updateExperimentalMobilities();
+}
+
+void BufferWidget::setExpValues()
+{
+  const auto &expVals = h_buffer.experimentalMobilities();
+
+  for (size_t idx = 0; idx < expVals.size(); idx++) {
+    auto w = new ExperimentalMobilityWidget(idx + 1);
+    w->setValue(expVals.at(idx));
+
+    m_expValuesScrollLayout->insertWidget(idx, w);
+    m_expValueWidgets.push_back(w);
+
+    connect(w, &ExperimentalMobilityWidget::removeMe, this, &BufferWidget::onRemoveExpValue);
+    connect(w, &ExperimentalMobilityWidget::dataChanged, this, &BufferWidget::updateExperimentalMobilities);
+  }
 
   updateExperimentalMobilities();
 }

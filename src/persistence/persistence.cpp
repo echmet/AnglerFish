@@ -9,6 +9,11 @@ namespace persistence {
 
 void loadEntireSetup(const QString &path)
 {
+  auto loaded = EntireSetup::load(path);
+
+  auto gbox = Gearbox::instance();
+
+  gbox->chemicalBuffersModel().setBuffers(std::move(std::get<0>(loaded)));
 
 }
 

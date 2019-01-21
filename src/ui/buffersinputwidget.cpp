@@ -3,6 +3,7 @@
 
 #include "bufferwidget.h"
 
+#include <gearbox/gearbox.h>
 #include <persistence/persistence.h>
 #include <QMessageBox>
 #include <QScrollBar>
@@ -58,6 +59,15 @@ void BuffersInputWidget::onBufferAdded(ChemicalBuffer &buffer)
   emit buffersChanged();
 }
 
+void BuffersInputWidget::onBeginBuffersReset()
+{
+  while (auto *w = m_scrollLayout->takeAt(0))
+    delete w;
+
+   /* Yeah, this is a little hacky... */
+  m_scrollLayout->addStretch();
+}
+
 void BuffersInputWidget::onBufferChanged(const BufferWidget *)
 {
   emit buffersChanged();
@@ -66,6 +76,14 @@ void BuffersInputWidget::onBufferChanged(const BufferWidget *)
 void BuffersInputWidget::onCloneBuffer(const BufferWidget *w)
 {
   emit addBuffer(w->buffer());
+}
+
+void BuffersInputWidget::onEndBuffersReset()
+{
+  auto gbox = Gearbox::instance();
+
+  for (auto &buf : gbox->chemicalBuffersModel())
+    onBufferAdded(buf);
 }
 
 void BuffersInputWidget::onExportBuffer(const BufferWidget *w)

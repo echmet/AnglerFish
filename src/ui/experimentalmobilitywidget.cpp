@@ -34,6 +34,11 @@ void ExperimentalMobilityWidget::setNumber(const int num)
   ui->ql_num->setText(QString::number(num));
 }
 
+void ExperimentalMobilityWidget::setValue(const double v)
+{
+  ui->qle_value->setText(DoubleToStringConvertor::convert(v));
+}
+
 void ExperimentalMobilityWidget::setupIcons()
 {
 #ifdef Q_OS_LINUX

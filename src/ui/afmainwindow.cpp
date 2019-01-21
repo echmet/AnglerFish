@@ -70,6 +70,8 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)(const ChemicalBuffer &)>(&BuffersInputWidget::addBuffer),
           [&](const ChemicalBuffer &buf) { Gearbox::instance()->chemicalBuffersModel().add(buf); });
   connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::bufferAdded, m_bufInpWidget, &BuffersInputWidget::onBufferAdded);
+  connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::beginModelReset, m_bufInpWidget, &BuffersInputWidget::onBeginBuffersReset);
+  connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::endModelReset, m_bufInpWidget, &BuffersInputWidget::onEndBuffersReset);
 }
 
 AFMainWindow::~AFMainWindow()

@@ -37,7 +37,9 @@ private slots:
   void onScrollToBottom(const int min, const int max);
 
 public slots:
+  void onBeginBuffersReset();
   void onBufferAdded(ChemicalBuffer &buffer);
+  void onEndBuffersReset();
   void onRemoveBuffer(BufferWidget *w);
 
 signals:

@@ -3,7 +3,8 @@
 #include <cassert>
 #include <util_lowlevel.h>
 
-ChemicalBuffersModel::ChemicalBuffersModel()
+ChemicalBuffersModel::ChemicalBuffersModel() :
+  QObject{nullptr}
 {
 }
 
@@ -24,12 +25,32 @@ ChemicalBuffer & ChemicalBuffersModel::at(const size_t idx)
   return *it;
 }
 
+ChemicalBuffersModel::iterator ChemicalBuffersModel::begin()
+{
+  return m_buffers.begin();
+}
+
 ChemicalBuffersModel::const_iterator ChemicalBuffersModel::begin() const
 {
   return m_buffers.cbegin();
 }
 
+ChemicalBuffersModel::const_iterator ChemicalBuffersModel::cbegin() const
+{
+  return m_buffers.cbegin();
+}
+
+ChemicalBuffersModel::iterator ChemicalBuffersModel::end()
+{
+  return m_buffers.end();
+}
+
 ChemicalBuffersModel::const_iterator ChemicalBuffersModel::end() const
+{
+  return m_buffers.cend();
+}
+
+ChemicalBuffersModel::const_iterator ChemicalBuffersModel::cend() const
 {
   return m_buffers.cend();
 }
@@ -55,4 +76,16 @@ void ChemicalBuffersModel::removeAt(const size_t idx) noexcept
   m_buffers.erase(it);
 
   emit bufferRemoved(idx);
+}
+
+void ChemicalBuffersModel:: setBuffers(std::vector<ChemicalBuffer> buffers)
+{
+  emit beginModelReset();
+
+  m_buffers.clear();
+
+  for (auto &&buf : buffers)
+    m_buffers.emplace_back(std::move(buf));
+
+  emit endModelReset();
 }

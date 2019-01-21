@@ -15,6 +15,7 @@ public:
   ~ExperimentalMobilityWidget();
 
   void setNumber(const int num);
+  void setValue(const double v);
   double value(bool &ok) const;
 
 private:

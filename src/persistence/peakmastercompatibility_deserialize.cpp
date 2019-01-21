@@ -35,7 +35,7 @@ gdm::GDM PeakMasterCompatibility::load(const QString &path)
   DeserializeCommon::checkIfContains(ROOT_COMPOSITION_BGE, obj);
   DeserializeCommon::deserializeComposition(model, obj[ROOT_COMPOSITION_BGE].toObject());
 
-  DeserializeCommon:: checkIfContains(ROOT_CONCENTRATIONS_BGE, obj);
+  DeserializeCommon::checkIfContains(ROOT_CONCENTRATIONS_BGE, obj);
   DeserializeCommon::deserializeConcentrations(model, obj[ROOT_CONCENTRATIONS_BGE].toObject());
 
   return model;
