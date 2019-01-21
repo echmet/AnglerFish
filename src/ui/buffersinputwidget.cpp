@@ -5,6 +5,8 @@
 
 #include <persistence/persistence.h>
 #include <QMessageBox>
+#include <QScrollBar>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <cassert>
 
@@ -48,6 +50,19 @@ void BuffersInputWidget::onBufferAdded(ChemicalBuffer &buffer)
   connect(w, &BufferWidget::bufferChanged, this, &BuffersInputWidget::onBufferChanged);
 
   emit buffersChanged();
+
+  /* This is one of the better WTF moments.
+   * Apparently something needs to happen inside Qt for the QScrollArea
+   * to notice that there is a new widget inside. Unless that happens the
+   * usual means to scroll to the new widget just do not work.
+   * The only workaround I that seems to work is to add a small delay
+   * to the scroll action. 15 msecs seem to do the trick...
+   */
+  QTimer::singleShot(15, this,
+                     [&]()
+  {
+    ui->qscr_bufferList->verticalScrollBar()->setValue(ui->qscr_bufferList->verticalScrollBar()->maximum());
+  });
 }
 
 void BuffersInputWidget::onBufferChanged(const BufferWidget *)
