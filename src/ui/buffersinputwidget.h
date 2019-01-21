@@ -32,6 +32,7 @@ private slots:
   void onBufferChanged(const BufferWidget *w);
   void onCloneBuffer(const BufferWidget *w);
   void onLoadBuffer();
+  void onScrollToBottom(const int min, const int max);
 
 public slots:
   void onBufferAdded(ChemicalBuffer &buffer);
