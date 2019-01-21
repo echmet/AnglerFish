@@ -75,7 +75,10 @@ void BuffersInputWidget::onBufferChanged(const BufferWidget *)
 
 void BuffersInputWidget::onCloneBuffer(const BufferWidget *w)
 {
-  emit addBuffer(w->buffer());
+  ChemicalBuffer buf = w->buffer();
+  buf.setExperimentalMobilities({});
+
+  emit addBuffer(std::move(buf));
 }
 
 void BuffersInputWidget::onEndBuffersReset()
