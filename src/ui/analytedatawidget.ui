@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>514</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,7 +40,7 @@
    <item>
     <layout class="QVBoxLayout" name="qvlay_results">
      <property name="sizeConstraint">
-      <enum>QLayout::SetMinimumSize</enum>
+      <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
       <widget class="QLabel" name="ql_resultsCaption">
@@ -59,11 +59,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="qp_fittedMobilities">
-       <property name="text">
-        <string>Mobilities:</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="qhlay_filler">
+       <item>
+        <widget class="QLabel" name="ql_fittedMobilities">
+         <property name="text">
+          <string>Mobilities:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QTableView" name="qtbv_fittedMobilities">
@@ -76,11 +80,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="ql_fittedpKas">
-       <property name="text">
-        <string>pKas:</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="qhlay_filler_2">
+       <item>
+        <widget class="QLabel" name="ql_fittedpKas">
+         <property name="text">
+          <string>pKas:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QTableView" name="qtbv_fittedpKas">
@@ -95,7 +103,7 @@
      <item>
       <layout class="QHBoxLayout" name="qhlay_controls">
        <property name="sizeConstraint">
-        <enum>QLayout::SetMinimumSize</enum>
+        <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item>
         <widget class="QPushButton" name="qpb_resultsToClipboard">

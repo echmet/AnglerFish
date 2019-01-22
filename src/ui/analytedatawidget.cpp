@@ -190,6 +190,12 @@ void AnalyteDataWidget::setWidgetSizes()
   ui->ql_resultsCaption->setMinimumWidth(ui->qtbv_fittedpKas->minimumWidth());
   ui->ql_resultsCaption->setMaximumWidth(ui->qtbv_fittedpKas->maximumWidth());
 
+  ui->ql_fittedMobilities->setMinimumHeight(ui->qpb_curveToClipboard->height());
+  ui->ql_fittedMobilities->setMaximumHeight(ui->qpb_curveToClipboard->height());
+
+  ui->ql_fittedpKas->setMinimumHeight(ui->qpb_curveToClipboard->height());
+  ui->ql_fittedpKas->setMaximumHeight(ui->qpb_curveToClipboard->height());
+
   {
     const int tw = m_estimatedParamsWidget->minimumWidth() + ui->qtbv_fittedpKas->minimumWidth() +2 * fontMetrics().width('x');
 
