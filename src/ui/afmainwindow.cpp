@@ -62,6 +62,9 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
 
+  connect(ui->actionNew, &QAction::triggered, this, &AFMainWindow::onNew);
+  connect(ui->actionLoad, &QAction::triggered, this, &AFMainWindow::onLoad);
+  connect(ui->actionSave, &QAction::triggered, this, &AFMainWindow::onSave);
   connect(ui->actionExit, &QAction::triggered, this, &AFMainWindow::close);
   connect(m_bufInpWidget, &BuffersInputWidget::buffersChanged, this, &AFMainWindow::onBuffersChanged);
   connect(ui->actionAbout, &QAction::triggered, this, &AFMainWindow::onAboutTriggered);
@@ -72,6 +75,8 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
           [&]() { Gearbox::instance()->chemicalBuffersModel().add({}); });
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)(const ChemicalBuffer &)>(&BuffersInputWidget::addBuffer),
           [&](const ChemicalBuffer &buf) { Gearbox::instance()->chemicalBuffersModel().add(buf); });
+  connect(m_bufInpWidget, &BuffersInputWidget::removeBuffer,
+          [](const ChemicalBuffer &buf) { Gearbox::instance()->chemicalBuffersModel().remove(buf); });
   connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::bufferAdded, m_bufInpWidget, &BuffersInputWidget::onBufferAdded);
   connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::beginModelReset, m_bufInpWidget, &BuffersInputWidget::onBeginBuffersReset);
   connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::endModelReset, m_bufInpWidget, &BuffersInputWidget::onEndBuffersReset);
@@ -211,6 +216,9 @@ void AFMainWindow::setupIcons()
 {
 #ifdef Q_OS_LINUX
   /* Menu bar */
+  ui->actionNew->setIcon(QIcon::fromTheme("document-new"));
+  ui->actionLoad->setIcon(QIcon::fromTheme("document-open"));
+  ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
 
