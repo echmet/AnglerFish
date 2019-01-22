@@ -61,8 +61,12 @@ void BuffersInputWidget::onBufferAdded(ChemicalBuffer &buffer)
 
 void BuffersInputWidget::onBeginBuffersReset()
 {
-  while (auto *w = m_scrollLayout->takeAt(0))
+  QLayoutItem *item;
+  while ((item = m_scrollLayout->takeAt(0)) != nullptr) {
+    QWidget *w = item->widget();
     delete w;
+    delete item;
+  }
 
    /* Yeah, this is a little hacky... */
   m_scrollLayout->addStretch();
@@ -128,9 +132,9 @@ void BuffersInputWidget::onRemoveBuffer(BufferWidget *w)
   if (mbox.exec() != QMessageBox::Yes)
     return;
 
-  emit removeBuffer(w->buffer());
-
   m_scrollLayout->removeWidget(w);
+
+  emit removeBuffer(w->buffer());
 
   delete w;
 
