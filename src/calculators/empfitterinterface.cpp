@@ -55,6 +55,11 @@ QVector<QPointF> expectedCurve(const InSystemWrap &system, const FitResultsPtr &
   double pHprev = std::numeric_limits<double>::infinity();
   for (size_t idx = 0; idx < expected->size(); idx++) {
     auto pt = expected->at(idx);
+
+    /* There is a theoretical corner case of two different buffers
+     * with exactly the same pH. This would require a lot more logic
+     * to handle properly
+     */
     if (pHprev != pt.pH) {
       retVec.push_back(QPointF{pt.pH, pt.expected});
       pHprev = pt.pH;
