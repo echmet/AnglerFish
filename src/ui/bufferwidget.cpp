@@ -35,6 +35,10 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
   ui->qpb_clone->setText("");
   ui->qpb_export->setText("");
 
+  ui->qpb_remove->setToolTip(tr("Remove buffer"));
+  ui->qpb_clone->setToolTip(tr("Clone buffer"));
+  ui->qpb_export->setToolTip(tr("Export buffer"));
+
   setupIcons();
 
   if (!h_buffer.experimentalMobilities().empty())
