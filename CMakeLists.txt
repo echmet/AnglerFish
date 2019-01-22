@@ -141,6 +141,7 @@ set(AnglerFish_SRCS
     "src/gearbox/mobilitycurvemodel.cpp"
     "src/gearbox/curvetoclipboardexporter.cpp"
     "src/gearbox/ioniceffectsmodel.cpp"
+    "src/gearbox/calcworker.cpp"
     "src/gdm/conversion/conversion.cpp"
     "src/gdm/core/basiccomposition.cpp"
     "src/gdm/core/composition.cpp"

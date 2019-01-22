@@ -5,15 +5,17 @@
 #include "analytedatawidget.h"
 #include "aboutdialog.h"
 #include "ioniceffectscorrections.h"
+#include "operationinprogressdialog.h"
 
 #include <globals.h>
 #include <gearbox/gearbox.h>
-#include <calculators/empfitterinterface.h>
+#include <gearbox/calcworker.h>
 #include <persistence/persistence.h>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSplitter>
+#include <QThread>
 #include <QVBoxLayout>
 
 AFMainWindow::AFMainWindow(QWidget *parent) :
@@ -130,15 +132,24 @@ void AFMainWindow::onCalculate()
 {
   setEstimates();
 
-  EMPFitterInterface iface{};
+  OperationInProgressDialog inProgDlg{"Fit in progress..."};
+  CalcWorker worker{};
+  QThread thread{};
 
-  try {
-    iface.fit();
-  } catch (const EMPFitterInterface::Exception &ex) {
+  worker.moveToThread(&thread);
+  connect(&thread, &QThread::started, &worker, &CalcWorker::process);
+  connect(&worker, &CalcWorker::finished, &thread, &QThread::quit);
+  connect(&worker, &CalcWorker::finished, &inProgDlg, &OperationInProgressDialog::onOperationCompleted);
+
+  thread.start();
+  inProgDlg.exec();
+  thread.wait();
+
+  if (worker.failed) {
     invalidateResults();
     updatePlotExperimental();
 
-    QMessageBox mbox{QMessageBox::Warning, tr("Calculation failed"), ex.what()};
+    QMessageBox mbox{QMessageBox::Warning, tr("Calculation failed"), worker.error};
     mbox.exec();
   }
 }
