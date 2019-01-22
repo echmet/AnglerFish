@@ -58,22 +58,14 @@ FitPlotWidget::~FitPlotWidget()
 void FitPlotWidget::refreshPlot()
 {
   auto brect = m_curveExperimental->boundingRect();
-  auto brect2 = m_curveFitted->boundingRect();
 
-  QRectF frect{};
-  if (brect.isValid()) {
-    frect = brect;
+  if (m_curveFitted->data()->size() > 0)
+    brect = brect.united(m_curveFitted->boundingRect());
 
-    if (brect2.isValid() && brect2.height() > frect.height())
-      frect = brect2;
-  } else if (brect2.isValid())
-    frect = brect2;
-  else
-    return;
 
   m_plot->replot();
-  m_plotZoomer->zoom(frect);
-  m_plotZoomer->setZoomBase(frect);
+  m_plotZoomer->zoom(brect);
+  m_plotZoomer->setZoomBase(brect);
 }
 
 void FitPlotWidget::setExperimentalData(const QVector<QPointF> &data)
