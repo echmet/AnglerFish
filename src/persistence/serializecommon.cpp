@@ -3,6 +3,7 @@
 #include "datakeys.h"
 
 #include <QJsonArray>
+#include <cassert>
 
 namespace persistence {
 

@@ -4,6 +4,7 @@
 
 #include <gearbox/floatingvaluedelegate.h>
 #include <QTableView>
+#include <cassert>
 
 std::vector<bool> EditChargesWidgetEstimates::fixedMobilities() const
 {

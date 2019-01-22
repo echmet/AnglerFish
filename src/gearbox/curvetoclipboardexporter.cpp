@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <map>
 #include <limits>
+#include <cassert>
 
 #define DBL_INF std::numeric_limits<double>::infinity()
 

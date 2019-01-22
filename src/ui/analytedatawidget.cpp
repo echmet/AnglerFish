@@ -9,6 +9,7 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QTextStream>
+#include <cassert>
 
 inline
 int estimatedParamsWidth(const QFontMetrics &fm)
