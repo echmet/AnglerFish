@@ -19,7 +19,7 @@
 AFMainWindow::AFMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::AFMainWindow),
-  m_loadDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)},
+  m_loadDlg{this, tr("Load setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)},
   m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)}
 {
   ui->setupUi(this);
