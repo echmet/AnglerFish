@@ -30,7 +30,7 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   m_buffersAnalyte = new QWidget{};
   m_buffersAnalyte->setLayout(new QHBoxLayout{});
   m_fitPlotWidget = new FitPlotWidget{};
-  m_fitPlotWidget->setMinimumHeight(10);
+  m_fitPlotWidget->setMinimumHeight(150);
 
   m_bufInpWidget = new BuffersInputWidget{};
   m_analDataWidget = new AnalyteDataWidget{};
