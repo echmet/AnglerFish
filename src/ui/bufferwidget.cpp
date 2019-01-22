@@ -164,6 +164,9 @@ void BufferWidget::setupIcons()
   ui->qpb_export->setIcon(QIcon::fromTheme("document-save"));
 #else
   ui->qpb_addExpValue->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
+  ui->qpb_remove->setIcon(style()->standardIcon(QStyle::SP_DialogDiscardButton));
+  ui->qpb_clone->setIcon(style()->standardIcon(QStyle::SP_FileLinkIcon)) ;
+  ui->qpb_export->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 #endif // Q_OS_
 }
 

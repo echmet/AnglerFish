@@ -156,5 +156,7 @@ void BuffersInputWidget::setupIcons()
   ui->qpb_addBuffer->setIcon(QIcon::fromTheme("list-add"));
   ui->qpb_loadBuffer->setIcon(QIcon::fromTheme("document-open"));
 #else
+  ui->qpb_addBuffer->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
+  ui->qpb_loadBuffer->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
 #endif // Q_OS_
 }

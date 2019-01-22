@@ -244,10 +244,16 @@ void AFMainWindow::setupIcons()
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else
   /* Menu bar */
+  ui->actionNew->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
+  ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+  ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 
   /* Button bar */
+  m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
+  m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+  m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   m_qpb_calculate->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 #endif // Q_OS_
 }
