@@ -28,6 +28,11 @@ const AnalyteInputParameters & Gearbox::analyteInputParameters() const noexcept
   return m_analInputParams;
 }
 
+void Gearbox::clearAnalyteInputParameters()
+{
+  m_analInputParams = AnalyteInputParameters(0, 0, {{0, false}}, {});
+}
+
 ChemicalBuffersModel & Gearbox::chemicalBuffersModel() noexcept
 {
   return m_chemBufsModel;

@@ -15,6 +15,7 @@ public:
 
   const AnalyteInputParameters & analyteInputParameters() const noexcept;
   ChemicalBuffersModel & chemicalBuffersModel() noexcept;
+  void clearAnalyteInputParameters();
   DatabaseProxy & databaseProxy() noexcept;
   FitResultsModel & mobilitiesResultsModel();
   FitResultsModel & pKaResultsModel();

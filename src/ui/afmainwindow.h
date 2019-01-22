@@ -40,6 +40,7 @@ private:
   BuffersInputWidget *m_bufInpWidget;
   AnalyteDataWidget *m_analDataWidget;
 
+  QPushButton *m_qpb_new;
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
@@ -52,6 +53,7 @@ private slots:
   void onAboutTriggered();
   void onCalculate();
   void onLoad();
+  void onNew();
   void onSave();
 };
 

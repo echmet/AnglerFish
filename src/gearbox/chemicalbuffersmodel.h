@@ -20,6 +20,7 @@ public:
   const_iterator begin() const;
   const_iterator cbegin() const;
   const_iterator cend() const;
+  void clear();
   iterator end();
   const_iterator end() const;
   void remove(const ChemicalBuffer &buffer) noexcept;

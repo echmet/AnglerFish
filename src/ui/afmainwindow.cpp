@@ -41,10 +41,12 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   m_buffersAnalyte->layout()->addWidget(m_bufInpWidget);
   m_buffersAnalyte->layout()->addWidget(m_analDataWidget);
 
+  m_qpb_new = new QPushButton{tr("New"), this};
   m_qpb_load = new QPushButton{tr("Load"), this};
   m_qpb_save = new QPushButton{tr("Save"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
 
+  ui->qtb_mainToolBar->addWidget(m_qpb_new);
   ui->qtb_mainToolBar->addWidget(m_qpb_load);
   ui->qtb_mainToolBar->addWidget(m_qpb_save);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
@@ -56,6 +58,7 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   setWindowTitle(Globals::VERSION_STRING());
 
   connect(m_qpb_load, &QPushButton::clicked, this, &AFMainWindow::onLoad);
+  connect(m_qpb_new, &QPushButton::clicked, this, &AFMainWindow::onNew);
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
 
@@ -150,6 +153,23 @@ void AFMainWindow::onLoad()
   }
 }
 
+void AFMainWindow::onNew()
+{
+  QMessageBox mbox{QMessageBox::Question,
+                   tr("Confirm action"),
+                   tr("Create new setup\n\n"
+                      "Are you sure you want to discard the current "
+                      "setup and create a new one?"),
+                   QMessageBox::Yes | QMessageBox::No};
+  if (mbox.exec() != QMessageBox::Yes)
+    return;
+
+  auto gbox = Gearbox::instance();
+  gbox->chemicalBuffersModel().clear();
+  gbox->clearAnalyteInputParameters();
+  m_analDataWidget->setEstimatesFromCurrent();
+}
+
 void AFMainWindow::onSave()
 {
   if (m_saveDlg.exec() == QDialog::Accepted) {
@@ -195,6 +215,7 @@ void AFMainWindow::setupIcons()
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
 
   /* Button bar */
+  m_qpb_new->setIcon(QIcon::fromTheme("document-new"));
   m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));

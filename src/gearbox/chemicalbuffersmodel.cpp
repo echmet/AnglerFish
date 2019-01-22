@@ -40,6 +40,11 @@ ChemicalBuffersModel::const_iterator ChemicalBuffersModel::cbegin() const
   return m_buffers.cbegin();
 }
 
+void ChemicalBuffersModel::clear()
+{
+  setBuffers({});
+}
+
 ChemicalBuffersModel::iterator ChemicalBuffersModel::end()
 {
   return m_buffers.end();
