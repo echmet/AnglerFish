@@ -105,8 +105,8 @@ void AFMainWindow::invalidateResults()
 
   gbox->mobilitiesResultsModel().setNewData({});
   gbox->pKaResultsModel().setNewData({});
+  gbox->mobilityCurveModel().invalidate();
 
-  m_fitPlotWidget->setFittedData({});
 }
 
 void AFMainWindow::onAboutTriggered()

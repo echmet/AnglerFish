@@ -20,6 +20,13 @@ const QVector<QPointF> & MobilityCurveModel::residuals() const
   return m_residuals;
 }
 
+void MobilityCurveModel::invalidate()
+{
+  setExperimental({});
+  setFitted({});
+  setResiduals({});
+}
+
 void MobilityCurveModel::setExperimental(QVector<QPointF> data)
 {
   m_experimental = std::move(data);
