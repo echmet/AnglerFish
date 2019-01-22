@@ -43,12 +43,32 @@ DatabaseProxy & Gearbox::databaseProxy() noexcept
   return m_databaseProxy;
 }
 
+MobilityCurveModel & Gearbox::mobilityCurveModel()
+{
+  return m_mobCurveModel;
+}
+
+const MobilityCurveModel & Gearbox::mobilityCurveModel() const
+{
+  return m_mobCurveModel;
+}
+
 FitResultsModel & Gearbox::mobilitiesResultsModel()
 {
   return m_mobilitiesResultsModel;
 }
 
+const FitResultsModel & Gearbox::mobilitiesResultsModel() const
+{
+  return m_mobilitiesResultsModel;
+}
+
 FitResultsModel & Gearbox::pKaResultsModel()
+{
+  return m_pKaResultsModel;
+}
+
+const FitResultsModel & Gearbox::pKaResultsModel() const
 {
   return m_pKaResultsModel;
 }

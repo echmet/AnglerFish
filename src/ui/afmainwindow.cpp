@@ -251,5 +251,5 @@ void AFMainWindow::updatePlotExperimental()
       data.push_back({buf.pH(), uExp});
   }
 
-  m_fitPlotWidget->setExperimentalData(std::move(data));
+  gbox->mobilityCurveModel().setExperimental(std::move(data));
 }

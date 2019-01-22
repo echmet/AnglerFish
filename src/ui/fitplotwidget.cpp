@@ -7,6 +7,7 @@
 #include <QFontMetrics>
 #include <QLayout>
 #include <qwt_plot.h>
+#include <qwt_plot_barchart.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_picker.h>
 #include <qwt_picker_machine.h>
@@ -40,6 +41,7 @@ FitPlotWidget::FitPlotWidget(QWidget *parent) :
 
   m_curveExperimental = new QwtPlotCurve{};
   m_curveFitted = new QwtPlotCurve{};
+  m_barResiduals = new QwtPlotBarChart{};
   m_plotZoomer = new DoubleClickableQwtPlotZoomer(m_plot->canvas());
   m_plotPicker = new QwtPlotPicker(QwtPlot::Axis::xBottom, QwtPlot::Axis::yLeft,
                                    QwtPicker::NoRubberBand, QwtPicker::AlwaysOff,
@@ -88,6 +90,14 @@ void FitPlotWidget::setFittedData(const QVector<QPointF> &data)
   refreshPlot();
 }
 
+void FitPlotWidget::setResidualsData(const QVector<QPointF> &data)
+{
+  m_barResiduals->setSamples(data);
+
+  refreshPlot();
+}
+
+
 void FitPlotWidget::setupPlot()
 {
   m_plot->setAxisTitle(QwtPlot::xBottom, QStringLiteral("pH"));
@@ -98,6 +108,7 @@ void FitPlotWidget::setupPlot()
 
   m_plot->setCanvasBackground(Qt::white);
 
+  m_barResiduals->attach(m_plot);
   m_curveExperimental->attach(m_plot);
   m_curveFitted->attach(m_plot);
 
@@ -111,4 +122,5 @@ void FitPlotWidget::setupPlot()
 
   m_curveFitted->setStyle(QwtPlotCurve::NoCurve);
   m_curveFitted->setSymbol(makeSymbol(QwtSymbol::XCross, Qt::blue, fontMetrics()));
+
 }
