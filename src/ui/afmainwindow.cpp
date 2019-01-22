@@ -4,6 +4,7 @@
 #include "buffersinputwidget.h"
 #include "analytedatawidget.h"
 #include "aboutdialog.h"
+#include "ioniceffectscorrections.h"
 
 #include <globals.h>
 #include <gearbox/gearbox.h>
@@ -68,6 +69,10 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   connect(ui->actionExit, &QAction::triggered, this, &AFMainWindow::close);
   connect(m_bufInpWidget, &BuffersInputWidget::buffersChanged, this, &AFMainWindow::onBuffersChanged);
   connect(ui->actionAbout, &QAction::triggered, this, &AFMainWindow::onAboutTriggered);
+  connect(ui->actionIonic_effects_corrections, &QAction::triggered, []() {
+    IonicEffectsCorrections dlg{};
+    dlg.exec();
+  });
 
   /* Connect to gearbox */
   auto gbox = Gearbox::instance();

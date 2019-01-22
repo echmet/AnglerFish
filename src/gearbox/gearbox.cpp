@@ -43,6 +43,11 @@ DatabaseProxy & Gearbox::databaseProxy() noexcept
   return m_databaseProxy;
 }
 
+IonicEffectsModel & Gearbox::ionicEffectsModel()
+{
+  return m_ionEffsModel;
+}
+
 MobilityCurveModel & Gearbox::mobilityCurveModel()
 {
   return m_mobCurveModel;

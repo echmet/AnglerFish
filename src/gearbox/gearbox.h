@@ -5,6 +5,7 @@
 #include "chemicalbuffersmodel.h"
 #include "databaseproxy.h"
 #include "fitresultsmodel.h"
+#include "ioniceffectsmodel.h"
 #include "mobilitycurvemodel.h"
 
 #include <memory>
@@ -18,6 +19,7 @@ public:
   ChemicalBuffersModel & chemicalBuffersModel() noexcept;
   void clearAnalyteInputParameters();
   DatabaseProxy & databaseProxy() noexcept;
+  IonicEffectsModel & ionicEffectsModel();
   MobilityCurveModel & mobilityCurveModel();
   const MobilityCurveModel & mobilityCurveModel() const;
   FitResultsModel & mobilitiesResultsModel();
@@ -33,6 +35,8 @@ private:
 
   AnalyteInputParameters m_analInputParams;
   ChemicalBuffersModel m_chemBufsModel;
+  IonicEffectsModel m_ionEffsModel;
+
   DatabaseProxy m_databaseProxy;
   MobilityCurveModel m_mobCurveModel;
 
