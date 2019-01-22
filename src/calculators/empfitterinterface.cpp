@@ -216,9 +216,11 @@ InSystemWrap prepare(/* TODO: IS corrections */)
     }
   }
 
-  ECHMET::NonidealityCorrections corrs{};
-  ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
-  ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
+  ECHMET::NonidealityCorrections corrs = ECHMET::defaultNonidealityCorrections();
+  if (gbox->ionicEffectsModel().debyeHuckel())
+    ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
+  if (gbox->ionicEffectsModel().onsagerFuoss())
+    ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
 
   inSystem->buffers = inBufVec.release();
   inSystem->corrections = corrs;
@@ -265,7 +267,7 @@ EMPFitterInterface::~EMPFitterInterface()
 {
 }
 
-void EMPFitterInterface::fit(/* TODO: IS corrections */)
+void EMPFitterInterface::fit()
 {
   auto system = prepare();
 

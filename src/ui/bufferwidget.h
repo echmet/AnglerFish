@@ -37,6 +37,7 @@ private:
 private slots:
   void onAddExpValue();
   void onCompositionChanged();
+  void onIonicEffectsChanged();
   void onRemoveExpValue(ExperimentalMobilityWidget *w);
   void setExpValues();
   void updateExperimentalMobilities();

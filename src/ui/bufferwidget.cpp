@@ -52,6 +52,8 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
   connect(m_compositionWidget, &BufferCompositionWidget::compositionChanged, this, &BufferWidget::onCompositionChanged);
   connect(ui->qpb_clone, &QPushButton::clicked, this, [this]() { emit this->cloneMe(this); });
   connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
+
+  connect(&Gearbox::instance()->ionicEffectsModel(), &IonicEffectsModel::changed, this, &BufferWidget::onIonicEffectsChanged);
 }
 
 BufferWidget::~BufferWidget()
@@ -96,6 +98,12 @@ void BufferWidget::onCompositionChanged()
     QMessageBox mbox{QMessageBox::Critical, tr("Calculation error"), ex.what()};
     mbox.exec();
   }
+}
+
+void BufferWidget::onIonicEffectsChanged()
+{
+  /* Treat change in ionic effects as a change in composition */
+  onCompositionChanged();
 }
 
 void BufferWidget::onRemoveExpValue(ExperimentalMobilityWidget *w)

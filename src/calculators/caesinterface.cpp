@@ -2,6 +2,7 @@
 
 #include "eclutil.h"
 
+#include <gearbox/gearbox.h>
 #include <gdm/core/gdm.h>
 #include <gdm/conversion/conversion.h>
 #include <echmetcaes.h>
@@ -42,7 +43,7 @@ SolverContextWrap makeSolverContext(const ChemicalSystemPtr &chemSystem)
 inline
 SolverWrap makeSolver(const SolverContextWrap &ctx, const bool debHue, const bool onsFuo)
 {
-  ECHMET::NonidealityCorrections corrs{};
+  ECHMET::NonidealityCorrections corrs = ECHMET::defaultNonidealityCorrections();
 
   if (debHue)
     ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
@@ -63,6 +64,8 @@ CAESInterface::CAESInterface(const gdm::GDM &model) :
 
 CAESInterface::BufferProperties CAESInterface::bufferProperties()
 {
+  const auto gbox = Gearbox::instance();
+
   ChemicalSystemPtr chemSystem{new ECHMET::SysComp::ChemicalSystem, chemicalSystemReleaser};
   CalcPropsPtr calcProps{new ECHMET::SysComp::CalculatedProperties, calcPropsReleaser};
   auto cVec = conversion::makeECHMETInConstituentVec(h_model);
@@ -80,7 +83,7 @@ CAESInterface::BufferProperties CAESInterface::bufferProperties()
   }
 
   auto solverCtx = makeSolverContext(chemSystem);
-  auto solver = makeSolver(solverCtx, true, true);
+  auto solver = makeSolver(solverCtx, gbox->ionicEffectsModel().debyeHuckel(), gbox->ionicEffectsModel().onsagerFuoss());
 
   tRet = solver->estimateDistributionSafe(acVec.get(), *calcProps);
   if (tRet != ECHMET::RetCode::OK)
