@@ -54,3 +54,8 @@ void Gearbox::setAnalyteInputParameters(const int chargeLow, const int chargeHig
   m_analInputParams = AnalyteInputParameters{chargeLow, chargeHigh,
                                              std::move(mobilities), std::move(pKas)};
 }
+
+void Gearbox::setAnalyteInputParameters(AnalyteInputParameters params)
+{
+  m_analInputParams = std::move(params);
+}

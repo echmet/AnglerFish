@@ -141,6 +141,7 @@ void AFMainWindow::onLoad()
     if (!m_loadDlg.selectedFiles().empty()) {
       try {
         persistence::loadEntireSetup(m_loadDlg.selectedFiles().first());
+        m_analDataWidget->setEstimatesFromCurrent();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
         mbox.exec();

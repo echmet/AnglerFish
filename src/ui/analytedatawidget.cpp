@@ -133,6 +133,33 @@ void AnalyteDataWidget::onResultsToClipboard()
     clip->setText(buf);
 }
 
+void AnalyteDataWidget::setEstimatesFromCurrent()
+{
+  const auto &analyte = Gearbox::instance()->analyteInputParameters();
+
+  std::map<int, std::pair<double, bool>> pKas{};
+
+  /* These conversions are so damn annoying...! */
+  const int bChg = m_estimatedParamsWidget->baseCharge(analyte.chargeLow, analyte.chargeHigh);
+  auto it = analyte.pKas.cbegin();
+  for (int charge = analyte.chargeLow; charge <= analyte.chargeHigh; charge++) {
+    if (charge != bChg) {
+      pKas[charge] = {it->value, it->fixed};
+      it++;
+    } else
+      pKas[charge] = {0.0, false};
+  }
+
+  std::map<int, std::pair<double, bool>> mobilities{};
+  int charge = analyte.chargeLow;
+  for (const auto &item : analyte.mobilities) {
+    mobilities[charge] = {item.value, item.fixed};
+    charge++;
+  }
+
+  m_estimatedParamsWidget->setCharges(std::move(pKas), std::move(mobilities), analyte.chargeLow, analyte.chargeHigh);
+}
+
 void AnalyteDataWidget::setWidgetSizes()
 {
   {

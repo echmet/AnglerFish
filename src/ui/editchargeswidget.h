@@ -23,6 +23,7 @@ public:
 
   explicit EditChargesWidget(QWidget *parent = nullptr);
   ~EditChargesWidget();
+  int baseCharge(const int chargeLow, const int chargeHigh);
   void initialize();
   void initialize(const gdm::PhysicalProperties &props);
   void initialize(PhysPropsMap pKas, PhysPropsMap mobilities, const int chargeLow, const int chargeHigh);

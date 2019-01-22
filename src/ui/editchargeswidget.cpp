@@ -9,16 +9,6 @@
 
 #include <cassert>
 
-static
-int baseCharge(const int chargeLow, const int chargeHigh)
-{
-  if (chargeHigh < 0)
-    return chargeHigh;
-  if (chargeLow > 0)
-    return chargeLow;
-  return 0;
-}
-
 EditChargesWidget::EditChargesWidget(QWidget *parent) :
   QWidget{parent},
   ui{new Ui::EditChargesWidget}
@@ -29,6 +19,15 @@ EditChargesWidget::EditChargesWidget(QWidget *parent) :
 EditChargesWidget::~EditChargesWidget()
 {
   delete ui;
+}
+
+int EditChargesWidget::baseCharge(const int chargeLow, const int chargeHigh)
+{
+  if (chargeHigh < 0)
+    return chargeHigh;
+  if (chargeLow > 0)
+    return chargeLow;
+  return 0;
 }
 
 int EditChargesWidget::chargeHigh() const

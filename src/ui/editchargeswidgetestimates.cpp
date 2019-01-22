@@ -37,6 +37,14 @@ std::vector<bool> EditChargesWidgetEstimates::fixedpKas() const
   return fixed;
 }
 
+void EditChargesWidgetEstimates::setCharges(std::map<int, std::pair<double, bool>> pKas, std::map<int, std::pair<double, bool>> mobilities,
+                                            const int chargeLow, const int chargeHigh)
+{
+  auto model = qobject_cast<ConstituentChargesModelFixable *>(m_chargesModel);
+  assert(model != nullptr);
+
+  model->refreshData(pKas, mobilities, chargeLow, chargeHigh);
+}
 
 void EditChargesWidgetEstimates::setupChargesModel(QTableView *tbv)
 {

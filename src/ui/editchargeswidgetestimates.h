@@ -13,6 +13,9 @@ public:
   std::vector<bool> fixedMobilities() const;
   std::vector<bool> fixedpKas() const;
 
+  void setCharges(std::map<int, std::pair<double, bool>> pKas, std::map<int, std::pair<double, bool>> mobilities,
+                  const int chargeLow, const int chargeHigh);
+
 protected:
   virtual void setupChargesModel(QTableView *tbv) override;
 

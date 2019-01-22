@@ -14,7 +14,7 @@ void loadEntireSetup(const QString &path)
   auto gbox = Gearbox::instance();
 
   gbox->chemicalBuffersModel().setBuffers(std::move(std::get<0>(loaded)));
-
+  gbox->setAnalyteInputParameters(std::move(std::get<1>(loaded)));
 }
 
 void saveEntireSetup(const QString &path, const ChemicalBuffersModel &buffers, const AnalyteInputParameters &analyte)

@@ -266,7 +266,7 @@ bool ConstituentChargesModelFixable::removeRows(int row, int count, const QModel
 }
 
 void ConstituentChargesModelFixable::refreshData(const std::map<int, double> &pKas, const std::map<int, double> &mobilities,
-                                          const int chargeLow, const int chargeHigh)
+                           const int chargeLow, const int chargeHigh)
 {
   assert(pKas.size() == mobilities.size());
   assert(pKas.size() == static_cast<size_t>(chargeHigh - chargeLow + 1));
@@ -280,6 +280,28 @@ void ConstituentChargesModelFixable::refreshData(const std::map<int, double> &pK
     const auto &mobility = mobilities.at(charge);
 
     m_charges.push_back({charge, mobility, pKa, false, false});
+  }
+
+  endResetModel();
+
+}
+
+void ConstituentChargesModelFixable::refreshData(const std::map<int, std::pair<double, bool>> &pKas,
+                                                 const std::map<int, std::pair<double, bool>> &mobilities,
+                                                 const int chargeLow, const int chargeHigh)
+{
+  assert(pKas.size() == mobilities.size());
+  assert(pKas.size() == static_cast<size_t>(chargeHigh - chargeLow + 1));
+
+  beginResetModel();
+
+  m_charges.clear();
+
+  for (int charge = chargeLow; charge <= chargeHigh; charge++) {
+    const auto &pKa = pKas.at(charge);
+    const auto &mobility = mobilities.at(charge);
+
+    m_charges.push_back({charge, mobility.first, pKa.first, mobility.second, pKa.second});
   }
 
   endResetModel();

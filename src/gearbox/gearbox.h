@@ -20,6 +20,7 @@ public:
   FitResultsModel & pKaResultsModel();
   void setAnalyteInputParameters(const int chargeLow, const int chargeHigh,
                                  AnalyteInputParameters::ParameterVec mobilities, AnalyteInputParameters::ParameterVec pKas);
+  void setAnalyteInputParameters(AnalyteInputParameters params);
 
 private:
   Gearbox();

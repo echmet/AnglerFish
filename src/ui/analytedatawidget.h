@@ -1,7 +1,6 @@
 #ifndef ANALYTEDATAWIDGET_H
 #define ANALYTEDATAWIDGET_H
 
-
 #include <QWidget>
 
 namespace Ui {
@@ -9,7 +8,6 @@ class AnalyteDataWidget;
 }
 
 class EditChargesWidgetEstimates;
-
 
 class AnalyteDataWidget : public QWidget {
   Q_OBJECT
@@ -21,6 +19,8 @@ public:
   int chargeHigh() const noexcept;
   std::vector<std::pair<double, bool>> estimatedMobilities() const;
   std::vector<std::pair<double, bool>> estimatedpKas() const;
+
+  void setEstimatesFromCurrent();
 
 private:
   void setWidgetSizes();

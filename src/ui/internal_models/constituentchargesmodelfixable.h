@@ -51,6 +51,10 @@ public:
   virtual void refreshData(const std::map<int, double> &pKas, const std::map<int, double> &mobilities,
                            const int chargeLow, const int chargeHigh) override;
 
+  void refreshData(const std::map<int, std::pair<double, bool>> &pKas,
+                   const std::map<int, std::pair<double, bool>> &mobilities,
+                   const int chargeLow, const int chargeHigh);
+
 private:
   bool isBaseCharge(const QModelIndex &index) const;
 

@@ -23,7 +23,7 @@ ChemicalBuffer::ChemicalBuffer(gdm::GDM *model) :
 
 ChemicalBuffer::ChemicalBuffer(const ChemicalBuffer &other) :
   m_gdmModel{new gdm::GDM{}},
-  m_composition{new GDMProxyImpl{*m_gdmModel, 1.0e-11}},
+  m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
   m_experimentalMobilities{other.experimentalMobilities()},
   m_pH{other.m_pH},
   m_ionicStrength{other.m_ionicStrength},
