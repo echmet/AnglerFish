@@ -18,18 +18,21 @@ inline
 void chemicalSystemReleaser(ECHMET::SysComp::ChemicalSystem *ptr)
 {
   ECHMET::SysComp::releaseChemicalSystem(*ptr);
+  delete ptr;
 }
 
 inline
 void calcPropsReleaser(ECHMET::SysComp::CalculatedProperties *ptr)
 {
   ECHMET::SysComp::releaseCalculatedProperties(*ptr);
+  delete ptr;
 }
 
 inline
 void inConstituentReleaser(ECHMET::SysComp::InConstituent *inC)
 {
   ECHMET::SysComp::releaseInConstituent(*inC);
+  delete inC;
 }
 
 inline

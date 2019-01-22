@@ -121,8 +121,10 @@ void AFCrashHandler::uninstallCrashHandler()
   return;
 #else
 
-  if (s_catcher != nullptr)
+  if (s_catcher != nullptr) {
     qApp->removeEventFilter(s_catcher);
+    delete s_catcher;
+  }
 
   CrashHandlingProvider<CrashHandlerPlatform>::deinitialize();
 

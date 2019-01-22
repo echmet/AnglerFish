@@ -13,6 +13,7 @@ inline
 void inSystemReleaser(ECHMET::ElmigParamsFitter::InSystem *inSys)
 {
   ECHMET::ElmigParamsFitter::releaseInSystem(*inSys);
+  delete inSys;
 }
 
 inline
@@ -25,6 +26,7 @@ inline
 void resultsReleaser(ECHMET::ElmigParamsFitter::FitResults *results)
 {
   ECHMET::ElmigParamsFitter::releaseResults(*results);
+  delete results;
 }
 
 using FitResultsPtr = std::unique_ptr<ECHMET::ElmigParamsFitter::FitResults,
@@ -93,7 +95,11 @@ void makeAnalyte(InSystemWrap &inSystem)
   for (const auto &p : params.pKas)
     analyte->pKas->push_back(p.value);
 
-  inSystem->analyte = *analyte.release();
+  auto aptr = analyte.release();
+
+  inSystem->analyte = *aptr;
+
+  delete aptr;
 }
 
 inline
@@ -256,5 +262,5 @@ void EMPFitterInterface::prepare(/* TODO: IS corrections */)
   inSystem->buffers = inBufVec.release();
   inSystem->corrections = corrs;
 
-  m_ctx->system= std::move(inSystem);
+  m_ctx->system = std::move(inSystem);
 }
