@@ -117,6 +117,7 @@ set(AnglerFish_SRCS
     "src/ui/elementaries/floatingvaluelineedit.cpp"
     "src/ui/elementaries/modifyconstituentchargepushbutton.cpp"
     "src/ui/ioniceffectscorrections.cpp"
+    "src/ui/operationinprogressdialog.cpp"
     "src/ui/internal_models/constituentchargesmodel.cpp"
     "src/ui/internal_models/constituentchargesmodelfixable.cpp"
     "src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp"

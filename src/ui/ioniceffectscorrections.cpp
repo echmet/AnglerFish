@@ -15,10 +15,10 @@ IonicEffectsCorrections::IonicEffectsCorrections(QWidget *parent) :
   ui->qcb_onsagerFuoss->setChecked(model.onsagerFuoss());
 
   connect(ui->buttonBox, &QDialogButtonBox::accepted, [this]() {
-    auto &model = Gearbox::instance()->ionicEffectsModel();
+    auto &_model = Gearbox::instance()->ionicEffectsModel();
 
-    model.setDebyeHuckel(ui->qcb_debyeHuckel->isChecked());
-    model.setOnsagerFuoss(ui->qcb_onsagerFuoss->isChecked());
+    _model.setDebyeHuckel(ui->qcb_debyeHuckel->isChecked());
+    _model.setOnsagerFuoss(ui->qcb_onsagerFuoss->isChecked());
   });
 }
 
