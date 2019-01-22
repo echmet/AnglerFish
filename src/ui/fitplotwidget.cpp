@@ -85,21 +85,29 @@ void FitPlotWidget::setResidualsData(const QVector<QPointF> &data)
 {
   m_barResiduals->setSamples(data);
 
+  auto brect = m_barResiduals->boundingRect();
+  m_plot->setAxisScale(QwtPlot::yRight, brect.top(), brect.bottom());
+
   refreshPlot();
 }
 
-
 void FitPlotWidget::setupPlot()
 {
+  m_plot->enableAxis(QwtPlot::yRight);
+
   m_plot->setAxisTitle(QwtPlot::xBottom, QStringLiteral("pH"));
   if (Globals::isWindowsXP())
     m_plot->setAxisTitle(QwtPlot::yLeft, QString{"<html>u<sub>eff</sub> %1 . %2</html>"}.arg(s_uEffUnit, s_uEffCoeff));
   else
     m_plot->setAxisTitle(QwtPlot::yLeft, QString{"<html>\xCE\xBC<sub>eff</sub> %1 \xC2\xB7 %2</html>"}.arg(s_uEffUnit, s_uEffCoeff));
 
+  m_plot->setAxisTitle(QwtPlot::yRight, QString{"Residuals"});
+
   m_plot->setCanvasBackground(Qt::white);
 
   m_barResiduals->attach(m_plot);
+  m_barResiduals->setYAxis(QwtPlot::yRight);
+
   m_curveExperimental->attach(m_plot);
   m_curveFitted->attach(m_plot);
 

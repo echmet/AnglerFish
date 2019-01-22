@@ -66,7 +66,6 @@ void CurveToClipboardExporter::write()
 {
   const auto &model = Gearbox::instance()->mobilityCurveModel();
 
-
   Aggregate aggr{};
 
   double prevX = std::numeric_limits<double>::infinity();
