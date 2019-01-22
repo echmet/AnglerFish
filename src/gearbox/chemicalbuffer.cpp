@@ -19,6 +19,7 @@ ChemicalBuffer::ChemicalBuffer(gdm::GDM *model) :
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
   m_needsRecalculation{true}
 {
+  recalculate();
 }
 
 ChemicalBuffer::ChemicalBuffer(const ChemicalBuffer &other) :

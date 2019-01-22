@@ -62,7 +62,11 @@ expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
 
     /* There is a theoretical corner case of two different buffers
      * with exactly the same pH. This would require a lot more logic
-     * to handle properly
+     * to handle properly.
+     *
+     * Exact float comparisons are otherwise safe to use here
+     * because they all come from one source and there is not
+     * arithmetic done with them.
      */
     if (pHprev != pt.pH) {
       if (residualCtr != 0) {

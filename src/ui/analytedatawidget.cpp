@@ -7,6 +7,7 @@
 #include <gearbox/gearbox.h>
 #include <gearbox/curvetoclipboardexporter.h>
 #include <QClipboard>
+#include <QMessageBox>
 #include <QTextStream>
 
 inline
@@ -45,7 +46,14 @@ AnalyteDataWidget::AnalyteDataWidget(QWidget *parent) :
 
   connect(ui->qpb_resultsToClipboard, &QPushButton::clicked, this, &AnalyteDataWidget::onResultsToClipboard);
   connect(ui->qpb_curveToClipboard, &QPushButton::clicked,
-          []() { CurveToClipboardExporter::write(); });
+          []() { try {
+                   CurveToClipboardExporter::write();
+                 } catch (const CurveToClipboardExporter::Exception &ex) {
+                   QMessageBox mbox{QMessageBox::Critical, tr("Internal error"),
+                                    QString{tr("Failed to copy curve to clipboard: %1")}.arg(ex.what())};
+                   mbox.exec();
+                 }
+          });
 }
 
 AnalyteDataWidget::~AnalyteDataWidget()
@@ -177,5 +185,15 @@ void AnalyteDataWidget::setWidgetSizes()
     ui->qtbv_fittedMobilities->setMaximumWidth(w);
     ui->qtbv_fittedpKas->setMinimumWidth(w);
     ui->qtbv_fittedpKas->setMaximumWidth(w);
+  }
+
+  ui->ql_resultsCaption->setMinimumWidth(ui->qtbv_fittedpKas->minimumWidth());
+  ui->ql_resultsCaption->setMaximumWidth(ui->qtbv_fittedpKas->maximumWidth());
+
+  {
+    const int tw = m_estimatedParamsWidget->minimumWidth() + ui->qtbv_fittedpKas->minimumWidth() +2 * fontMetrics().width('x');
+
+    setMinimumWidth(tw);
+    setMaximumWidth(tw);
   }
 }
