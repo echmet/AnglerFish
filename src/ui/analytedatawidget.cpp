@@ -5,6 +5,7 @@
 
 #include <gearbox/doubletostringconvertor.h>
 #include <gearbox/gearbox.h>
+#include <gearbox/curvetoclipboardexporter.h>
 #include <QClipboard>
 #include <QTextStream>
 
@@ -43,6 +44,8 @@ AnalyteDataWidget::AnalyteDataWidget(QWidget *parent) :
   setWidgetSizes();
 
   connect(ui->qpb_resultsToClipboard, &QPushButton::clicked, this, &AnalyteDataWidget::onResultsToClipboard);
+  connect(ui->qpb_curveToClipboard, &QPushButton::clicked,
+          []() { CurveToClipboardExporter::write(); });
 }
 
 AnalyteDataWidget::~AnalyteDataWidget()

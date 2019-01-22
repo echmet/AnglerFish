@@ -127,6 +127,7 @@ set(AnglerFish_SRCS
     "src/gearbox/analyteinputparameters.cpp"
     "src/gearbox/fitresultsmodel.cpp"
     "src/gearbox/mobilitycurvemodel.cpp"
+    "src/gearbox/curvetoclipboardexporter.cpp"
     "src/gdm/conversion/conversion.cpp"
     "src/gdm/core/basiccomposition.cpp"
     "src/gdm/core/composition.cpp"
