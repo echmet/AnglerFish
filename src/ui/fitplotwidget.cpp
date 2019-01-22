@@ -62,7 +62,6 @@ void FitPlotWidget::refreshPlot()
   if (m_curveFitted->data()->size() > 0)
     brect = brect.united(m_curveFitted->boundingRect());
 
-
   m_plot->replot();
   m_plotZoomer->zoom(brect);
   m_plotZoomer->setZoomBase(brect);

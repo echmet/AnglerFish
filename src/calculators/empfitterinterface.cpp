@@ -5,6 +5,7 @@
 #include <gdm/conversion/conversion.h>
 #include <gearbox/gearbox.h>
 #include <echmetelmigparamsfitter.h>
+#include <limits>
 #include <tuple>
 
 #include <QDebug>
@@ -51,9 +52,13 @@ QVector<QPointF> expectedCurve(const InSystemWrap &system, const FitResultsPtr &
   }
 
   QVector<QPointF> retVec{};
+  double pHprev = std::numeric_limits<double>::infinity();
   for (size_t idx = 0; idx < expected->size(); idx++) {
     auto pt = expected->at(idx);
-    retVec.push_back(QPointF{pt.pH, pt.expected});
+    if (pHprev != pt.pH) {
+      retVec.push_back(QPointF{pt.pH, pt.expected});
+      pHprev = pt.pH;
+    }
   }
 
   expected->destroy();
