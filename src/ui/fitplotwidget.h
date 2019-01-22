@@ -5,7 +5,6 @@
 
 class DoubleClickableQwtPlotZoomer;
 class QwtPlot;
-class QwtPlotBarChart;
 class QwtPlotCurve;
 class QwtPlotPicker;
 
@@ -33,7 +32,7 @@ private:
   QwtPlot *m_plot;
   QwtPlotCurve *m_curveExperimental;
   QwtPlotCurve *m_curveFitted;
-  QwtPlotBarChart *m_barResiduals;
+  QwtPlotCurve *m_curveResiduals;
   QwtPlotPicker *m_plotPicker;
   DoubleClickableQwtPlotZoomer *m_plotZoomer;
 

@@ -69,8 +69,8 @@ int AnalyteDataWidget::chargeLow() const noexcept
 int AnalyteDataWidget::chargeHigh() const noexcept
 {
   return m_estimatedParamsWidget->chargeHigh();
-
 }
+
 std::vector<std::pair<double, bool>> AnalyteDataWidget::estimatedMobilities() const
 {
   std::vector<std::pair<double, bool>> v{};

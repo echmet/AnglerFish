@@ -5,10 +5,15 @@
 #include <gdm/conversion/conversion.h>
 #include <gearbox/gearbox.h>
 #include <echmetelmigparamsfitter.h>
+#include <algorithm>
 #include <limits>
 #include <tuple>
 
-#include <QDebug>
+inline
+bool operator<(const QPointF &lhs, const QPointF &rhs)
+{
+  return lhs.x() < rhs.x();
+}
 
 inline
 void inSystemReleaser(ECHMET::ElmigParamsFitter::InSystem *inSys)
@@ -65,7 +70,7 @@ expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
      * to handle properly.
      *
      * Exact float comparisons are otherwise safe to use here
-     * because they all come from one source and there is not
+     * because they all come from one source and there is no
      * arithmetic done with them.
      */
     if (pHprev != pt.pH) {
@@ -245,8 +250,15 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results)
 
   auto &model = Gearbox::instance()->mobilityCurveModel();
   const auto t = expectedAndResidual(system, results);
-  model.setFitted(std::get<0>(t));
-  model.setResiduals(std::get<1>(t));
+
+  auto fitted = std::move(std::get<0>(t));
+  auto residuals = std::move(std::get<1>(t));
+
+  std::sort(fitted.begin(), fitted.end());
+  std::sort(residuals.begin(), residuals.end());
+
+  model.setFitted(std::move(fitted));
+  model.setResiduals(std::move(residuals));
 }
 
 EMPFitterInterface::~EMPFitterInterface()
