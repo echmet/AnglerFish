@@ -68,11 +68,21 @@ include_directories(${INCLUDE_DIRECTORIES}
                     SYSTEM "${QWTPLOT_DIR}/include"
                     )
 
+if (WIN32)
+    include_directories(${INCLUDE_DIRECTORIES}
+						SYSTEM "${SQLITE3_DIR}")
+endif ()
+
 link_directories(${LINK_DIRECTORIES}
                  "${ECHMET_CORE_LIBS_DIR}/lib"
                  "${EMPFITTER_DIR}/lib"
                  "${QWTPLOT_DIR}/lib"
                  )
+
+if (WIN32)
+    link_directories(${LINK_DIRECTORIES}
+	                 "${SQLITE3_DIR}")
+endif ()
 
 set(CMAKE_CXX_FLAGS
     ${CMAKE_CXX_FLAGS}
@@ -191,6 +201,11 @@ else ()
     add_executable(AnglerFish ${AnglerFish_SRCS})
 endif ()
 
+if (WIN32)
+    set(WIN32_DBGHELP
+	    "dbghelp")
+endif ()
+
 target_link_libraries(AnglerFish
                       PRIVATE Qt5::Core
                       PRIVATE Qt5::Gui
@@ -202,4 +217,5 @@ target_link_libraries(AnglerFish
                       PRIVATE ElmigParamsFitter
                       PRIVATE qwt
                       PRIVATE sqlite3
-                      PRIVATE ${LINK_PTHREAD})
+                      PRIVATE ${LINK_PTHREAD}
+                      PRIVATE ${WIN32_DBGHELP})
