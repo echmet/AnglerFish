@@ -15,7 +15,7 @@ public:
   const QVector<QPointF> &residuals() const;
 
   void setExperimental(QVector<QPointF> data);
-  void setFitteed(QVector<QPointF> data);
+  void setFitted(QVector<QPointF> data);
   void setResiduals(QVector<QPointF> data);
 
 private:

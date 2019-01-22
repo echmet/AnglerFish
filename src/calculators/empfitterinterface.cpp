@@ -39,6 +39,28 @@ using InSystemWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::InSystem,
 using FixerWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::ParametersFixer,
                                   decltype(&fixerReleaser)>;
 
+
+QVector<QPointF> expectedCurve(const InSystemWrap &system, const FitResultsPtr &results)
+{
+  ECHMET::ElmigParamsFitter::ExpectedCurvePointVec *expected{};
+
+  auto fitRet = ECHMET::ElmigParamsFitter::expectedCurve(*system, *results, expected);
+  if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
+    const auto err = QString{"Cannot get expected curve: "} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
+    throw EMPFitterInterface:: Exception{err.toStdString()};
+  }
+
+  QVector<QPointF> retVec{};
+  for (size_t idx = 0; idx < expected->size(); idx++) {
+    auto pt = expected->at(idx);
+    retVec.push_back(QPointF{pt.pH, pt.expected});
+  }
+
+  expected->destroy();
+
+  return retVec;
+}
+
 inline
 void fixParameters(FixerWrap &fixer)
 {
@@ -122,7 +144,57 @@ makeBuffer(const gdm::GDM *model)
 }
 
 inline
-void setResults(ECHMET::ElmigParamsFitter::FitResults &results)
+InSystemWrap prepare(/* TODO: IS corrections */)
+{
+  auto gbox = Gearbox::instance();
+
+  InSystemWrap inSystem{new ECHMET::ElmigParamsFitter::InSystem{}, inSystemReleaser};
+  inSystem->buffers = nullptr;
+
+  makeAnalyte(inSystem);
+
+  auto inBufVec = InBufferVecWrap{ECHMET::ElmigParamsFitter::createInBufferVec(), ECHMET::ElmigParamsFitter::releaseInBufferVec};
+  if (inBufVec == nullptr) {
+   throw EMPFitterInterface::Exception{trstr("Insufficient memory")};
+  }
+
+  ECHMET::RetCode tRet{};
+
+  for (const auto &b : gbox->chemicalBuffersModel()) {
+    try {
+      for (const auto &uExp : b.experimentalMobilities()) {
+        ECHMET::ElmigParamsFitter::InBuffer inBuf{nullptr, nullptr, 0.0};
+
+        auto bufComp = makeBuffer(b.model());
+
+        tRet = inBufVec->push_back(inBuf);
+        if (tRet != ECHMET::RetCode::OK) {
+          throw EMPFitterInterface::Exception{errstr(tRet)};
+        }
+
+        const size_t sz = inBufVec->size();
+        auto &_buf = inBufVec->operator[](sz - 1);
+        _buf.composition = std::get<0>(bufComp).release();
+        _buf.concentrations = std::get<1>(bufComp).release();
+        _buf.uEffExperimental = uExp;
+      }
+    } catch (const std::bad_alloc &) {
+      throw EMPFitterInterface::Exception{trstr("Insufficient memory")};
+    }
+  }
+
+  ECHMET::NonidealityCorrections corrs{};
+  ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
+  ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
+
+  inSystem->buffers = inBufVec.release();
+  inSystem->corrections = corrs;
+
+  return inSystem;
+}
+
+inline
+void setResults(const InSystemWrap &system, const FitResultsPtr &results)
 {
   static const auto relStDev = [](auto v, auto stDev) {
     return (std::abs(stDev / v) * 100.0);
@@ -140,127 +212,29 @@ void setResults(ECHMET::ElmigParamsFitter::FitResults &results)
     model.setNewData(std::move(vec));
   };
 
-  walk(results.mobilities, Gearbox::instance()->mobilitiesResultsModel());
-  walk(results.pKas, Gearbox::instance()->pKaResultsModel());
-}
+  walk(results->mobilities, Gearbox::instance()->mobilitiesResultsModel());
+  walk(results->pKas, Gearbox::instance()->pKaResultsModel());
 
-class EMPFitterInterface::Context {
-public:
-  Context() :
-    system{nullptr, inSystemReleaser},
-    results{nullptr, resultsReleaser}
-  {
-  }
-
-  InSystemWrap system;
-  FitResultsPtr results;
-};
-
-EMPFitterInterface::EMPFitterInterface() :
-  m_ctx{new Context{}},
-  m_resultsAvailable{false}
-{
+  Gearbox::instance()->mobilityCurveModel().setFitted(expectedCurve(system, results));
 }
 
 EMPFitterInterface::~EMPFitterInterface()
 {
 }
 
-QVector<QPointF > EMPFitterInterface::expectedCurve()
-{
-  if (!m_resultsAvailable)
-    throw Exception{trstr("Fit results are not available")};
-
-  assert(m_ctx->results != nullptr);
-
-  ECHMET::ElmigParamsFitter::ExpectedCurvePointVec *expected{};
-
-  auto fitRet = ECHMET::ElmigParamsFitter::expectedCurve(*m_ctx->system, *m_ctx->results, expected);
-  if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
-    const auto err = QString{"Cannot get expected curve: "} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
-    throw Exception{err.toStdString()};
-  }
-
-  QVector<QPointF> retVec{};
-  for (size_t idx = 0; idx < expected->size(); idx++) {
-    auto pt = expected->at(idx);
-    retVec.push_back(QPointF{pt.pH, pt.expected});
-  }
-
-  expected->destroy();
-
-  return retVec;
-}
-
 void EMPFitterInterface::fit(/* TODO: IS corrections */)
 {
-  prepare();
-
-  assert(m_ctx != nullptr);
+  auto system = prepare();
 
   auto fixer = FixerWrap{ECHMET::ElmigParamsFitter::createParametersFixer(), fixerReleaser};
   fixParameters(fixer);
 
   auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr}, resultsReleaser};
-  auto fitRet = ECHMET::ElmigParamsFitter::process(*m_ctx->system, fixer.get(), *results);
+  auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), *results);
   if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
     const auto err = QString{"Fit failed: "} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
     throw Exception{err.toStdString()};
   }
 
-  setResults(*results);
-
-  m_ctx->results = std::move(results);
-  m_resultsAvailable = true;
-}
-
-void EMPFitterInterface::prepare(/* TODO: IS corrections */)
-{
-  assert(m_ctx != nullptr);
-
-  auto gbox = Gearbox::instance();
-
-  InSystemWrap inSystem{new ECHMET::ElmigParamsFitter::InSystem{}, inSystemReleaser};
-  inSystem->buffers = nullptr;
-
-  makeAnalyte(inSystem);
-
-  auto inBufVec = InBufferVecWrap{ECHMET::ElmigParamsFitter::createInBufferVec(), ECHMET::ElmigParamsFitter::releaseInBufferVec};
-  if (inBufVec == nullptr) {
-   throw Exception{trstr("Insufficient memory")};
-  }
-
-  ECHMET::RetCode tRet{};
-
-  for (const auto &b : gbox->chemicalBuffersModel()) {
-    try {
-      for (const auto &uExp : b.experimentalMobilities()) {
-        ECHMET::ElmigParamsFitter::InBuffer inBuf{nullptr, nullptr, 0.0};
-
-        auto bufComp = makeBuffer(b.model());
-
-        tRet = inBufVec->push_back(inBuf);
-        if (tRet != ECHMET::RetCode::OK) {
-          throw Exception{errstr(tRet)};
-        }
-
-        const size_t sz = inBufVec->size();
-        auto &_buf = inBufVec->operator[](sz - 1);
-        _buf.composition = std::get<0>(bufComp).release();
-        _buf.concentrations = std::get<1>(bufComp).release();
-        _buf.uEffExperimental = uExp;
-      }
-    } catch (const std::bad_alloc &) {
-      throw Exception{trstr("Insufficient memory")};
-    }
-  }
-
-  ECHMET::NonidealityCorrections corrs{};
-  ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
-  ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
-
-  inSystem->buffers = inBufVec.release();
-  inSystem->corrections = corrs;
-
-  m_ctx->system = std::move(inSystem);
+  setResults(system, results);
 }

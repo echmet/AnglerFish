@@ -24,11 +24,6 @@ public:
   void setFittedData(const QVector<QPointF> &data);
   void setResidualsData(const QVector<QPointF> &data);
 
-public slots:
-  void onExperimentalChanged();
-  void onFittedChanged();
-  void onResidualsChanged();
-
 private:
   void refreshPlot();
   void setupPlot();

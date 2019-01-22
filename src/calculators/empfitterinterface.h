@@ -16,16 +16,9 @@ public:
     using std::runtime_error::runtime_error;
   };
 
-  explicit EMPFitterInterface();
+  explicit EMPFitterInterface() = default;
   ~EMPFitterInterface();
-  QVector<QPointF> expectedCurve();
   void fit();
-
-private:
-  void prepare();
-
-  std::unique_ptr<Context> m_ctx;
-  bool m_resultsAvailable;
 };
 
 #endif // EMPFITTERINTERFACE_H

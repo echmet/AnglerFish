@@ -80,6 +80,9 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::bufferAdded, m_bufInpWidget, &BuffersInputWidget::onBufferAdded);
   connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::beginModelReset, m_bufInpWidget, &BuffersInputWidget::onBeginBuffersReset);
   connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::endModelReset, m_bufInpWidget, &BuffersInputWidget::onEndBuffersReset);
+  connect(&gbox->mobilityCurveModel(), &MobilityCurveModel::experimentalChanged, this, &AFMainWindow::onCurveExperimentalChanged);
+  connect(&gbox->mobilityCurveModel(), &MobilityCurveModel::fittedChanged, this, &AFMainWindow::onCurveFittedChanged);
+  connect(&gbox->mobilityCurveModel(), &MobilityCurveModel::residualsChanged, this, &AFMainWindow::onCurveResidualsChanged);
 }
 
 AFMainWindow::~AFMainWindow()
@@ -133,14 +136,6 @@ void AFMainWindow::onCalculate()
     mbox.exec();
     return;
   }
-
-  try {
-    auto curve = iface.expectedCurve();
-    m_fitPlotWidget->setFittedData(curve);
-  } catch (const EMPFitterInterface::Exception &ex) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Calculation failed"), ex.what()};
-    mbox.exec();
-  }
 }
 
 void AFMainWindow::onLoad()
@@ -156,6 +151,21 @@ void AFMainWindow::onLoad()
       }
     }
   }
+}
+
+void AFMainWindow::onCurveExperimentalChanged()
+{
+  m_fitPlotWidget->setExperimentalData(Gearbox::instance()->mobilityCurveModel().experimental());
+}
+
+void AFMainWindow::onCurveFittedChanged()
+{
+  m_fitPlotWidget->setFittedData(Gearbox::instance()->mobilityCurveModel().fitted());
+}
+
+void AFMainWindow::onCurveResidualsChanged()
+{
+  m_fitPlotWidget->setResidualsData(Gearbox::instance()->mobilityCurveModel().residuals());
 }
 
 void AFMainWindow::onNew()

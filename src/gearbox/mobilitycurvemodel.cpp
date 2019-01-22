@@ -12,12 +12,12 @@ const QVector<QPointF> & MobilityCurveModel::experimental() const
 
 const QVector<QPointF> & MobilityCurveModel::fitted() const
 {
-  return m_experimental;
+  return m_fitted;
 }
 
 const QVector<QPointF> & MobilityCurveModel::residuals() const
 {
-  return m_experimental;
+  return m_residuals;
 }
 
 void MobilityCurveModel::setExperimental(QVector<QPointF> data)
@@ -27,7 +27,7 @@ void MobilityCurveModel::setExperimental(QVector<QPointF> data)
   emit experimentalChanged();
 }
 
-void MobilityCurveModel::setFitteed(QVector<QPointF> data)
+void MobilityCurveModel::setFitted(QVector<QPointF> data)
 {
   m_fitted = std::move(data);
 
