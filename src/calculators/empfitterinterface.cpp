@@ -40,8 +40,9 @@ using InSystemWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::InSystem,
 using FixerWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::ParametersFixer,
                                   decltype(&fixerReleaser)>;
 
-
-QVector<QPointF> expectedCurve(const InSystemWrap &system, const FitResultsPtr &results)
+inline
+std::tuple<QVector<QPointF>, QVector<QPointF>>
+expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
 {
   ECHMET::ElmigParamsFitter::ExpectedCurvePointVec *expected{};
 
@@ -51,8 +52,11 @@ QVector<QPointF> expectedCurve(const InSystemWrap &system, const FitResultsPtr &
     throw EMPFitterInterface:: Exception{err.toStdString()};
   }
 
-  QVector<QPointF> retVec{};
+  QVector<QPointF> mobsVec{};
+  QVector<QPointF> resVec{};
   double pHprev = std::numeric_limits<double>::infinity();
+  double residual{0.0};
+  size_t residualCtr{0};
   for (size_t idx = 0; idx < expected->size(); idx++) {
     auto pt = expected->at(idx);
 
@@ -61,14 +65,24 @@ QVector<QPointF> expectedCurve(const InSystemWrap &system, const FitResultsPtr &
      * to handle properly
      */
     if (pHprev != pt.pH) {
-      retVec.push_back(QPointF{pt.pH, pt.expected});
+      if (residualCtr != 0) {
+        resVec.push_back({pHprev, residual / residualCtr});
+        residualCtr = 0.0;
+      }
+
+      mobsVec.push_back(QPointF{pt.pH, pt.expected});
       pHprev = pt.pH;
-    }
+      residual = std::abs(pt.expected - pt.experimental);
+    } else
+      residual += std::abs(pt.expected - pt.experimental);
+    residualCtr++;
   }
+  if (residualCtr != 0)
+    resVec.push_back({pHprev, residual / residualCtr});
 
   expected->destroy();
 
-  return retVec;
+  return {std::move(mobsVec), std::move(resVec)};
 }
 
 inline
@@ -225,7 +239,10 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results)
   walk(results->mobilities, Gearbox::instance()->mobilitiesResultsModel());
   walk(results->pKas, Gearbox::instance()->pKaResultsModel());
 
-  Gearbox::instance()->mobilityCurveModel().setFitted(expectedCurve(system, results));
+  auto &model = Gearbox::instance()->mobilityCurveModel();
+  const auto t = expectedAndResidual(system, results);
+  model.setFitted(std::get<0>(t));
+  model.setResiduals(std::get<1>(t));
 }
 
 EMPFitterInterface::~EMPFitterInterface()
