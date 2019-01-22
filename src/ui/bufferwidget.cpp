@@ -58,10 +58,6 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
   connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
 
   connect(&Gearbox::instance()->ionicEffectsModel(), &IonicEffectsModel::changed, this, &BufferWidget::onIonicEffectsChanged);
-
-  /* Visual alignment hack */
-  ui->ql_expValues->setMinimumHeight(ui->qpb_addExpValue->height());
-  ui->ql_expValues->setMaximumHeight(ui->qpb_addExpValue->height());
 }
 
 BufferWidget::~BufferWidget()
