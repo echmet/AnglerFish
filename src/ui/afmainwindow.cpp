@@ -111,7 +111,6 @@ void AFMainWindow::invalidateResults()
   gbox->mobilitiesResultsModel().setNewData({});
   gbox->pKaResultsModel().setNewData({});
   gbox->mobilityCurveModel().invalidate();
-
 }
 
 void AFMainWindow::onAboutTriggered()
@@ -137,9 +136,10 @@ void AFMainWindow::onCalculate()
     iface.fit();
   } catch (const EMPFitterInterface::Exception &ex) {
     invalidateResults();
+    updatePlotExperimental();
+
     QMessageBox mbox{QMessageBox::Warning, tr("Calculation failed"), ex.what()};
     mbox.exec();
-    return;
   }
 }
 

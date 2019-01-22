@@ -108,9 +108,10 @@ void fixParameters(FixerWrap &fixer)
         if (fpt == ECHMET::ElmigParamsFitter::FixedParameterType::FPT_MOBILITY)
           continue;
       }
-
       if (val.fixed)
         fixer->add(fpt, charge, val.value);
+
+      charge++;
     }
   };
 
