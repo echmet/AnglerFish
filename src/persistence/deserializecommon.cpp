@@ -102,8 +102,12 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
     QJsonArray inpKas = ctuent[DataKeys::CTUENT_PKAS].toArray();
     if (inpKas.size() != chargeHigh - chargeLow)
       throw Exception{"Invalid pKa array size"};
-    for (const auto d : inpKas)
+    for (const auto d : inpKas) {
+      if (!d.isDouble())
+        throw Exception{"Unexpected type of pKa value"};
+
       pKas.emplace_back(d.toDouble());
+    }
 
     /* Read mobilities */
     std::vector<double> mobilities{};
@@ -111,8 +115,12 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
     QJsonArray inMobilities = ctuent[DataKeys::CTUENT_MOBILITIES].toArray();
     if (inMobilities.size() != chargeHigh - chargeLow + 1)
       throw Exception{"Invalid mobilities array size"};
-    for (const auto u : inMobilities)
+    for (const auto u : inMobilities) {
+      if (!u.isDouble())
+        throw Exception{"Unexpected type of mobility value"};
+
       mobilities.emplace_back(u.toDouble());
+    }
 
     gdm::ChargeInterval charges{chargeLow, chargeHigh};
     gdm::PhysicalProperties physProps{charges, pKas, mobilities, viscosityCoefficient};
