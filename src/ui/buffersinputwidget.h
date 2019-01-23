@@ -26,7 +26,6 @@ private:
   QWidget *m_scrollWidget;
   QVBoxLayout *m_scrollLayout;
 
-  QFileDialog m_loadBufferDlg;
   QFileDialog m_saveBufferDlg;
 
 private slots:

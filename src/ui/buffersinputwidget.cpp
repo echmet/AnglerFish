@@ -14,7 +14,6 @@
 BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
   QWidget{parent},
   ui{new Ui::BuffersInputWidget},
-  m_loadBufferDlg{this, tr("Load buffer from PeakMaster 6"), {}, "PeakMaster 6 JSON file (*.json)"},
   m_saveBufferDlg{this, tr("Save buffer as PeakMaster 6 file"), {}, "PeakMaster 6 JSON file (*.json)"}
 {
   ui->setupUi(this);
@@ -30,8 +29,6 @@ BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
 
   setupIcons();
 
-  m_loadBufferDlg.setAcceptMode(QFileDialog::AcceptOpen);
-  m_loadBufferDlg.setFileMode(QFileDialog::ExistingFiles);
   m_saveBufferDlg.setAcceptMode(QFileDialog::AcceptSave);
 
   connect(ui->qpb_addBuffer, &QPushButton::clicked, this, [this]() { emit this->addBuffer(); });
@@ -114,18 +111,23 @@ void BuffersInputWidget::onLoadBuffer()
 {
   static QString lastPath{};
 
-  if (!lastPath.isEmpty())
-    m_loadBufferDlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+  QFileDialog dlg{this, tr("Load buffer from PeakMaster 6"), {}, "PeakMaster 6 JSON file (*.json)"};
+  dlg.setAcceptMode(QFileDialog::AcceptOpen);
+  dlg.setFileMode(QFileDialog::ExistingFiles);
 
-  if (m_loadBufferDlg.exec() == QDialog::Accepted) {
-    try {
-      for (const auto &path : m_loadBufferDlg.selectedFiles()) {
+  if (!lastPath.isEmpty())
+    dlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+
+  if (dlg.exec() == QDialog::Accepted) {
+    for (const auto &path : dlg.selectedFiles()) {
+      try {
         persistence::loadPeakMasterBuffer(path);
         lastPath = path;
+      } catch (const persistence::Exception &ex) {
+        QMessageBox mbox{QMessageBox::Warning, tr("Cannot load buffer"),
+                         QString{"Failed to load file %1:\n%2"}.arg(QFileInfo{path}.fileName(), ex.what())};
+        mbox.exec();
       }
-    } catch (const persistence::Exception &ex) {
-      QMessageBox mbox{QMessageBox::Warning, tr("Cannot load buffer"), ex.what()};
-      mbox.exec();
     }
   }
 }
