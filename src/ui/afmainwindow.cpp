@@ -14,6 +14,7 @@
 #include <gearbox/calcworker.h>
 #include <persistence/persistence.h>
 #include <QCloseEvent>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSplitter>
@@ -188,11 +189,18 @@ void AFMainWindow::onCurveResidualsChanged()
 
 void AFMainWindow::onLoad()
 {
+  static QString lastPath{};
+
+  if (!lastPath.isEmpty())
+    m_loadDlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+
   if (m_loadDlg.exec() == QDialog::Accepted) {
     if (!m_loadDlg.selectedFiles().empty()) {
       try {
         persistence::loadEntireSetup(m_loadDlg.selectedFiles().first());
         m_analDataWidget->setEstimatesFromCurrent();
+
+        lastPath = m_loadDlg.selectedFiles().first();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
         mbox.exec();
@@ -220,6 +228,11 @@ void AFMainWindow::onNew()
 
 void AFMainWindow::onSave()
 {
+  static QString lastPath{};
+
+  if (!lastPath.isEmpty())
+    m_saveDlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+
   if (m_saveDlg.exec() == QDialog::Accepted) {
     if (!m_saveDlg.selectedFiles().empty()) {
       try {
@@ -230,6 +243,8 @@ void AFMainWindow::onSave()
         persistence::saveEntireSetup(m_saveDlg.selectedFiles().first(),
                                      gbox->chemicalBuffersModel(),
                                      gbox->analyteInputParameters());
+
+        lastPath = m_saveDlg.selectedFiles().first();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to save setup"), ex.what()};
         mbox.exec();
