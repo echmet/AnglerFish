@@ -3,6 +3,7 @@
 #include "internal_models/constituentchargesmodelfixable.h"
 
 #include <gearbox/floatingvaluedelegate.h>
+#include <gearbox/additionalfloatingvalidator.h>
 #include <QTableView>
 #include <cassert>
 
@@ -49,9 +50,16 @@ void EditChargesWidgetEstimates::setCharges(std::map<int, std::pair<double, bool
 
 void EditChargesWidgetEstimates::setupChargesModel(QTableView *tbv)
 {
-  m_fltDelegate = new FloatingValueDelegate{this};
+  auto mustBePositiveAV = std::shared_ptr<AdditionalFloatingValidator>{new AdditionalFloatingValidator{[](const double d) { return d >= 0.0; }}};
+
+  auto fltDelegate = new FloatingValueDelegate{this};
+  auto fltDelegatePos = new FloatingValueDelegate{this};
+
+  fltDelegatePos->setProperty(AdditionalFloatingValidator::PROPERTY_NAME,
+                              QVariant::fromValue<AdditionalFloatingValidatorVec>({ mustBePositiveAV }));
+
   m_chargesModel = new ConstituentChargesModelFixable{this};
 
-  tbv->setItemDelegateForColumn(0, m_fltDelegate);
-  tbv->setItemDelegateForColumn(1, m_fltDelegate);
+  tbv->setItemDelegateForColumn(0, fltDelegatePos);
+  tbv->setItemDelegateForColumn(1, fltDelegate);
 }

@@ -18,9 +18,6 @@ public:
 
 protected:
   virtual void setupChargesModel(QTableView *tbv) override;
-
-private:
-  FloatingValueDelegate *m_fltDelegate;
 };
 
 #endif // EDITCHARGESWIDGETESTIMATES_H

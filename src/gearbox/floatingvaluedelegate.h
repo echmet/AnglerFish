@@ -4,8 +4,7 @@
 #include <QLocale>
 #include <QItemDelegate>
 
-class FloatingValueDelegate : public QItemDelegate
-{
+class FloatingValueDelegate : public QItemDelegate {
   Q_OBJECT
 public:
   FloatingValueDelegate(QObject *parent = nullptr);
