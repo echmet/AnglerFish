@@ -8,7 +8,10 @@
 #include <gearbox/curvetoclipboardexporter.h>
 #include <QClipboard>
 #include <QMessageBox>
+#include <QScreen>
 #include <QTextStream>
+#include <QTimer>
+#include <QWindow>
 #include <cassert>
 
 inline
@@ -57,8 +60,6 @@ AnalyteDataWidget::AnalyteDataWidget(QWidget *parent) :
   ui->qtbv_fittedMobilities->setModel(&Gearbox::instance()->mobilitiesResultsModel());
   ui->qtbv_fittedpKas->setModel(&Gearbox::instance()->pKaResultsModel());
 
-  setWidgetSizes();
-
   connect(ui->qpb_resultsToClipboard, &QPushButton::clicked, this, &AnalyteDataWidget::onResultsToClipboard);
   connect(ui->qpb_curveToClipboard, &QPushButton::clicked,
           []() { try {
@@ -69,6 +70,10 @@ AnalyteDataWidget::AnalyteDataWidget(QWidget *parent) :
                    mbox.exec();
                  }
           });
+
+  setWidgetSizes();
+
+  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &AnalyteDataWidget::onScreenChanged); }); /* This must be done from the event queue after the window is created */
 }
 
 AnalyteDataWidget::~AnalyteDataWidget()
@@ -157,6 +162,11 @@ void AnalyteDataWidget::onResultsToClipboard()
   auto clip = QApplication::clipboard();
   if (clip != nullptr)
     clip->setText(buf);
+}
+
+void AnalyteDataWidget::onScreenChanged()
+{
+  setWidgetSizes();
 }
 
 void AnalyteDataWidget::setEstimatesFromCurrent()

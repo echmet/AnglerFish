@@ -19,9 +19,13 @@ public:
   double value(bool &ok) const;
 
 private:
+  void setWidgetSizes();
   void setupIcons();
 
   Ui::ExperimentalMobilityWidget *ui;
+
+private slots:
+  void onScreenChanged();
 
 signals:
   void dataChanged();
