@@ -17,7 +17,7 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
 {
   std::map<std::string, gdm::Complexation> ret{};
 
-  DeserializeCommon::checkIfContains(DataKeys::CPX_COMPLEX_FORMS, obj);
+  DeserializeCommon::checkIfContains(DataKeys::CPX_COMPLEX_FORMS, obj, QJsonValue::Array);
   const QJsonArray cforms = obj[DataKeys::CPX_COMPLEX_FORMS].toArray();
 
   for (const auto &item : cforms) {
@@ -27,14 +27,14 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
 
     /* Read nucleus charge */
     int charge;
-    DeserializeCommon::checkIfContains(DataKeys::CPX_NUCLEUS_CHARGE, cf);
+    DeserializeCommon::checkIfContainsInt(DataKeys::CPX_NUCLEUS_CHARGE, cf);
     charge = cf[DataKeys:: CPX_NUCLEUS_CHARGE].toInt();
 
     if (charge < nucleusChargeLow || charge > nucleusChargeHigh)
       throw Exception{"Nucleus charge in complexForm definition is outside nucleus' charge range"};
 
     /* Read ligand groups */
-    DeserializeCommon::checkIfContains(DataKeys::CPX_LIGAND_GROUPS, cf);
+    DeserializeCommon::checkIfContains(DataKeys::CPX_LIGAND_GROUPS, cf, QJsonValue::Array);
     const QJsonArray ligandGroups = cf[DataKeys::CPX_LIGAND_GROUPS].toArray();
     if (!ligandGroups.empty())
       throw Exception{"Complexing buffers are not supported"};
@@ -51,13 +51,16 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
   ret.reserve(arr.count());
 
   for (const auto &item : arr) {
+    if (item.type() != QJsonValue::Object)
+      throw Exception{"Constituent field is not an object"};
+
     const QJsonObject ctuent = item.toObject();
     if (ctuent.isEmpty())
       throw Exception{"Invalid constituent object"};
 
     /* Read type */
     gdm::ConstituentType type;
-    DeserializeCommon::checkIfContains(DataKeys::CTUENT_TYPE, ctuent);
+    DeserializeCommon::checkIfContains(DataKeys::CTUENT_TYPE, ctuent, QJsonValue::String);
 
     auto inType = ctuent[DataKeys::CTUENT_TYPE];
     if (inType == DataKeys::CTUENT_TYPE_NUCLEUS)
@@ -69,7 +72,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read name */
     std::string name{};
-    DeserializeCommon::checkIfContains(DataKeys::CTUENT_NAME, ctuent);
+    DeserializeCommon::checkIfContains(DataKeys::CTUENT_NAME, ctuent, QJsonValue::String);
     QString inName = ctuent[DataKeys::CTUENT_NAME].toString();
     if (inName.isNull())
       throw Exception{"Invalid \"name\""};
@@ -77,17 +80,17 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read chargeLow */
     int chargeLow;
-    DeserializeCommon::checkIfContains(DataKeys::CTUENT_CHARGE_LOW, ctuent);
+    DeserializeCommon::checkIfContainsInt(DataKeys::CTUENT_CHARGE_LOW, ctuent);
     chargeLow = ctuent[DataKeys::CTUENT_CHARGE_LOW].toInt();
 
     /* Read chargeHigh */
     int chargeHigh;
-    DeserializeCommon::checkIfContains(DataKeys::CTUENT_CHARGE_HIGH, ctuent);
+    DeserializeCommon::checkIfContainsInt(DataKeys::CTUENT_CHARGE_HIGH, ctuent);
     chargeHigh = ctuent[DataKeys::CTUENT_CHARGE_HIGH].toInt();
 
     /* Read viscosityCoefficient */
     double viscosityCoefficient;
-    DeserializeCommon::checkIfContains(DataKeys::CTUENT_VISCOSITY_COEFFICIENT, ctuent);
+    DeserializeCommon::checkIfContains(DataKeys::CTUENT_VISCOSITY_COEFFICIENT, ctuent, QJsonValue::Double);
     viscosityCoefficient = ctuent[DataKeys::CTUENT_VISCOSITY_COEFFICIENT].toDouble();
 
     if (chargeLow > chargeHigh)
@@ -95,7 +98,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read pKas */
     std::vector<double> pKas{};
-    DeserializeCommon::checkIfContains(DataKeys::CTUENT_PKAS, ctuent);
+    DeserializeCommon::checkIfContains(DataKeys::CTUENT_PKAS, ctuent, QJsonValue::Array);
     QJsonArray inpKas = ctuent[DataKeys::CTUENT_PKAS].toArray();
     if (inpKas.size() != chargeHigh - chargeLow)
       throw Exception{"Invalid pKa array size"};
@@ -104,7 +107,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read mobilities */
     std::vector<double> mobilities{};
-    DeserializeCommon::checkIfContains(DataKeys::CTUENT_MOBILITIES, ctuent);
+    DeserializeCommon::checkIfContains(DataKeys::CTUENT_MOBILITIES, ctuent, QJsonValue::Array);
     QJsonArray inMobilities = ctuent[DataKeys::CTUENT_MOBILITIES].toArray();
     if (inMobilities.size() != chargeHigh - chargeLow + 1)
       throw Exception{"Invalid mobilities array size"};
@@ -128,7 +131,16 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
   return ret;
 }
 
-void DeserializeCommon::checkIfContains(const QString &str, const QJsonObject &obj)
+void DeserializeCommon::checkIfContains(const QString &str, const QJsonObject &obj, const QJsonValue::Type type)
+{
+  if (!obj.contains(str))
+    throw Exception{std::string{"Missing "} + str.toStdString()};
+
+  if (obj[str].type() != type)
+    throw Exception{std::string{"Unexpected type of field "} + str.toStdString()};
+}
+
+void DeserializeCommon::checkIfContainsInt(const QString &str, const QJsonObject &obj)
 {
   if (!obj.contains(str))
     throw Exception{std::string{"Missing "} + str.toStdString()};
@@ -136,7 +148,7 @@ void DeserializeCommon::checkIfContains(const QString &str, const QJsonObject &o
 
 void DeserializeCommon::deserializeComposition(gdm::GDM &gdm, const QJsonObject &obj)
 {
-  checkIfContains(DataKeys::CTUENT_CTUENTS, obj);
+  checkIfContains(DataKeys::CTUENT_CTUENTS, obj, QJsonValue::Array);
   try {
     const auto constituents = deserializeConstituents(obj[DataKeys::CTUENT_CTUENTS].toArray());
 
@@ -174,11 +186,14 @@ void DeserializeCommon::deserializeConcentrations(gdm::GDM &gdm, const QJsonObje
 {
   for (auto ctuentIt = gdm.begin(); ctuentIt != gdm.end(); ctuentIt++) {
     const QString name = QString::fromStdString(ctuentIt->name());
-    checkIfContains(name, obj);
+    checkIfContains(name, obj, QJsonValue::Array);
 
     QJsonArray arr = obj[name].toArray();
     if (arr.size() != 1)
       throw Exception{"Invalid concentrations array size"};
+
+    if (arr.first().type() != QJsonValue::Double)
+      throw Exception{"Unexpected type of concentration value"};
 
     gdm.setConcentrations(ctuentIt, { arr.first().toDouble() });
   }

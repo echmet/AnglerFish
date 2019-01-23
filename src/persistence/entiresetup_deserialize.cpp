@@ -24,14 +24,10 @@ AnalyteInputParameters::ParameterVec EntireSetup::arrayToParamVec(const QJsonArr
       throw Exception{"Field in analyte array is not an object"};
 
     auto obj = item.toObject();
-    DeserializeCommon::checkIfContains(ANAL_PVEC_FIXED, obj);
-    if (!obj[ANAL_PVEC_FIXED].isBool())
-      throw Exception{"Fixed field is not boolean"};
+    DeserializeCommon::checkIfContains(ANAL_PVEC_FIXED, obj, QJsonValue::Bool);
     bool fixed = obj[ANAL_PVEC_FIXED].toBool();
 
-    DeserializeCommon::checkIfContains(ANAL_PVEC_VALUE, obj);
-    if (!obj[ANAL_PVEC_VALUE].isDouble())
-      throw Exception{"Value field is not double"};
+    DeserializeCommon::checkIfContains(ANAL_PVEC_VALUE, obj, QJsonValue::Double);
     double val = obj[ANAL_PVEC_VALUE].toDouble();
 
     vec.emplace_back(val, fixed);
@@ -42,25 +38,21 @@ AnalyteInputParameters::ParameterVec EntireSetup::arrayToParamVec(const QJsonArr
 
 AnalyteInputParameters EntireSetup::deserializeAnalyte(const QJsonObject &obj)
 {
-  DeserializeCommon::checkIfContains(ANAL_CHARGE_LOW, obj);
+  DeserializeCommon::checkIfContainsInt(ANAL_CHARGE_LOW, obj);
   const int chargeLow = obj[ANAL_CHARGE_LOW].toInt();
 
-  DeserializeCommon::checkIfContains(ANAL_CHARGE_HIGH, obj);
+  DeserializeCommon::checkIfContainsInt(ANAL_CHARGE_HIGH, obj);
   const int chargeHigh = obj[ANAL_CHARGE_HIGH].toInt();
 
   if (chargeHigh < chargeLow)
     throw Exception{"Invalid charge values"};
 
-  DeserializeCommon::checkIfContains(ANAL_PKAS, obj);
-  if (!obj[ANAL_PKAS].isArray())
-    throw Exception{"pKas is not an array"};
+  DeserializeCommon::checkIfContains(ANAL_PKAS, obj, QJsonValue::Array);
   auto pKas = arrayToParamVec(obj[ANAL_PKAS].toArray());
   if (pKas.size() != chargeHigh - chargeLow)
     throw Exception{"Unexpected size of pKas array"};
 
-  DeserializeCommon::checkIfContains(ANAL_MOBILITIES, obj);
-  if (!obj[ANAL_MOBILITIES].isArray())
-    throw Exception{"Mobilities is not an array"};
+  DeserializeCommon::checkIfContains(ANAL_MOBILITIES, obj, QJsonValue::Array);
   auto mobs = arrayToParamVec(obj[ANAL_MOBILITIES].toArray());
   if (mobs.size() != chargeHigh - chargeLow + 1)
     throw Exception{"Unexpected size of mobilities array"};
@@ -80,19 +72,13 @@ std::vector<ChemicalBuffer> EntireSetup::deserializeBuffers(const QJsonArray &ar
 
     auto gdmModel = std::make_unique<gdm::GDM>();
 
-    DeserializeCommon::checkIfContains(BUF_COMPOSITION, obj);
-    if (!obj[BUF_COMPOSITION].isObject())
-      throw Exception{"Composition is not an object"};
+    DeserializeCommon::checkIfContains(BUF_COMPOSITION, obj, QJsonValue::Object);
     DeserializeCommon::deserializeComposition(*gdmModel, obj[BUF_COMPOSITION].toObject());
 
-    DeserializeCommon::checkIfContains(BUF_CONCENTRATIONS, obj);
-    if (!obj[BUF_CONCENTRATIONS].isObject())
-      throw Exception{"Concentrations is not an object"};
+    DeserializeCommon::checkIfContains(BUF_CONCENTRATIONS, obj, QJsonValue::Object);
     DeserializeCommon::deserializeConcentrations(*gdmModel, obj[BUF_CONCENTRATIONS].toObject());
 
-    DeserializeCommon::checkIfContains(BUF_EXP_MOBILITIES, obj);
-    if (!obj[BUF_EXP_MOBILITIES].isArray())
-      throw Exception{"Experimental mobilities field is not an array"};
+    DeserializeCommon::checkIfContains(BUF_EXP_MOBILITIES, obj, QJsonValue::Array);
     auto expMobsSer = obj[BUF_EXP_MOBILITIES].toArray();
 
     std::vector<double> expMobs{};
@@ -128,14 +114,10 @@ std::tuple<std::vector<ChemicalBuffer>, AnalyteInputParameters> EntireSetup::loa
   if (root.empty())
     throw Exception{trstr("Bad root object")};
 
-  DeserializeCommon::checkIfContains(ROOT_BUFFERS, root);
-  if (!root[ROOT_BUFFERS].isArray())
-    throw Exception{"Buffers is not an array"};
+  DeserializeCommon::checkIfContains(ROOT_BUFFERS, root, QJsonValue::Array);
   auto buffers = deserializeBuffers(root[ROOT_BUFFERS].toArray());
 
-  DeserializeCommon::checkIfContains(ROOT_ANALYTE, root);
-  if (!root[ROOT_ANALYTE].isObject())
-    throw Exception{"Analyte is not an object"};
+  DeserializeCommon::checkIfContains(ROOT_ANALYTE, root, QJsonValue::Object);
   auto analyte = deserializeAnalyte(root[ROOT_ANALYTE].toObject());
 
   return {std::move(buffers), std::move(analyte)};
