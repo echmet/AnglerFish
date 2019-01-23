@@ -36,6 +36,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionCheck_for_update"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -87,7 +88,12 @@
   </action>
   <action name="actionIonic_effects_corrections">
    <property name="text">
-    <string>Ionic effects corrections</string>
+    <string>&amp;Ionic effects corrections</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_update">
+   <property name="text">
+    <string>Check for update</string>
    </property>
   </action>
  </widget>

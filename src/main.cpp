@@ -1,14 +1,20 @@
 #include "globals.h"
-#include "ui/afmainwindow.h"
-#include "gearbox/doubletostringconvertor.h"
-
 #include "afcrashhandler.h"
+#include "softwareupdater.h"
+
+#include  <ui/afmainwindow.h>
+#include <gearbox/doubletostringconvertor.h>
 #include <gearbox/gearbox.h>
 #include <QApplication>
+
+void registerMetatypes();
 
 int main(int argc, char **argv)
 {
   QApplication a{argc, argv};
+  SoftwareUpdater updater{};
+
+  registerMetatypes();
 
   QCoreApplication::setOrganizationDomain(Globals::ORG_DOMAIN);
   QCoreApplication::setOrganizationName(Globals::ORG_NAME);
@@ -23,6 +29,9 @@ int main(int argc, char **argv)
   AFCrashHandler::checkForCrash();
 
   AFMainWindow mWin{};
+
+  mWin.connectUpdater(&updater);
+  updater.checkAutomatically();
 
   mWin.show();
 

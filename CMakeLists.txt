@@ -65,6 +65,7 @@ include_directories(${INCLUDE_DIRECTORIES}
                     "${CMAKE_CURRENT_SOURCE_DIR}/src"
                     "${ECHMET_CORE_LIBS_DIR}/include/ECHMET/CoreLibs"
                     "${EMPFITTER_DIR}/include/ECHMET"
+                    "${ECHMET_UPDATECHECK_DIR}/include"
                     SYSTEM "${QWTPLOT_DIR}/include"
                     )
 
@@ -77,6 +78,7 @@ link_directories(${LINK_DIRECTORIES}
                  "${ECHMET_CORE_LIBS_DIR}/lib"
                  "${EMPFITTER_DIR}/lib"
                  "${QWTPLOT_DIR}/lib"
+                 "${ECHMET_UPDATECHECK_DIR}/lib"
                  )
 
 if (WIN32)
@@ -96,6 +98,9 @@ set(AnglerFish_SRCS
     "src/afcrashhandler.cpp"
     "src/crashevent.cpp"
     "src/crasheventcatcher.cpp"
+    "src/softwareupdater.cpp"
+    "src/softwareupdateresult.cpp"
+    "src/metatyperegistrator.cpp"
     "src/ui/afmainwindow.cpp"
     "src/ui/fitplotwidget.cpp"
     "src/ui/buffersinputwidget.cpp"
@@ -118,6 +123,9 @@ set(AnglerFish_SRCS
     "src/ui/elementaries/modifyconstituentchargepushbutton.cpp"
     "src/ui/ioniceffectscorrections.cpp"
     "src/ui/operationinprogressdialog.cpp"
+    "src/ui/softwareupdatewidget.cpp"
+    "src/ui/autoupdatecheckdialog.cpp"
+    "src/ui/checkforupdatedialog.cpp"
     "src/ui/internal_models/constituentchargesmodel.cpp"
     "src/ui/internal_models/constituentchargesmodelfixable.cpp"
     "src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp"
@@ -219,5 +227,6 @@ target_link_libraries(AnglerFish
                       PRIVATE ElmigParamsFitter
                       PRIVATE qwt
                       PRIVATE sqlite3
+                      PRIVATE ECHMETUpdateCheck
                       PRIVATE ${LINK_PTHREAD}
                       PRIVATE ${WIN32_DBGHELP})

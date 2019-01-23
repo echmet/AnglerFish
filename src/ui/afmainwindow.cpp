@@ -6,8 +6,10 @@
 #include "aboutdialog.h"
 #include "ioniceffectscorrections.h"
 #include "operationinprogressdialog.h"
+#include "checkforupdatedialog.h"
 
 #include <globals.h>
+#include <softwareupdater.h>
 #include <gearbox/gearbox.h>
 #include <gearbox/calcworker.h>
 #include <persistence/persistence.h>
@@ -37,6 +39,8 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   m_bufInpWidget = new BuffersInputWidget{};
   m_analDataWidget = new AnalyteDataWidget{};
 
+  m_checkForUpdateDlg = new CheckForUpdateDialog{this};
+
   ui->centralwidget->layout()->addWidget(qsp_controlsChart);
   qsp_controlsChart->addWidget(m_buffersAnalyte);
   qsp_controlsChart->addWidget(m_fitPlotWidget);
@@ -64,6 +68,8 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   connect(m_qpb_new, &QPushButton::clicked, this, &AFMainWindow::onNew);
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
+
+  connect(ui->actionCheck_for_update, &QAction::triggered, this, &AFMainWindow::onCheckForUpdate);
 
   connect(ui->actionNew, &QAction::triggered, this, &AFMainWindow::onNew);
   connect(ui->actionLoad, &QAction::triggered, this, &AFMainWindow::onLoad);
@@ -104,6 +110,12 @@ void AFMainWindow::closeEvent(QCloseEvent *evt)
                    QMessageBox::Yes | QMessageBox::No};
   if (mbox.exec() != QMessageBox::Yes)
     evt->ignore();
+}
+
+void AFMainWindow::connectUpdater(SoftwareUpdater *updater)
+{
+  connect(m_checkForUpdateDlg, &CheckForUpdateDialog::checkForUpdate, updater, &SoftwareUpdater::onCheckForUpdate);
+  connect(updater, &SoftwareUpdater::checkComplete, m_checkForUpdateDlg, &CheckForUpdateDialog::onCheckComplete);
 }
 
 void AFMainWindow::invalidateResults()
@@ -154,19 +166,9 @@ void AFMainWindow::onCalculate()
   }
 }
 
-void AFMainWindow::onLoad()
+void AFMainWindow::onCheckForUpdate()
 {
-  if (m_loadDlg.exec() == QDialog::Accepted) {
-    if (!m_loadDlg.selectedFiles().empty()) {
-      try {
-        persistence::loadEntireSetup(m_loadDlg.selectedFiles().first());
-        m_analDataWidget->setEstimatesFromCurrent();
-      } catch (const persistence::Exception &ex) {
-        QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
-        mbox.exec();
-      }
-    }
-  }
+  m_checkForUpdateDlg->exec();
 }
 
 void AFMainWindow::onCurveExperimentalChanged()
@@ -182,6 +184,21 @@ void AFMainWindow::onCurveFittedChanged()
 void AFMainWindow::onCurveResidualsChanged()
 {
   m_fitPlotWidget->setResidualsData(Gearbox::instance()->mobilityCurveModel().residuals());
+}
+
+void AFMainWindow::onLoad()
+{
+  if (m_loadDlg.exec() == QDialog::Accepted) {
+    if (!m_loadDlg.selectedFiles().empty()) {
+      try {
+        persistence::loadEntireSetup(m_loadDlg.selectedFiles().first());
+        m_analDataWidget->setEstimatesFromCurrent();
+      } catch (const persistence::Exception &ex) {
+        QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
+        mbox.exec();
+      }
+    }
+  }
 }
 
 void AFMainWindow::onNew()
@@ -247,6 +264,7 @@ void AFMainWindow::setupIcons()
   ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
+  ui->actionCheck_for_update->setIcon(QIcon::fromTheme("system-software-update"));
 
   /* Button bar */
   m_qpb_new->setIcon(QIcon::fromTheme("document-new"));
@@ -260,6 +278,7 @@ void AFMainWindow::setupIcons()
   ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
+  ui->actionCheck_for_update->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 
   /* Button bar */
   m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
