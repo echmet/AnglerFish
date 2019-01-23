@@ -85,6 +85,10 @@ QVariant ConstituentChargesModelFixable::data(const QModelIndex &index, int role
     }
   } else if (role == Qt::CheckStateRole) {
     const int col = index.column();
+
+    if ((isBaseCharge(index) && col == 3) || std::get<0>(m_charges.at(row)) == 0)
+      return {};
+
     switch (col) {
     case 2:
       return std::get<3>(m_charges.at(row));
@@ -279,7 +283,7 @@ void ConstituentChargesModelFixable::refreshData(const std::map<int, double> &pK
     const auto &pKa = pKas.at(charge);
     const auto &mobility = mobilities.at(charge);
 
-    m_charges.push_back({charge, mobility, pKa, false, false});
+    m_charges.push_back({charge, mobility, pKa, Qt::Unchecked, Qt::Unchecked});
   }
 
   endResetModel();
@@ -301,7 +305,9 @@ void ConstituentChargesModelFixable::refreshData(const std::map<int, std::pair<d
     const auto &pKa = pKas.at(charge);
     const auto &mobility = mobilities.at(charge);
 
-    m_charges.push_back({charge, mobility.first, pKa.first, mobility.second, pKa.second});
+    m_charges.push_back({charge, mobility.first, pKa.first,
+                         mobility.second ? Qt::Checked : Qt::Unchecked ,
+                         pKa.second ? Qt::Checked : Qt::Unchecked});
   }
 
   endResetModel();
