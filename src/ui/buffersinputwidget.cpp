@@ -5,6 +5,7 @@
 
 #include <gearbox/gearbox.h>
 #include <persistence/persistence.h>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -30,6 +31,7 @@ BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
   setupIcons();
 
   m_loadBufferDlg.setAcceptMode(QFileDialog::AcceptOpen);
+  m_loadBufferDlg.setFileMode(QFileDialog::ExistingFiles);
   m_saveBufferDlg.setAcceptMode(QFileDialog::AcceptSave);
 
   connect(ui->qpb_addBuffer, &QPushButton::clicked, this, [this]() { emit this->addBuffer(); });
@@ -110,12 +112,17 @@ void BuffersInputWidget::onExportBuffer(const BufferWidget *w)
 
 void BuffersInputWidget::onLoadBuffer()
 {
-  if (m_loadBufferDlg.exec() == QDialog::Accepted) {
-    if (m_loadBufferDlg.selectedFiles().empty())
-      return;
+  static QString lastPath{};
 
+  if (!lastPath.isEmpty())
+    m_loadBufferDlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+
+  if (m_loadBufferDlg.exec() == QDialog::Accepted) {
     try {
-      persistence::loadPeakMasterBuffer(m_loadBufferDlg.selectedFiles().first());
+      for (const auto &path : m_loadBufferDlg.selectedFiles()) {
+        persistence::loadPeakMasterBuffer(path);
+        lastPath = path;
+      }
     } catch (const persistence::Exception &ex) {
       QMessageBox mbox{QMessageBox::Warning, tr("Cannot load buffer"), ex.what()};
       mbox.exec();
