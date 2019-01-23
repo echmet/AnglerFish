@@ -7,8 +7,8 @@
 #include <thread>
 
 const QString CrashHandlerDialog::s_reportToDevsCaption{QObject::tr("Report to developers")};
-const QString CrashHandlerDialog::s_dialogCaptionDuring{"Well, I have been stiff and smiling 'till I crashed..."};
-const QString CrashHandlerDialog::s_dialogCaptionPostCrash{"Well, I have been stiff and smiling 'till I crashed..."};
+const QString CrashHandlerDialog::s_dialogCaptionDuring{"I'm not sure that's quite right..."};
+const QString CrashHandlerDialog::s_dialogCaptionPostCrash{"I'm not sure that's quite right..."};
 
 CrashHandlerDialog::CrashHandlerDialog(const bool postCrash, QWidget *parent) :
   QDialog{parent},

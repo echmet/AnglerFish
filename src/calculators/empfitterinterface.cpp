@@ -178,7 +178,7 @@ makeBuffer(const gdm::GDM *model)
 }
 
 inline
-InSystemWrap prepare(/* TODO: IS corrections */)
+InSystemWrap prepare()
 {
   auto gbox = Gearbox::instance();
 
@@ -270,6 +270,7 @@ EMPFitterInterface::~EMPFitterInterface()
 
 void EMPFitterInterface::fit()
 {
+  /* Panzer vor! */
   auto system = prepare();
 
   auto fixer = FixerWrap{ECHMET::ElmigParamsFitter::createParametersFixer(), fixerReleaser};
