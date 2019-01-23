@@ -24,7 +24,6 @@
 AFMainWindow::AFMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::AFMainWindow),
-  m_loadDlg{this, tr("Load setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)},
   m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)}
 {
   ui->setupUi(this);
@@ -191,16 +190,19 @@ void AFMainWindow::onLoad()
 {
   static QString lastPath{};
 
-  if (!lastPath.isEmpty())
-    m_loadDlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+  QFileDialog dlg{this, tr("Load setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)};
+  dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
-  if (m_loadDlg.exec() == QDialog::Accepted) {
-    if (!m_loadDlg.selectedFiles().empty()) {
+  if (!lastPath.isEmpty())
+    dlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+
+  if (dlg.exec() == QDialog::Accepted) {
+    if (!dlg.selectedFiles().empty()) {
       try {
-        persistence::loadEntireSetup(m_loadDlg.selectedFiles().first());
+        persistence::loadEntireSetup(dlg.selectedFiles().first());
         m_analDataWidget->setEstimatesFromCurrent();
 
-        lastPath = m_loadDlg.selectedFiles().first();
+        lastPath = dlg.selectedFiles().first();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
         mbox.exec();

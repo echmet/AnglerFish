@@ -50,7 +50,6 @@ private:
 
   CheckForUpdateDialog *m_checkForUpdateDlg;
 
-  QFileDialog m_loadDlg;
   QFileDialog m_saveDlg;
 
 private slots:
