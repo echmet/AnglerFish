@@ -20,6 +20,8 @@ public:
   void setFitted(QVector<QPointF> data);
   void setResiduals(QVector<QPointF> data);
 
+  static QVector<QPointF> compact(const QVector<QPointF> &src);
+
 private:
   QVector<QPointF> m_experimental;
   QVector<QPointF> m_fitted;

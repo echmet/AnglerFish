@@ -1,8 +1,39 @@
 #include "mobilitycurvemodel.h"
 
+#include <limits>
+
 MobilityCurveModel::MobilityCurveModel() :
   QObject{nullptr}
 {
+}
+
+QVector<QPointF> MobilityCurveModel::compact(const QVector<QPointF> &src)
+{
+  QVector<QPointF> compacted{};
+
+  double xPrev = std::numeric_limits<double>::infinity();
+  double ySum{0.0};
+  size_t ySumCtr{0};
+  for (const auto &pt : src) {
+    const double x = pt.x();
+
+    if (xPrev != x) {
+      if (ySumCtr > 0) {
+        compacted.push_back({xPrev, ySum / ySumCtr});
+        ySum = pt.y();
+        ySumCtr = 0;
+      }
+
+      xPrev = x;
+    } else
+      ySum += pt.y();
+
+    ySumCtr++;
+  }
+  if (ySumCtr > 0)
+    compacted.push_back({xPrev, ySum / ySumCtr});
+
+  return compacted;
 }
 
 const QVector<QPointF> & MobilityCurveModel::experimental() const

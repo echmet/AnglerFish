@@ -17,7 +17,7 @@ public:
   };
 
   explicit EMPFitterInterface() = default;
-  ~EMPFitterInterface();
+  ~EMPFitterInterface() = default;
   void fit();
 };
 

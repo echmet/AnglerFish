@@ -178,12 +178,14 @@ void AFMainWindow::onCurveExperimentalChanged()
 
 void AFMainWindow::onCurveFittedChanged()
 {
-  m_fitPlotWidget->setFittedData(Gearbox::instance()->mobilityCurveModel().fitted());
+  auto data = MobilityCurveModel::compact(Gearbox::instance()->mobilityCurveModel().fitted());
+  m_fitPlotWidget->setFittedData(std::move(data));
 }
 
 void AFMainWindow::onCurveResidualsChanged()
 {
-  m_fitPlotWidget->setResidualsData(Gearbox::instance()->mobilityCurveModel().residuals());
+  auto data = MobilityCurveModel::compact(Gearbox::instance()->mobilityCurveModel().residuals());
+  m_fitPlotWidget->setResidualsData(std::move(data));
 }
 
 void AFMainWindow::onLoad()

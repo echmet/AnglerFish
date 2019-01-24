@@ -59,35 +59,13 @@ expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
 
   QVector<QPointF> mobsVec{};
   QVector<QPointF> resVec{};
-  double pHprev = std::numeric_limits<double>::infinity();
-  double residual{0.0};
-  size_t residualCtr{0};
   for (size_t idx = 0; idx < expected->size(); idx++) {
     auto pt = expected->at(idx);
+    const double pH = pt.pH;
 
-    /* There is a theoretical corner case of two different buffers
-     * with exactly the same pH. This would require a lot more logic
-     * to handle properly.
-     *
-     * Exact float comparisons are otherwise safe to use here
-     * because they all come from one source and there is no
-     * arithmetic done with them.
-     */
-    if (pHprev != pt.pH) {
-      if (residualCtr != 0) {
-        resVec.push_back({pHprev, residual / residualCtr});
-        residualCtr = 0.0;
-      }
-
-      mobsVec.push_back(QPointF{pt.pH, pt.expected});
-      pHprev = pt.pH;
-      residual = std::abs(pt.expected - pt.experimental);
-    } else
-      residual += std::abs(pt.expected - pt.experimental);
-    residualCtr++;
+    mobsVec.push_back({pH, pt.expected});
+    resVec.push_back({pH, std::abs(pt.expected - pt.experimental)});
   }
-  if (residualCtr != 0)
-    resVec.push_back({pHprev, residual / residualCtr});
 
   expected->destroy();
 
@@ -262,10 +240,6 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results)
 
   model.setFitted(std::move(fitted));
   model.setResiduals(std::move(residuals));
-}
-
-EMPFitterInterface::~EMPFitterInterface()
-{
 }
 
 void EMPFitterInterface::fit()
