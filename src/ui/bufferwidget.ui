@@ -23,6 +23,12 @@
        </property>
        <item>
         <widget class="QLineEdit" name="qcap_composition">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Composition</string>
          </property>
@@ -92,6 +98,12 @@
     <layout class="QVBoxLayout" name="qvlay_expValues" stretch="0,0,0">
      <item>
       <widget class="QLineEdit" name="qcap_expValues">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Experimental mobilities</string>
        </property>
@@ -128,8 +140,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>89</width>
-          <height>202</height>
+          <width>106</width>
+          <height>217</height>
          </rect>
         </property>
        </widget>

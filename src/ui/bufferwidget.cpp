@@ -9,7 +9,10 @@
 #include <gearbox/chemicalbuffer.h>
 #include <util_lowlevel.h>
 #include <QMessageBox>
+#include <QScreen>
+#include <QTimer>
 #include <QVBoxLayout>
+#include <QWindow>
 #include <limits>
 
 BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
@@ -72,6 +75,10 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
   connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
 
   connect(&Gearbox::instance()->ionicEffectsModel(), &IonicEffectsModel::changed, this, &BufferWidget::onIonicEffectsChanged);
+  QTimer::singleShot(0, this, [this]() {
+    this->setWidgetSizes();
+    connect(this->window()->windowHandle()->screen(), &QScreen::logicalDotsPerInchChanged, this, &BufferWidget::setWidgetSizes);
+  });
 }
 
 BufferWidget::~BufferWidget()
@@ -167,6 +174,14 @@ void BufferWidget::setExpValues()
   }
 
   updateExperimentalMobilities();
+}
+
+void BufferWidget::setWidgetSizes()
+{
+  const auto &fm = fontMetrics();
+
+  ui->qcap_composition->resize(qRound(fm.width(tr("Composition")) * 1.2), ui->qcap_composition->height());
+  ui->qcap_expValues->setMinimumWidth(qRound(fm.width(tr("Experimental mobilities")) * 1.2));
 }
 
 void BufferWidget::setupIcons()

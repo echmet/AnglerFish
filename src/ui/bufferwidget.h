@@ -22,6 +22,7 @@ public:
   const ChemicalBuffer & buffer() const noexcept;
 
 private:
+  void setWidgetSizes();
   void setupIcons();
 
   Ui::BufferWidget *ui;
