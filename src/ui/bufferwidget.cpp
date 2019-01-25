@@ -39,6 +39,20 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
   ui->qpb_clone->setToolTip(tr("Clone buffer"));
   ui->qpb_export->setToolTip(tr("Export buffer"));
 
+  /* Vertical alignment hack */
+  {
+    ui->qcap_expValues->setDisabled(true);
+    ui->qcap_composition->setDisabled(true);
+
+    auto p = ui->qcap_expValues->palette();
+    p.setColor(QPalette::Disabled, QPalette::WindowText, p.color(QPalette::Active, QPalette::WindowText));
+    p.setColor(QPalette::Disabled, QPalette::Text, p.color(QPalette::Active, QPalette::Text));
+    p.setColor(QPalette::Disabled, QPalette::Base, p.color(QPalette::Active, QPalette::Window));
+
+    ui->qcap_expValues->setPalette(p);
+    ui->qcap_composition->setPalette(p);
+  }
+
   setupIcons();
 
   if (!h_buffer.experimentalMobilities().empty())

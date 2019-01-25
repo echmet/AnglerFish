@@ -22,15 +22,12 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="QLabel" name="ql_composition">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QLineEdit" name="qcap_composition">
          <property name="text">
           <string>Composition</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -94,15 +91,21 @@
    <item>
     <layout class="QVBoxLayout" name="qvlay_expValues" stretch="0,0,0">
      <item>
-      <widget class="QLabel" name="ql_expValues">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QLineEdit" name="qcap_expValues">
        <property name="text">
         <string>Experimental mobilities</string>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -125,8 +128,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>150</width>
-          <height>216</height>
+          <width>89</width>
+          <height>202</height>
          </rect>
         </property>
        </widget>
