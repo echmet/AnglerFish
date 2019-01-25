@@ -22,7 +22,7 @@ int estimatedParamsWidth(const QFontMetrics &fm)
 #ifdef Q_OS_WIN
   return qRound(fm.width(cue) * 2.9);
 #else
-  return qRound(fm.width(cue) * 2.2);
+  return qRound(fm.width(cue) * 2.5);
 #endif // Q_OS_WIN
 }
 
@@ -34,7 +34,7 @@ int fitResultsWidth(const QFontMetrics &fm)
 #ifdef Q_OS_WIN
   return qRound(fm.width(cue) * 2.25);
 #else
-  return qRound(fm.width(cue) * 2.3);
+  return qRound(fm.width(cue) * 2.1);
 #endif // Q_OS_WIN
 }
 
