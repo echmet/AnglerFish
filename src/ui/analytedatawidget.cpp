@@ -211,6 +211,8 @@ void AnalyteDataWidget::setEstimatesFromCurrent()
 
 void AnalyteDataWidget::setWidgetSizes()
 {
+  ui->qhspac_sep->changeSize(2 * fontMetrics().width('x'), 1);
+
   {
     const int w = estimatedParamsWidth(fontMetrics());
     m_estimatedParamsWidget->setMinimumWidth(w);
