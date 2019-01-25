@@ -64,7 +64,7 @@ expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
     const double pH = pt.pH;
 
     mobsVec.push_back({pH, pt.expected});
-    resVec.push_back({pH, std::abs(pt.expected - pt.experimental)});
+    resVec.push_back({pH, pt.expected - pt.experimental});
   }
 
   expected->destroy();
