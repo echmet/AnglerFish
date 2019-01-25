@@ -240,6 +240,9 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results)
 
   model.setFitted(std::move(fitted));
   model.setResiduals(std::move(residuals));
+  Gearbox::instance()->scalarFitResultsModel()->setItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED,
+                                                        results->rSquared,
+                                                        Qt::EditRole);
 }
 
 void EMPFitterInterface::fit()
@@ -250,7 +253,7 @@ void EMPFitterInterface::fit()
   auto fixer = FixerWrap{ECHMET::ElmigParamsFitter::createParametersFixer(), fixerReleaser};
   fixParameters(fixer);
 
-  auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr}, resultsReleaser};
+  auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr, 0.0}, resultsReleaser};
   auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), *results);
   if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
     const auto err = QString{"Fit failed: "} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};

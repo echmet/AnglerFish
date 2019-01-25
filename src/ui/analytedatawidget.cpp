@@ -6,13 +6,16 @@
 #include <gearbox/doubletostringconvertor.h>
 #include <gearbox/gearbox.h>
 #include <gearbox/curvetoclipboardexporter.h>
+#include <gearbox/scalarfitresultsmapping.h>
 #include <QClipboard>
+#include <QDataWidgetMapper>
 #include <QMessageBox>
 #include <QScreen>
 #include <QTextStream>
 #include <QTimer>
 #include <QWindow>
 #include <cassert>
+
 
 inline
 int estimatedParamsWidth(const QFontMetrics &fm)
@@ -54,11 +57,21 @@ AnalyteDataWidget::AnalyteDataWidget(QWidget *parent) :
   m_estimatedParamsWidget = new EditChargesWidgetEstimates{this};
   m_estimatedParamsWidget->initialize();
   m_estimatedParamsWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+  m_estimatedParamsWidget->layout()->setMargin(0);
 
   ui->qvlay_estimates->addWidget(m_estimatedParamsWidget);
 
   ui->qtbv_fittedMobilities->setModel(&Gearbox::instance()->mobilitiesResultsModel());
   ui->qtbv_fittedpKas->setModel(&Gearbox::instance()->pKaResultsModel());
+
+  {
+    auto model = Gearbox::instance()->scalarFitResultsModel();
+
+    m_scalarFitResultsMapper = new QDataWidgetMapper{this};
+    m_scalarFitResultsMapper->setModel(model);
+    m_scalarFitResultsMapper->addMapping(ui->qle_rSquared, model->indexFromItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED));
+    m_scalarFitResultsMapper->toFirst();
+  }
 
   connect(ui->qpb_resultsToClipboard, &QPushButton::clicked, this, &AnalyteDataWidget::onResultsToClipboard);
   connect(ui->qpb_curveToClipboard, &QPushButton::clicked,
@@ -219,7 +232,10 @@ void AnalyteDataWidget::setWidgetSizes()
   ui->qtbv_fittedpKas->setMinimumHeight(fitResultsHeight(fontMetrics()));
 
   {
-    const int tw = m_estimatedParamsWidget->minimumWidth() + ui->qtbv_fittedpKas->minimumWidth() +2 * fontMetrics().width('x');
+    const int tw = m_estimatedParamsWidget->minimumWidth() +
+                   ui->qtbv_fittedpKas->minimumWidth() +
+                   ui->qhspac_sep->sizeHint().width() +
+                   2 * fontMetrics().width('x');
 
     setMinimumWidth(tw);
     setMaximumWidth(tw);

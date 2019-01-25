@@ -19,8 +19,11 @@ Gearbox * Gearbox::instance()
 Gearbox::Gearbox() :
   m_analInputParams{0, 0, {}, {}},
   m_mobilitiesResultsModel{"Mobility"},
-  m_pKaResultsModel{"pKa"}
+  m_pKaResultsModel{"pKa"},
+  m_scalFitResultsModel{nullptr}
 {
+  m_scalFitResultsData.resize(1);
+  m_scalFitResultsModel.setUnderlyingData(&m_scalFitResultsData);
 }
 
 const AnalyteInputParameters & Gearbox::analyteInputParameters() const noexcept
@@ -41,6 +44,13 @@ ChemicalBuffersModel & Gearbox::chemicalBuffersModel() noexcept
 DatabaseProxy & Gearbox::databaseProxy() noexcept
 {
   return m_databaseProxy;
+}
+
+void Gearbox::invalidateResults()
+{
+  m_mobilitiesResultsModel.setNewData({});
+  m_pKaResultsModel.setNewData({});
+  m_mobCurveModel.invalidate();
 }
 
 IonicEffectsModel & Gearbox::ionicEffectsModel()
@@ -76,6 +86,11 @@ FitResultsModel & Gearbox::pKaResultsModel()
 const FitResultsModel & Gearbox::pKaResultsModel() const
 {
   return m_pKaResultsModel;
+}
+
+gearbox::ScalarFitResultsMapping::MapperModel *Gearbox::scalarFitResultsModel()
+{
+  return &m_scalFitResultsModel;
 }
 
 void Gearbox::setAnalyteInputParameters(const int chargeLow, const int chargeHigh,

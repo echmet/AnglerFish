@@ -1,12 +1,14 @@
 #ifndef ANALYTEDATAWIDGET_H
 #define ANALYTEDATAWIDGET_H
 
+#include <gearbox/floatingvaluedelegate.h>
 #include <QWidget>
 
 namespace Ui {
 class AnalyteDataWidget;
 }
 
+class QDataWidgetMapper;
 class EditChargesWidgetEstimates;
 
 class AnalyteDataWidget : public QWidget {
@@ -28,6 +30,8 @@ private:
   Ui::AnalyteDataWidget *ui;
 
   EditChargesWidgetEstimates *m_estimatedParamsWidget;
+
+  QDataWidgetMapper *m_scalarFitResultsMapper;
 
 private slots:
   void onResultsToClipboard();
