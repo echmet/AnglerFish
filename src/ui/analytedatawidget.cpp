@@ -20,7 +20,7 @@ int estimatedParamsWidth(const QFontMetrics &fm)
   static const QString cue{"Mobility pKa Fix mobility Fix pKa"};
 
 #ifdef Q_OS_WIN
-  return qRound(fm.width(cue) * 2.6);
+  return qRound(fm.width(cue) * 2.9);
 #else
   return qRound(fm.width(cue) * 2.2);
 #endif // Q_OS_WIN
@@ -32,7 +32,7 @@ int fitResultsWidth(const QFontMetrics &fm)
   static const QString cue{"Mobility Abs. error Rel. error"};
 
 #ifdef Q_OS_WIN
-  return qRound(fm.width(cue) * 2.3);
+  return qRound(fm.width(cue) * 2.25);
 #else
   return qRound(fm.width(cue) * 2.3);
 #endif // Q_OS_WIN

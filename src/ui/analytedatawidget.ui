@@ -27,6 +27,12 @@
      </property>
      <item>
       <widget class="QLabel" name="ql_estimatesCaption">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Estimates</string>
        </property>
@@ -45,7 +51,7 @@
      <item>
       <widget class="QLabel" name="ql_resultsCaption">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
