@@ -68,6 +68,7 @@ private slots:
   void onNew();
   void onNewBuffers();
   void onSave();
+  void onSetDebuggingOutput();
 };
 
 #endif // AFMAINWINDOW_H

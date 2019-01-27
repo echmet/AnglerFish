@@ -46,8 +46,15 @@
     </property>
     <addaction name="actionIonic_effects_corrections"/>
    </widget>
+   <widget class="QMenu" name="menuAdvanced">
+    <property name="title">
+     <string>&amp;Advanced</string>
+    </property>
+    <addaction name="actionSet_debugging_output"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuAdvanced"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -100,6 +107,11 @@
   <action name="actionNew_buffers">
    <property name="text">
     <string>New &amp;buffers</string>
+   </property>
+  </action>
+  <action name="actionSet_debugging_output">
+   <property name="text">
+    <string>Set debugging output</string>
    </property>
   </action>
  </widget>

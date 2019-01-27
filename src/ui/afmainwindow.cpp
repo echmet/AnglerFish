@@ -7,6 +7,7 @@
 #include "ioniceffectscorrections.h"
 #include "operationinprogressdialog.h"
 #include "checkforupdatedialog.h"
+#include "toggletracepointsdialog.h"
 
 #include <globals.h>
 #include <softwareupdater.h>
@@ -89,6 +90,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
     gearbox::IonicEffectsCorrections dlg{h_gbox.ionicEffectsModel()};
     dlg.exec();
   });
+  connect(ui->actionSet_debugging_output, &QAction::triggered, this, &AFMainWindow::onSetDebuggingOutput);
 
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
           [&]() { h_gbox.chemicalBuffersModel().add(h_gbox.ionicEffectsModel()); });
@@ -268,6 +270,15 @@ void AFMainWindow::onSave()
       }
     }
   }
+}
+
+void AFMainWindow::onSetDebuggingOutput()
+{
+  ToggleTracepointsDialog::TracingSetup setup{};
+
+  ToggleTracepointsDialog dlg{{}, setup};
+
+  dlg.exec();
 }
 
 void AFMainWindow::setEstimates()
