@@ -264,7 +264,7 @@ void EMPFitterInterface::fit()
   auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr, 0.0}, resultsReleaser};
   auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), *results);
   if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
-    const auto err = QString{"Fit failed: "} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
+    const auto err = QString{QObject::tr("Fit failed: ")} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
     throw Exception{err.toStdString()};
   }
 
