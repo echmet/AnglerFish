@@ -3,6 +3,7 @@
 #include "../ui/editconstituentdialog.h"
 #include <gdm/core/common/gdmexcept.h>
 #include <gdm/core/constituent/physicalproperties.h>
+#include <calculators/empfitterinterface.h>
 #include "gdmproxy.h"
 #include <util_lowlevel.h>
 
@@ -21,6 +22,12 @@ bool ConstituentManipulator::validateConstituentProperties(const IConstituentEdi
 
   if (name.length() < 1) {
     QMessageBox mbox{QMessageBox::Warning, QObject::tr("Invalid constituent properties"), QObject::tr("Constituent must have a name")};
+    mbox.exec();
+    return false;
+  }
+
+  if (name == QString{calculators::EMPFitterInterface::ANALYTE_NAME}) {
+    QMessageBox mbox{QMessageBox::Warning, QObject::tr("Invalid constituent properties"), QObject::tr("This constituent name is not allowed")};
     mbox.exec();
     return false;
   }

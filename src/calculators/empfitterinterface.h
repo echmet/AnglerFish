@@ -1,10 +1,6 @@
 #ifndef EMPFITTERINTERFACE_H
 #define EMPFITTERINTERFACE_H
 
-#include <QPointF>
-#include <QString>
-#include <QVector>
-#include <memory>
 #include <stdexcept>
 
 namespace gearbox {
@@ -23,6 +19,8 @@ public:
   explicit EMPFitterInterface(gearbox::Gearbox &gbox);
   ~EMPFitterInterface() = default;
   void fit();
+
+  static const char *ANALYTE_NAME;
 
 private:
   gearbox::Gearbox &h_gbox;

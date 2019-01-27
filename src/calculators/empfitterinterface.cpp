@@ -51,6 +51,8 @@ using FixerWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::ParametersFixer,
 
 namespace calculators {
 
+const char * EMPFitterInterface::ANALYTE_NAME{"__ANALYTE__"};
+
 inline
 std::tuple<QVector<QPointF>, QVector<QPointF>>
 expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
@@ -116,7 +118,7 @@ void makeAnalyte(InSystemWrap &inSystem, gearbox::Gearbox &gbox)
   analyte->complexForms = nullptr;
   analyte->viscosityCoefficient = 0.0;
 
-  analyte->name = ECHMET::createFixedString("__ANALYTE__");
+  analyte->name = ECHMET::createFixedString(EMPFitterInterface::ANALYTE_NAME);
   if (analyte->name == nullptr)
     throw std::bad_alloc{};
 
