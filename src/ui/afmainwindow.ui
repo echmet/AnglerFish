@@ -28,6 +28,7 @@
      <string>Fi&amp;le</string>
     </property>
     <addaction name="actionNew"/>
+    <addaction name="actionNew_buffers"/>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
     <addaction name="actionExit"/>
@@ -73,7 +74,7 @@
   </action>
   <action name="actionNew">
    <property name="text">
-    <string>&amp;New</string>
+    <string>&amp;New setup</string>
    </property>
   </action>
   <action name="actionLoad">
@@ -93,7 +94,12 @@
   </action>
   <action name="actionCheck_for_update">
    <property name="text">
-    <string>Check for update</string>
+    <string>&amp;Check for update</string>
+   </property>
+  </action>
+  <action name="actionNew_buffers">
+   <property name="text">
+    <string>New buffers</string>
    </property>
   </action>
  </widget>

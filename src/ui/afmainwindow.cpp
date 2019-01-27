@@ -52,12 +52,14 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_buffersAnalyte->layout()->addWidget(m_bufInpWidget);
   m_buffersAnalyte->layout()->addWidget(m_analDataWidget);
 
-  m_qpb_new = new QPushButton{tr("New"), this};
+  m_qpb_new = new QPushButton{tr("New setup"), this};
+  m_qpb_newBuffers = new QPushButton{tr("New buffers"), this};
   m_qpb_load = new QPushButton{tr("Load"), this};
   m_qpb_save = new QPushButton{tr("Save"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
 
   ui->qtb_mainToolBar->addWidget(m_qpb_new);
+  ui->qtb_mainToolBar->addWidget(m_qpb_newBuffers);
   ui->qtb_mainToolBar->addWidget(m_qpb_load);
   ui->qtb_mainToolBar->addWidget(m_qpb_save);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
@@ -70,12 +72,14 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   connect(m_qpb_load, &QPushButton::clicked, this, &AFMainWindow::onLoad);
   connect(m_qpb_new, &QPushButton::clicked, this, &AFMainWindow::onNew);
+  connect(m_qpb_newBuffers, &QPushButton::clicked, this, &AFMainWindow::onNewBuffers);
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
 
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &AFMainWindow::onCheckForUpdate);
 
   connect(ui->actionNew, &QAction::triggered, this, &AFMainWindow::onNew);
+  connect(ui->actionNew_buffers, &QAction::triggered, this, &AFMainWindow::onNewBuffers);
   connect(ui->actionLoad, &QAction::triggered, this, &AFMainWindow::onLoad);
   connect(ui->actionSave, &QAction::triggered, this, &AFMainWindow::onSave);
   connect(ui->actionExit, &QAction::triggered, this, &AFMainWindow::close);
@@ -232,6 +236,20 @@ void AFMainWindow::onNew()
   m_analDataWidget->setEstimatesFromCurrent();
 }
 
+void AFMainWindow::onNewBuffers()
+{
+  QMessageBox mbox{QMessageBox::Question,
+                   tr("Confirm action"),
+                   tr("Create new buffers\n\n"
+                      "Are you sure you want to discard current buffers?"),
+                   QMessageBox::Yes | QMessageBox::No};
+  if (mbox.exec() != QMessageBox::Yes)
+    return;
+
+  h_gbox.invalidateAll();
+  h_gbox.chemicalBuffersModel().clear();
+}
+
 void AFMainWindow::onSave()
 {
   static QString lastPath{};
@@ -279,6 +297,7 @@ void AFMainWindow::setupIcons()
 #ifdef Q_OS_LINUX
   /* Menu bar */
   ui->actionNew->setIcon(QIcon::fromTheme("document-new"));
+  ui->actionNew_buffers->setIcon(QIcon::fromTheme("document-new"));
   ui->actionLoad->setIcon(QIcon::fromTheme("document-open"));
   ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
@@ -287,12 +306,14 @@ void AFMainWindow::setupIcons()
 
   /* Button bar */
   m_qpb_new->setIcon(QIcon::fromTheme("document-new"));
+  m_qpb_newBuffers->setIcon(QIcon::fromTheme("document-new"));
   m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else
   /* Menu bar */
   ui->actionNew->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
+  ui->actionNew_buffers->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
@@ -301,6 +322,7 @@ void AFMainWindow::setupIcons()
 
   /* Button bar */
   m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
+  m_qpb_newBuffers->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   m_qpb_calculate->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
