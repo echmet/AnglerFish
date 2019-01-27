@@ -54,8 +54,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   m_qpb_new = new QPushButton{tr("New setup"), this};
   m_qpb_newBuffers = new QPushButton{tr("New buffers"), this};
-  m_qpb_load = new QPushButton{tr("Load"), this};
-  m_qpb_save = new QPushButton{tr("Save"), this};
+  m_qpb_load = new QPushButton{tr("Load setup"), this};
+  m_qpb_save = new QPushButton{tr("Save setup"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
 
   ui->qtb_mainToolBar->addWidget(m_qpb_new);
