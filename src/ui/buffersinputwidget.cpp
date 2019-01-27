@@ -99,6 +99,8 @@ void BuffersInputWidget::onEndBuffersReset()
 {
   for (auto &buf : h_gbox.chemicalBuffersModel())
     onBufferAdded(buf);
+
+  onSortBypH();
 }
 
 void BuffersInputWidget::onExportBuffer(const BufferWidget *w)
