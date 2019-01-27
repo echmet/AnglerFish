@@ -243,8 +243,7 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbo
   std::sort(fitted.begin(), fitted.end());
   std::sort(residuals.begin(), residuals.end());
 
-  model.setFitted(std::move(fitted));
-  model.setResiduals(std::move(residuals));
+  model.setFitted(std::move(fitted), std::move(residuals));
   gbox.scalarResultsModel().setItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED,
                                     results->rSquared, Qt::EditRole);
 }

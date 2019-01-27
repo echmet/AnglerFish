@@ -56,14 +56,12 @@ const QVector<QPointF> & MobilityCurveModel::residuals() const
 void MobilityCurveModel::invalidateAll()
 {
   setExperimental({});
-  setFitted({});
-  setResiduals({});
+  setFitted({}, {});
 }
 
 void MobilityCurveModel::invalidateResults()
 {
-  setFitted({});
-  setResiduals({});
+  setFitted({}, {});
 }
 
 void MobilityCurveModel::setExperimental(QVector<QPointF> data)
@@ -73,18 +71,12 @@ void MobilityCurveModel::setExperimental(QVector<QPointF> data)
   emit experimentalChanged();
 }
 
-void MobilityCurveModel::setFitted(QVector<QPointF> data)
+void MobilityCurveModel::setFitted(QVector<QPointF> fitted, QVector<QPointF> residuals)
 {
-  m_fitted = std::move(data);
+  m_fitted = std::move(fitted);
+  m_residuals = std::move(residuals);
 
   emit fittedChanged();
-}
-
-void MobilityCurveModel::setResiduals(QVector<QPointF> data)
-{
-  m_residuals = std::move(data);
-
-  emit residualsChanged();
 }
 
 } // namespace gearbox

@@ -106,8 +106,6 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           this, &AFMainWindow::onCurveExperimentalChanged);
   connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::fittedChanged,
           this, &AFMainWindow::onCurveFittedChanged);
-  connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::residualsChanged,
-          this, &AFMainWindow::onCurveResidualsChanged);
 
   connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, this,
           [this]() { h_gbox.invalidateResults(); });
@@ -184,14 +182,11 @@ void AFMainWindow::onCurveExperimentalChanged()
 
 void AFMainWindow::onCurveFittedChanged()
 {
-  auto data = gearbox::MobilityCurveModel::compact(h_gbox.mobilityCurveModel().fitted());
-  m_fitPlotWidget->setFittedData(std::move(data));
-}
+  auto fitted = gearbox::MobilityCurveModel::compact(h_gbox.mobilityCurveModel().fitted());
+  auto residuals = gearbox::MobilityCurveModel::compact(h_gbox.mobilityCurveModel().residuals());
 
-void AFMainWindow::onCurveResidualsChanged()
-{
-  auto data = gearbox::MobilityCurveModel::compact(h_gbox.mobilityCurveModel().residuals());
-  m_fitPlotWidget->setResidualsData(std::move(data));
+  m_fitPlotWidget->setFittedData(std::move(fitted));
+  m_fitPlotWidget->setResidualsData(std::move(residuals));
 }
 
 void AFMainWindow::onLoad()

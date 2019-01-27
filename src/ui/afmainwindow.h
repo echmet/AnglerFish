@@ -64,7 +64,6 @@ private slots:
   void onCheckForUpdate();
   void onCurveExperimentalChanged();
   void onCurveFittedChanged();
-  void onCurveResidualsChanged();
   void onLoad();
   void onNew();
   void onNewBuffers();

@@ -20,8 +20,7 @@ public:
   void invalidateResults();
 
   void setExperimental(QVector<QPointF> data);
-  void setFitted(QVector<QPointF> data);
-  void setResiduals(QVector<QPointF> data);
+  void setFitted(QVector<QPointF> fitted, QVector<QPointF> residuals);
 
   static QVector<QPointF> compact(const QVector<QPointF> &src);
 
@@ -33,7 +32,6 @@ private:
 signals:
   void experimentalChanged();
   void fittedChanged();
-  void residualsChanged();
 };
 
 } // namespace gearbox
