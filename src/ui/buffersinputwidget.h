@@ -40,6 +40,7 @@ private slots:
   void onExportBuffer(const BufferWidget *w);
   void onLoadBuffer();
   void onScrollToBottom(const int min, const int max);
+  void onSortBypH();
 
 public slots:
   void onBeginBuffersReset();

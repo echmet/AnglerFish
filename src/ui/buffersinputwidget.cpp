@@ -12,6 +12,13 @@
 #include <QVBoxLayout>
 #include <cassert>
 
+
+inline
+bool cmpBufferWidgets(BufferWidget *lhs, BufferWidget *rhs)
+{
+  return lhs->buffer().pH() < rhs->buffer().pH();
+}
+
 BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) :
   QWidget{parent},
   ui{new Ui::BuffersInputWidget},
@@ -35,6 +42,7 @@ BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) 
 
   connect(ui->qpb_addBuffer, &QPushButton::clicked, this, [this]() { emit this->addBuffer(); });
   connect(ui->qpb_loadBuffer, &QPushButton::clicked, this, &BuffersInputWidget::onLoadBuffer);
+  connect(ui->qpb_sortBypH, &QPushButton::clicked, this, &BuffersInputWidget::onSortBypH);
 }
 
 BuffersInputWidget::~BuffersInputWidget()
@@ -68,6 +76,7 @@ void BuffersInputWidget::onBeginBuffersReset()
     delete w;
     delete item;
   }
+  assert(m_scrollLayout->count() == 0);
 
    /* Yeah, this is a little hacky... */
   m_scrollLayout->addStretch();
@@ -157,6 +166,28 @@ void BuffersInputWidget::onScrollToBottom(const int min, const int max)
   ui->qscr_bufferList->verticalScrollBar()->setValue(max);
 
   disconnect(ui->qscr_bufferList->verticalScrollBar(), &QScrollBar::rangeChanged, this, &BuffersInputWidget::onScrollToBottom);
+}
+
+void BuffersInputWidget::onSortBypH()
+{
+  std::vector<BufferWidget *> wBufs{};
+
+  while (m_scrollLayout->count() > 1) {
+    QLayoutItem *item = m_scrollLayout->itemAt(0);
+    QWidget *w = item->widget();
+    BufferWidget *bw = qobject_cast<BufferWidget *>(w);
+    if (bw != nullptr) {
+      m_scrollLayout->removeWidget(bw);
+      wBufs.emplace_back(bw);
+    }
+  }
+
+  std::sort(wBufs.begin(), wBufs.end(), cmpBufferWidgets);
+
+  for (auto &bw : wBufs) {
+    int idx = m_scrollLayout->count() - 1;
+    m_scrollLayout->insertWidget(idx, bw);
+  }
 }
 
 void BuffersInputWidget::setupIcons()

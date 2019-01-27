@@ -33,7 +33,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>366</width>
+        <width>364</width>
         <height>16</height>
        </rect>
       </property>
@@ -59,6 +59,26 @@
       <widget class="QPushButton" name="qpb_loadBuffer">
        <property name="text">
         <string>Load buffer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpb_sortBypH">
+       <property name="text">
+        <string>Sort by pH</string>
        </property>
       </widget>
      </item>
