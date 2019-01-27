@@ -226,8 +226,9 @@ void AFMainWindow::onNew()
   if (mbox.exec() != QMessageBox::Yes)
     return;
 
-  h_gbox.chemicalBuffersModel().clear();
+  h_gbox.invalidateAll();
   h_gbox.clearAnalyteEstimates();
+  h_gbox.chemicalBuffersModel().clear();
   m_analDataWidget->setEstimatesFromCurrent();
 }
 
