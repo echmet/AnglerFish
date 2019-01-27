@@ -62,4 +62,6 @@ void EditChargesWidgetEstimates::setupChargesModel(QTableView *tbv)
 
   tbv->setItemDelegateForColumn(0, fltDelegatePos);
   tbv->setItemDelegateForColumn(1, fltDelegate);
+
+  connect(m_chargesModel, &QAbstractTableModel::dataChanged, this, [this]() { emit estimatesChanged(); });
 }

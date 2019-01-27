@@ -104,6 +104,9 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           this, &AFMainWindow::onCurveFittedChanged);
   connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::residualsChanged,
           this, &AFMainWindow::onCurveResidualsChanged);
+
+  connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, this,
+          [this]() { invalidateResults(); });
 }
 
 AFMainWindow::~AFMainWindow()

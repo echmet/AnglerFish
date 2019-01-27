@@ -42,6 +42,9 @@ private:
 private slots:
   void onResultsToClipboard();
   void onScreenChanged();
+
+signals:
+  void estimatesChanged();
 };
 
 #endif // ANALYTEDATAWIDGET_H

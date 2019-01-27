@@ -48,7 +48,6 @@ int fitResultsHeight(const QFontMetrics &fm)
   return qRound(fm.height() * 5.0);
 }
 
-
 AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
                                      QWidget *parent) :
   QWidget{parent},
@@ -88,6 +87,9 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
           });
 
   setWidgetSizes();
+
+  connect(m_estimatedParamsWidget, &EditChargesWidgetEstimates::estimatesChanged, this,
+          [this]() { emit estimatesChanged(); });
 
   QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &AnalyteDataWidget::onScreenChanged); }); /* This must be done from the event queue after the window is created */
 }

@@ -20,6 +20,9 @@ public:
 
 protected:
   virtual void setupChargesModel(QTableView *tbv) override;
+
+signals:
+  void estimatesChanged();
 };
 
 #endif // EDITCHARGESWIDGETESTIMATES_H
