@@ -38,28 +38,9 @@ public:
 
   bool operator<(const Block &other) const
   {
-    return pH > other.pH;
+    return pH < other.pH;
   }
 };
-
-inline
-Block & findNearest(std::vector<Block> &blocks, const double pH, double Block::* M)
-{
-  for (auto &b : blocks) {
-    if (qFuzzyCompare(b.pH, pH)) {
-      if (b.*M != DBL_INF)
-        throw CurveToClipboardExporter::Exception{"Ambiguous datapoint"};
-
-      return b;
-    }
-
-    /* This assumes a vector sorted in descending order - which we have */
-    if (pH > b.pH)
-      return b;
-  }
-
-  return blocks.back();
-}
 
 inline
 void writeClipboard(const std::vector<Block> &blocks)
@@ -77,23 +58,35 @@ void writeClipboard(const std::vector<Block> &blocks)
       << "\n";
 
   for (const auto &b : blocks) {
-    assert(b.exps.size() > 0);
-
-    str << DoubleToStringConvertor::convert(b.pH) << SEP
-        << DoubleToStringConvertor::convert(b.exps.front()) << SEP
-        << DoubleToStringConvertor::convert(b.fit) << SEP
+    str << DoubleToStringConvertor::convert(b.pH) << SEP;
+        if (!b.exps.empty())
+          str << DoubleToStringConvertor::convert(b.exps.front()) << SEP;
+        else
+          str << SEP;
+    str << DoubleToStringConvertor::convert(b.fit) << SEP
         << DoubleToStringConvertor::convert(b.res)
         << "\n";
 
-    for (auto it = b.exps.cbegin() + 1; it != b.exps.cend(); ++it) {
+    for (size_t idx = 1; idx < b.exps.size(); idx++) {
       str << DoubleToStringConvertor::convert(b.pH) << SEP
-          << DoubleToStringConvertor::convert(*it) << SEP
+          << DoubleToStringConvertor::convert(b.exps.at(idx)) << SEP
           << SEP
           << "\n";
     }
   }
 
   QApplication::clipboard()->setText(data);
+}
+
+inline
+std::vector<Block>::iterator contains(std::vector<Block> &vec, const double pH)
+{
+  for (auto it = vec.begin(); it != vec.end(); ++it) {
+    if (it->pH == pH)
+      return it;
+  }
+
+  return vec.end();
 }
 
 void CurveToClipboardExporter::write(const Gearbox &gbox)
@@ -117,22 +110,25 @@ void CurveToClipboardExporter::write(const Gearbox &gbox)
   if (v.size() > 0)
     blocks.emplace_back(prevX, std::move(v), DBL_INF, DBL_INF);
 
-  /* Sort in descending order */
+  /* Yes, this is nasty, horrible, dull and slow
+   * staircase-behaving stinking pile of garbage */
+  auto bind = [&blocks](const QVector<QPointF> &vec, double Block::* field) {
+    for (const auto &pt : vec) {
+      auto it = contains(blocks, pt.x());
+      if (it != blocks.end())
+        (*it).*field = pt.y();
+      else {
+        Block b{pt.x(), {}, DBL_INF, DBL_INF};
+        b.*field = pt.y();
+        blocks.emplace_back(std::move(b));
+      }
+    }
+  };
+
+  bind(model.fitted(), &Block::fit);
+  bind(model.residuals(), &Block::res);
+
   std::sort(blocks.begin(), blocks.end());
-
-  for (const auto &pt : model.fitted()) {
-    const double pH = pt.x();
-
-    auto &b  = findNearest(blocks, pH, &Block::fit);
-    b.fit = pt.y();
-  }
-
-  for (const auto &pt : model.residuals()) {
-    const double pH = pt.x();
-
-    auto &b  = findNearest(blocks, pH, &Block::res);
-    b.res = pt.y();
-  }
 
   writeClipboard(blocks);
 }
