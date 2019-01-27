@@ -180,6 +180,9 @@ InSystemWrap prepare(gearbox::Gearbox &gbox)
   ECHMET::RetCode tRet{};
 
   for (const auto &b : gbox.chemicalBuffersModel()) {
+    if (b.empty())
+      continue;
+
     try {
       for (const auto &uExp : b.experimentalMobilities()) {
         ECHMET::ElmigParamsFitter::InBuffer inBuf{nullptr, nullptr, 0.0};
