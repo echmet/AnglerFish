@@ -106,7 +106,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           this, &AFMainWindow::onCurveResidualsChanged);
 
   connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, this,
-          [this]() { invalidateResults(); });
+          [this]() { h_gbox.invalidateResults(); });
 }
 
 AFMainWindow::~AFMainWindow()
@@ -129,11 +129,6 @@ void AFMainWindow::connectUpdater(SoftwareUpdater *updater)
   connect(updater, &SoftwareUpdater::checkComplete, m_checkForUpdateDlg, &CheckForUpdateDialog::onCheckComplete);
 }
 
-void AFMainWindow::invalidateResults()
-{
-  h_gbox.invalidateResults();
-}
-
 void AFMainWindow::onAboutTriggered()
 {
   AboutDialog dlg{};
@@ -143,7 +138,7 @@ void AFMainWindow::onAboutTriggered()
 
 void AFMainWindow::onBuffersChanged()
 {
-  invalidateResults();
+  h_gbox.invalidateAll();
   updatePlotExperimental();
 }
 
@@ -165,8 +160,7 @@ void AFMainWindow::onCalculate()
   thread.wait();
 
   if (worker.failed) {
-    invalidateResults();
-    updatePlotExperimental();
+    h_gbox.invalidateResults();
 
     QMessageBox mbox{QMessageBox::Warning, tr("Calculation failed"), worker.error};
     mbox.exec();

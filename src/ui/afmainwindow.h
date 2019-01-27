@@ -33,7 +33,6 @@ protected:
   virtual void closeEvent(QCloseEvent *evt) override;
 
 private:
-  void invalidateResults();
   void updatePlotExperimental();
   void updatePlotFitted();
   void setEstimates();

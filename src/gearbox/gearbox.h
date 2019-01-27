@@ -34,6 +34,7 @@ public:
   void setAnalyteEstimates(AnalyteEstimates estimates);
 
   void clearAnalyteEstimates();
+  void invalidateAll();
   void invalidateResults();
 
 private:

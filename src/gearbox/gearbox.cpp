@@ -45,11 +45,18 @@ FitResultsModel & Gearbox::fittedpKasModel() const
   return m_gboxPriv->m_fittedpKas;
 }
 
+void Gearbox::invalidateAll()
+{
+  m_gboxPriv->m_fittedpKas.setNewData({});
+  m_gboxPriv->m_fittedMobilities.setNewData({});
+  m_gboxPriv->m_mobilityCurveModel.invalidateAll();
+}
+
 void Gearbox::invalidateResults()
 {
   m_gboxPriv->m_fittedpKas.setNewData({});
   m_gboxPriv->m_fittedMobilities.setNewData({});
-  m_gboxPriv->m_mobilityCurveModel.invalidate();
+  m_gboxPriv->m_mobilityCurveModel.invalidateResults();
 }
 
 IonicEffectsModel & Gearbox::ionicEffectsModel()

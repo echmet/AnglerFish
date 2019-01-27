@@ -53,9 +53,15 @@ const QVector<QPointF> & MobilityCurveModel::residuals() const
   return m_residuals;
 }
 
-void MobilityCurveModel::invalidate()
+void MobilityCurveModel::invalidateAll()
 {
   setExperimental({});
+  setFitted({});
+  setResiduals({});
+}
+
+void MobilityCurveModel::invalidateResults()
+{
   setFitted({});
   setResiduals({});
 }
