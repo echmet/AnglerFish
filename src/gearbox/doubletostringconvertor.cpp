@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+namespace gearbox {
+
 DoubleToStringConvertor *DoubleToStringConvertor::s_me{nullptr};
 
 
@@ -158,3 +160,4 @@ char DoubleToStringConvertor::type()
   return s_me->m_type;
 }
 
+} // namespace gearbox

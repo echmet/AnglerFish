@@ -1,56 +1,45 @@
 #ifndef GEARBOX_H
 #define GEARBOX_H
 
-#include "analyteinputparameters.h"
-#include "chemicalbuffersmodel.h"
-#include "databaseproxy.h"
-#include "fitresultsmodel.h"
-#include "ioniceffectsmodel.h"
-#include "mobilitycurvemodel.h"
-#include <QVector>
-#include <memory>
-
+#include "analyteestimates.h"
 #include "scalarfitresultsmapping.h"
+
+namespace gearbox {
+
+class GearboxPrivate;
+
+class AnalyteEstimates;
+class ChemicalBuffersModel;
+class DatabaseProxy;
+class FitResultsModel;
+class IonicEffectsModel;
+class MobilityCurveModel;
 
 class Gearbox {
 public:
-  static void initialize();
-  static Gearbox * instance();
+  explicit Gearbox();
+  Gearbox(const Gearbox &other) = delete;
+  ~Gearbox();
 
-  const AnalyteInputParameters & analyteInputParameters() const noexcept;
-  ChemicalBuffersModel & chemicalBuffersModel() noexcept;
-  void clearAnalyteInputParameters();
-  DatabaseProxy & databaseProxy() noexcept;
-  void invalidateResults();
+  const AnalyteEstimates & analyteEstimates() const;
+  ChemicalBuffersModel & chemicalBuffersModel() const;
+  DatabaseProxy & databaseProxy() const;
+  FitResultsModel & fittedMobilitiesModel() const;
+  FitResultsModel & fittedpKasModel() const;
   IonicEffectsModel & ionicEffectsModel();
-  MobilityCurveModel & mobilityCurveModel();
-  const MobilityCurveModel & mobilityCurveModel() const;
-  FitResultsModel & mobilitiesResultsModel();
-  const FitResultsModel & mobilitiesResultsModel() const;
-  FitResultsModel & pKaResultsModel();
-  const FitResultsModel & pKaResultsModel() const;
-  gearbox::ScalarFitResultsMapping::MapperModel *scalarFitResultsModel();
-  void setAnalyteInputParameters(const int chargeLow, const int chargeHigh,
-                                 AnalyteInputParameters::ParameterVec mobilities, AnalyteInputParameters::ParameterVec pKas);
-  void setAnalyteInputParameters(AnalyteInputParameters params);
+  MobilityCurveModel & mobilityCurveModel() const;
+  ScalarFitResultsMapping::MapperModel & scalarResultsModel() const;
+  void setAnalyteEstimates(const int chargeLow, const int chargeHigh,
+                           AnalyteEstimates::ParameterVec mobilities, AnalyteEstimates::ParameterVec pKas);
+  void setAnalyteEstimates(AnalyteEstimates estimates);
+
+  void clearAnalyteEstimates();
+  void invalidateResults();
 
 private:
-  Gearbox();
-
-  AnalyteInputParameters m_analInputParams;
-  ChemicalBuffersModel m_chemBufsModel;
-  IonicEffectsModel m_ionEffsModel;
-
-  DatabaseProxy m_databaseProxy;
-  MobilityCurveModel m_mobCurveModel;
-
-  FitResultsModel m_mobilitiesResultsModel;
-  FitResultsModel m_pKaResultsModel;
-
-  gearbox::ScalarFitResultsMapping::MapperModel m_scalFitResultsModel;
-  QVector<double> m_scalFitResultsData;
-
-  static std::unique_ptr<Gearbox> s_me;
+  GearboxPrivate *m_gboxPriv;
 };
+
+} // namespace gearbox
 
 #endif // GEARBOX_H

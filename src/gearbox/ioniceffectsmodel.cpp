@@ -1,5 +1,7 @@
 #include "ioniceffectsmodel.h"
 
+namespace gearbox {
+
 IonicEffectsModel::IonicEffectsModel() :
   QObject{nullptr},
   m_debyeHuckel{true},
@@ -30,3 +32,5 @@ void IonicEffectsModel::setOnsagerFuoss(const bool v)
 
   emit changed();
 }
+
+} // namespace gearbox

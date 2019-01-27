@@ -5,10 +5,10 @@
 #include <QLocale>
 #include "../../gearbox/inumberformatchangeable.h"
 
-class FloatingValueLineEdit : public QLineEdit, public INumberFormatChangeable
+class FloatingValueLineEdit : public QLineEdit, public gearbox::INumberFormatChangeable
 {
   Q_OBJECT
-  Q_INTERFACES(INumberFormatChangeable)
+  Q_INTERFACES(gearbox::INumberFormatChangeable)
 public:
   FloatingValueLineEdit(QWidget *parent = nullptr);
   void onNumberFormatChanged(const QLocale *oldLocale) override;

@@ -49,7 +49,7 @@ void ExperimentalMobilityWidget::setNumber(const int num)
 
 void ExperimentalMobilityWidget::setValue(const double v)
 {
-  ui->qle_value->setText(DoubleToStringConvertor::convert(v));
+  ui->qle_value->setText(gearbox::DoubleToStringConvertor::convert(v));
 }
 
 void ExperimentalMobilityWidget::setupIcons()
@@ -71,5 +71,5 @@ void ExperimentalMobilityWidget::setWidgetSizes()
 
 double ExperimentalMobilityWidget::value(bool &ok) const
 {
-  return DoubleToStringConvertor::back(ui->qle_value->text(), &ok);
+  return gearbox::DoubleToStringConvertor::back(ui->qle_value->text(), &ok);
 }

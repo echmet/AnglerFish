@@ -10,7 +10,7 @@ FloatingValueLineEdit::FloatingValueLineEdit(QWidget *parent) :
 
   connect(this, &FloatingValueLineEdit::textChanged, this, &FloatingValueLineEdit::ensureSanity);
   connect(this, &FloatingValueLineEdit::editingFinished, this, &FloatingValueLineEdit::onEditingFinished);
-  DoubleToStringConvertor::notifyOnFormatChanged(this);
+  gearbox::DoubleToStringConvertor::notifyOnFormatChanged(this);
 }
 
 void FloatingValueLineEdit::ensureSanity(QString text)
@@ -19,9 +19,9 @@ void FloatingValueLineEdit::ensureSanity(QString text)
 
   QString _text = text.replace(QChar::Nbsp, QString(""), Qt::CaseInsensitive);
 
-  const double dv = DoubleToStringConvertor::back(text, &ok);
+  const double dv = gearbox::DoubleToStringConvertor::back(text, &ok);
   if (ok)
-    ok = AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
+    ok = gearbox::AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
 
   if (ok)
       this->setPalette(QPalette());
@@ -37,7 +37,7 @@ void FloatingValueLineEdit::onEditingFinished()
   bool ok;
   double dv;
 
-  dv = DoubleToStringConvertor::back(text(), &ok);
+  dv = gearbox::DoubleToStringConvertor::back(text(), &ok);
   if (ok) {
     setNumberText(dv);
     emit valueChanged(dv);
@@ -63,8 +63,8 @@ void FloatingValueLineEdit::setNumberText(const double dv)
 {
   blockSignals(true);
 
-  const int prec = DoubleToStringConvertor::decimalDigits(text());
-  const QString t = DoubleToStringConvertor::convert(dv, 'f', prec);
+  const int prec = gearbox::DoubleToStringConvertor::decimalDigits(text());
+  const QString t = gearbox::DoubleToStringConvertor::convert(dv, 'f', prec);
   this->setText(t);
 
   blockSignals(false);

@@ -4,9 +4,13 @@
 #include <gearbox/floatingvaluedelegate.h>
 #include <QWidget>
 
+namespace gearbox {
+  class Gearbox;
+} // namespace gearbox
+
 namespace Ui {
-class AnalyteDataWidget;
-}
+  class AnalyteDataWidget;
+} // namespace Ui
 
 class QDataWidgetMapper;
 class EditChargesWidgetEstimates;
@@ -14,7 +18,7 @@ class EditChargesWidgetEstimates;
 class AnalyteDataWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit AnalyteDataWidget(QWidget *parent = nullptr);
+  explicit AnalyteDataWidget(gearbox::Gearbox &h_gbox, QWidget *parent = nullptr);
   ~AnalyteDataWidget();
 
   int chargeLow() const noexcept;
@@ -32,6 +36,8 @@ private:
   EditChargesWidgetEstimates *m_estimatedParamsWidget;
 
   QDataWidgetMapper *m_scalarFitResultsMapper;
+
+  gearbox::Gearbox &h_gbox;
 
 private slots:
   void onResultsToClipboard();

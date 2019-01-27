@@ -6,16 +6,21 @@
 #include <gdm/core/gdm.h>
 #include <QString>
 
-class AnalyteInputParameters;
-class ChemicalBuffer;
-class ChemicalBuffersModel;
+
+namespace gearbox {
+  class AnalyteEstimates;
+  class ChemicalBuffer;
+  class ChemicalBuffersModel;
+  class Gearbox;
+} // namespace gearbox
 
 namespace persistence {
 
-void loadEntireSetup(const QString &path);
-void saveEntireSetup(const QString &path, const ChemicalBuffersModel &buffers, const AnalyteInputParameters &analyte);
-void loadPeakMasterBuffer(const QString &path);
-void savePeakMasterBuffer(const QString &path, const ChemicalBuffer &buffer);
+void loadEntireSetup(const QString &path, gearbox::Gearbox &gbox);
+void saveEntireSetup(const QString &path, const gearbox::ChemicalBuffersModel &buffers,
+                     const gearbox::AnalyteEstimates &analyte);
+void loadPeakMasterBuffer(const QString &path, gearbox::Gearbox &gbox);
+void savePeakMasterBuffer(const QString &path, const gearbox::ChemicalBuffer &buffer);
 
 } // namespace persistence
 

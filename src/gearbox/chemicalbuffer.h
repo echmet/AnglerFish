@@ -4,11 +4,16 @@
 #include <stdexcept>
 #include <vector>
 
+namespace gearbox {
+  class GDMProxy;
+  class IonicEffectsModel;
+} // namespace gearbox
+
 namespace gdm {
   class GDM;
 } // namespace gdm
 
-class GDMProxy;
+namespace gearbox {
 
 class ChemicalBuffer {
 public:
@@ -17,8 +22,8 @@ public:
     using std::runtime_error::runtime_error;
   };
 
-  ChemicalBuffer();
-  ChemicalBuffer(gdm::GDM *model);
+  ChemicalBuffer(const IonicEffectsModel &ionEffs);
+  ChemicalBuffer(const IonicEffectsModel &ionEffs, gdm::GDM *model);
   ChemicalBuffer(const ChemicalBuffer &other);
   ChemicalBuffer(ChemicalBuffer &&other) noexcept;
   ~ChemicalBuffer();
@@ -37,6 +42,7 @@ public:
 private:
   void recalculate();
 
+  const IonicEffectsModel &h_ionEffs;
   gdm::GDM *m_gdmModel;
   GDMProxy *m_composition;
 
@@ -47,5 +53,7 @@ private:
 
   bool m_needsRecalculation;
 };
+
+} // namespace gearbox
 
 #endif // CHEMICALBUFFER_H

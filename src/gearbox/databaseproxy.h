@@ -11,6 +11,8 @@ namespace database {
   class ConstituentsDatabase;
 }
 
+namespace gearbox {
+
 typedef std::map<int, double> DBChargePropsMap;
 
 class DatabaseConstituent {
@@ -53,6 +55,8 @@ private:
   static const char *DATABASE_PATH;
 };
 
-Q_DECLARE_METATYPE(DatabaseProxy::MatchType)
+} // namespace gearbox
+
+Q_DECLARE_METATYPE(gearbox::DatabaseProxy::MatchType)
 
 #endif // DATABASEPROXY_H

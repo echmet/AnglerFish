@@ -4,9 +4,10 @@
 #include "buffercompositionwidget.h"
 #include "experimentalmobilitywidget.h"
 
-#include <gearbox/doubletostringconvertor.h>
 #include <gearbox/gearbox.h>
+#include <gearbox/doubletostringconvertor.h>
 #include <gearbox/chemicalbuffer.h>
+#include <gearbox/ioniceffectsmodel.h>
 #include <util_lowlevel.h>
 #include <QMessageBox>
 #include <QScreen>
@@ -15,15 +16,16 @@
 #include <QWindow>
 #include <limits>
 
-BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
+BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buffer, QWidget *parent) :
   QWidget{parent},
   ui{new Ui::BufferWidget},
+  h_gbox{gbox},
   h_buffer{buffer}
 {
   ui->setupUi(this);
 
   m_compositionWidget = new BufferCompositionWidget{h_buffer.composition(),
-                                                    Gearbox::instance()->databaseProxy()};
+                                                    h_gbox.databaseProxy()};
   ui->qvlay_composition->addWidget(m_compositionWidget);
 
   m_expValuesScrollWidget = new QWidget{};
@@ -64,8 +66,8 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
     onAddExpValue();
 
   if (!h_buffer.empty()) {
-    ui->qle_pH->setText(DoubleToStringConvertor::convert(h_buffer.pH()));
-    ui->qle_ionicStrength->setText(DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
+    ui->qle_pH->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.pH()));
+    ui->qle_ionicStrength->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
   }
 
   connect(ui->qpb_addExpValue, &QPushButton::clicked, this, &BufferWidget::onAddExpValue);
@@ -74,7 +76,7 @@ BufferWidget::BufferWidget(ChemicalBuffer &buffer, QWidget *parent) :
   connect(ui->qpb_clone, &QPushButton::clicked, this, [this]() { emit this->cloneMe(this); });
   connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
 
-  connect(&Gearbox::instance()->ionicEffectsModel(), &IonicEffectsModel::changed, this, &BufferWidget::onIonicEffectsChanged);
+  connect(&h_gbox.ionicEffectsModel(), &gearbox::IonicEffectsModel::changed, this, &BufferWidget::onIonicEffectsChanged);
   QTimer::singleShot(0, this, [this]() {
     this->setWidgetSizes();
     connect(this->window()->windowHandle()->screen(), &QScreen::logicalDotsPerInchChanged, this, &BufferWidget::setWidgetSizes);
@@ -86,7 +88,7 @@ BufferWidget::~BufferWidget()
   delete ui;
 }
 
-const ChemicalBuffer & BufferWidget::buffer() const noexcept
+const gearbox::ChemicalBuffer & BufferWidget::buffer() const noexcept
 {
   return h_buffer;
 }
@@ -115,11 +117,11 @@ void BufferWidget::onCompositionChanged()
   h_buffer.invalidate();
 
   try {
-    ui->qle_pH->setText(DoubleToStringConvertor::convert(h_buffer.pH()));
-    ui->qle_ionicStrength->setText(DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
+    ui->qle_pH->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.pH()));
+    ui->qle_ionicStrength->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
 
     emit bufferChanged(this);
-  } catch (const ChemicalBuffer::Exception &ex) {
+  } catch (const gearbox::ChemicalBuffer::Exception &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Calculation error"), ex.what()};
     mbox.exec();
   }

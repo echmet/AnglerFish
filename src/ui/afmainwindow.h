@@ -13,15 +13,19 @@ class FitPlotWidget;
 class Gearbox;
 class QSplitter;
 
+namespace gearbox {
+  class Gearbox;
+} // namespace gearbox
+
 namespace Ui {
-class AFMainWindow;
-}
+  class AFMainWindow;
+} // namespace Ui
 
 class AFMainWindow : public QMainWindow {
   Q_OBJECT
-
 public:
-  explicit AFMainWindow(QWidget *parent = nullptr);
+  explicit AFMainWindow(gearbox::Gearbox &gbox,
+                        QWidget *parent = nullptr);
   ~AFMainWindow() override;
   void connectUpdater(SoftwareUpdater *updater);
 
@@ -36,6 +40,7 @@ private:
   void setupIcons();
 
   Ui::AFMainWindow *ui;
+  gearbox::Gearbox &h_gbox;
 
   QSplitter *qsp_controlsChart;
   QWidget *m_buffersAnalyte;

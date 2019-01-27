@@ -1,5 +1,7 @@
 #include "fitresultsmodel.h"
 
+namespace gearbox {
+
 FitResultsModel::FitResultsModel(const QString &name, QObject *parent) :
   QAbstractTableModel{parent},
   m_name{name}
@@ -76,3 +78,5 @@ void FitResultsModel::setNewData(QVector<Result> data)
   m_data = std::move(data);
   endResetModel();
 }
+
+} // namespace gearbox

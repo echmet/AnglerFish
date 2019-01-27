@@ -1,12 +1,14 @@
 #include "constituentmanipulator.h"
 
 #include "../ui/editconstituentdialog.h"
-#include "../gdm/core/common/gdmexcept.h"
-#include "../gdm/core/constituent/physicalproperties.h"
+#include <gdm/core/common/gdmexcept.h>
+#include <gdm/core/constituent/physicalproperties.h>
 #include "gdmproxy.h"
 #include <util_lowlevel.h>
 
 #include <QMessageBox>
+
+namespace gearbox {
 
 bool ConstituentManipulator::validateConstituentProperties(const IConstituentEditor *dlg)
 {
@@ -63,7 +65,8 @@ gdm::Constituent ConstituentManipulator::makeConstituent(const IConstituentEdito
   return gdm::Constituent{type, name, std::move(physProps)};
 }
 
-EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string &name, GDMProxy &proxy, DatabaseProxy &dbProxy)
+EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string &name, GDMProxy &proxy,
+                                                               DatabaseProxy &dbProxy)
 {
   assert(proxy.contains(name));
 
@@ -80,7 +83,10 @@ EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string
 
   const bool allowTypeChange = !proxy.complexes(name);
 
-  return new EditConstituentDialog{dbProxy, QString::fromStdString(name), type, ctuent.physicalProperties(), allowTypeChange, m_viscosityCorrectionEnabled};
+  return new EditConstituentDialog{dbProxy, QString::fromStdString(name),
+                                   type, ctuent.physicalProperties(),
+                                   allowTypeChange,
+                                   m_viscosityCorrectionEnabled};
 }
 
 void ConstituentManipulator::onValidateConstituentInput(const IConstituentEditor *dlg, bool *ok)
@@ -98,3 +104,5 @@ void ConstituentManipulator::onValidateConstituentInputUpdate(const IConstituent
 {
   *ok = validateConstituentProperties(dlg);
 }
+
+} // namespace gearbox

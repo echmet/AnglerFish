@@ -3,20 +3,25 @@
 
 #include <QWidget>
 
+namespace gearbox {
+  class DatabaseProxy;
+  class FloatingValueDelegate;
+  class GDMProxy;
+} // namespace gearbox
+
 namespace Ui {
-class BufferCompositionWidget;
+  class BufferCompositionWidget;
 }
 
 class BufferCompositionModel;
-class DatabaseProxy;
 class EditConstituentDialog;
-class FloatingValueDelegate;
-class GDMProxy;
 
 class BufferCompositionWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit BufferCompositionWidget(GDMProxy &gdmProxy, DatabaseProxy &dbProxy, QWidget *parent = nullptr);
+  explicit BufferCompositionWidget(gearbox::GDMProxy &gdmProxy,
+                                   gearbox::DatabaseProxy &dbProxy,
+                                   QWidget *parent = nullptr);
   ~BufferCompositionWidget();
 
 private:
@@ -25,10 +30,10 @@ private:
 
   Ui::BufferCompositionWidget *ui;
 
-  FloatingValueDelegate *m_fltDelegate;
+  gearbox::FloatingValueDelegate *m_fltDelegate;
   BufferCompositionModel *m_model;
-  GDMProxy &h_gdmProxy;
-  DatabaseProxy &h_dbProxy;
+  gearbox::GDMProxy &h_gdmProxy;
+  gearbox::DatabaseProxy &h_dbProxy;
 
 private slots:
   void onAddConstituent();

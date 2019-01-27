@@ -10,7 +10,8 @@
 
 QSize PickConstituentFromDBDialog::m_lastDlgSize = QSize{};
 
-PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhysPropsTableModel &model, DatabaseProxy &dbProxy, QWidget *parent) :
+PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhysPropsTableModel &model,
+                                                         gearbox::DatabaseProxy &dbProxy, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::PickConstituentFromDBDialog},
   h_dbProxy{dbProxy},
@@ -27,8 +28,8 @@ PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhy
   if (!m_lastDlgSize.isEmpty())
     resize(m_lastDlgSize);
 
-  ui->qcbox_matchType->addItem(tr("Name begins with..."), QVariant::fromValue(DatabaseProxy::MatchType::BEGINS_WITH));
-  ui->qcbox_matchType->addItem(tr("Name contains..."), QVariant::fromValue(DatabaseProxy::MatchType::CONTAINS));
+  ui->qcbox_matchType->addItem(tr("Name begins with..."), QVariant::fromValue(gearbox::DatabaseProxy::MatchType::BEGINS_WITH));
+  ui->qcbox_matchType->addItem(tr("Name contains..."), QVariant::fromValue(gearbox::DatabaseProxy::MatchType::CONTAINS));
 
   connect(ui->qle_constituentName, &QLineEdit::textChanged, this, &PickConstituentFromDBDialog::onConstituentNameChanged);
 
@@ -53,16 +54,16 @@ void PickConstituentFromDBDialog::executeSearch(const QString &name, const QVari
 
   try {
     const auto match = [matchVar]() {
-      if (!matchVar.canConvert<DatabaseProxy::MatchType>())
-        return DatabaseProxy::MatchType::BEGINS_WITH;
-      return matchVar.value<DatabaseProxy::MatchType>();
+      if (!matchVar.canConvert<gearbox::DatabaseProxy::MatchType>())
+        return gearbox::DatabaseProxy::MatchType::BEGINS_WITH;
+      return matchVar.value<gearbox::DatabaseProxy::MatchType>();
     }();
 
     std::string _name = name.toStdString();
     auto results = h_dbProxy.search(_name, match);
 
     m_model.refreshData(std::move(results));
-  } catch (const DatabaseException &ex) {
+  } catch (const gearbox::DatabaseException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
     mbox.exec();
   }
@@ -103,7 +104,7 @@ void PickConstituentFromDBDialog::onAllCompounds()
     auto results = h_dbProxy.fetchAll();
 
     m_model.refreshData(std::move(results));
-  } catch (const DatabaseException &ex) {
+  } catch (const gearbox::DatabaseException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
     mbox.exec();
   }

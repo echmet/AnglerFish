@@ -23,12 +23,12 @@ int main(int argc, char **argv)
 
   AFCrashHandler::installCrashHandler();
 
-  DoubleToStringConvertor::initialize();
-  Gearbox::initialize();
+  gearbox::DoubleToStringConvertor::initialize();
+  gearbox::Gearbox gbox{};
 
   AFCrashHandler::checkForCrash();
 
-  AFMainWindow mWin{};
+  AFMainWindow mWin{gbox};
 
   mWin.connectUpdater(&updater);
   updater.checkAutomatically();

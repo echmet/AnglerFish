@@ -8,15 +8,18 @@ namespace Ui {
   class PickConstituentFromDBDialog;
 }
 
-class DatabaseProxy;
+namespace gearbox {
+  class DatabaseProxy;
+} // namespace gearbox
+
 class DatabaseConstituentsPhysPropsTableModel;
 
-class PickConstituentFromDBDialog : public QDialog
-{
+class PickConstituentFromDBDialog : public QDialog {
   Q_OBJECT
-
 public:
-  explicit PickConstituentFromDBDialog(DatabaseConstituentsPhysPropsTableModel &model, DatabaseProxy &dbProxy, QWidget *parent = nullptr);
+  explicit PickConstituentFromDBDialog(DatabaseConstituentsPhysPropsTableModel &model,
+                                       gearbox::DatabaseProxy &dbProxy,
+                                       QWidget *parent = nullptr);
   ~PickConstituentFromDBDialog() override;
   int selectedIndex() const;
 
@@ -28,7 +31,7 @@ private:
 
   Ui::PickConstituentFromDBDialog *ui;
 
-  DatabaseProxy &h_dbProxy;
+  gearbox::DatabaseProxy &h_dbProxy;
   DatabaseConstituentsPhysPropsTableModel &m_model;
   QSortFilterProxyModel m_proxyModel;
 

@@ -16,6 +16,6 @@ const QString EntireSetup::ANAL_MOBILITIES{"mobilities"};
 const QString EntireSetup::ANAL_PVEC_FIXED{"fixed"};
 const QString EntireSetup::ANAL_PVEC_VALUE{"value"};
 
-} // namespace persiste
+} // namespace persistence
 
 

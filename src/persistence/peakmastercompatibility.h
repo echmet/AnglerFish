@@ -7,6 +7,10 @@ class QJsonArray;
 class QJsonObject;
 class QString;
 
+namespace gearbox {
+  class GearboxFrontend;
+} // namespace gearbox
+
 namespace persistence {
 
 class PeakMasterCompatibility {

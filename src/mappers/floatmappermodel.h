@@ -104,7 +104,7 @@ private:
     Q_ASSERT(from <= to);
 
     for (int idx = from; idx <= to; idx++) {
-      const int prec = DoubleToStringConvertor::guessPrecision(this->m_data->at(idx));
+      const int prec = gearbox::DoubleToStringConvertor::guessPrecision(this->m_data->at(idx));
       this->m_decimalDigits[idx] = prec;
     }
   }

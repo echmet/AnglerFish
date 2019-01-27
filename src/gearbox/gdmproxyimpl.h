@@ -7,6 +7,8 @@ namespace gdm {
   class GDM;
 }
 
+namespace gearbox {
+
 class GDMProxyImpl : public GDMProxy {
 public:
   GDMProxyImpl(gdm::GDM &model, const double minimumConcentration);
@@ -26,5 +28,7 @@ public:
 private:
   gdm::GDM &h_model;
 };
+
+} // namespace gearbox
 
 #endif // GDMPROXYIMPL_H

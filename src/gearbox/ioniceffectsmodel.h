@@ -3,7 +3,9 @@
 
 #include <QObject>
 
-class IonicEffectsModel :public QObject {
+namespace gearbox {
+
+class IonicEffectsModel : public QObject {
   Q_OBJECT
 public:
   IonicEffectsModel();
@@ -21,5 +23,7 @@ private:
 signals:
   void changed();
 };
+
+} // namespace gearbox
 
 #endif // IONICEFFECTSMODEL_H

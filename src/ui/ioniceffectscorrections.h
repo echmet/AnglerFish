@@ -3,20 +3,27 @@
 
 #include <QDialog>
 
+namespace gearbox {
+  class IonicEffectsModel;
+} // namespace gearbox
+
 namespace Ui {
-class IonicEffectsCorrections;
+  class IonicEffectsCorrections;
 }
 
-class IonicEffectsCorrections : public QDialog
-{
-  Q_OBJECT
+namespace gearbox {
 
+class IonicEffectsCorrections : public QDialog {
+  Q_OBJECT
 public:
-  explicit IonicEffectsCorrections(QWidget *parent = nullptr);
+  explicit IonicEffectsCorrections(gearbox::IonicEffectsModel &ionEffs, QWidget *parent = nullptr);
   ~IonicEffectsCorrections();
 
 private:
   Ui::IonicEffectsCorrections *ui;
+  gearbox::IonicEffectsModel &h_ionEffs;
 };
+
+} // namespace gearbox
 
 #endif // IONICEFFECTSCORRECTIONS_H

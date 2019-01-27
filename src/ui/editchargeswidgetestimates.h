@@ -3,7 +3,9 @@
 
 #include "editchargeswidget.h"
 
-class FloatingValueDelegate;
+namespace gearbox {
+  class FloatingValueDelegate;
+} // namespace gearbox
 
 class EditChargesWidgetEstimates : public EditChargesWidget {
   Q_OBJECT

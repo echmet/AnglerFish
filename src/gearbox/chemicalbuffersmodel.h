@@ -6,6 +6,8 @@
 #include <QObject>
 #include <list>
 
+namespace gearbox {
+
 class ChemicalBuffersModel : public QObject {
   Q_OBJECT
 public:
@@ -36,5 +38,7 @@ signals:
   void beginModelReset();
   void endModelReset();
 };
+
+} // namespace gearbox
 
 #endif // CHEMICALBUFFERSMODEL_H

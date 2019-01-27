@@ -3,6 +3,8 @@
 #include <cassert>
 #include <util_lowlevel.h>
 
+namespace gearbox {
+
 ChemicalBuffersModel::ChemicalBuffersModel() :
   QObject{nullptr}
 {
@@ -94,3 +96,5 @@ void ChemicalBuffersModel:: setBuffers(std::vector<ChemicalBuffer> buffers)
 
   emit endModelReset();
 }
+
+} // namespace gearbox

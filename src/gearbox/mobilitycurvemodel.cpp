@@ -2,6 +2,8 @@
 
 #include <limits>
 
+namespace gearbox {
+
 MobilityCurveModel::MobilityCurveModel() :
   QObject{nullptr}
 {
@@ -78,3 +80,5 @@ void MobilityCurveModel::setResiduals(QVector<QPointF> data)
 
   emit residualsChanged();
 }
+
+} // namespace gearbox

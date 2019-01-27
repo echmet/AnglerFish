@@ -15,6 +15,8 @@ public:
   using std::runtime_error::runtime_error;
 };
 
+namespace gearbox {
+
 class GDMProxy {
 public:
   using const_iterator = gdm::BasicComposition::const_iterator;
@@ -36,5 +38,7 @@ public:
 protected:
   const double m_minimumConcentration;
 };
+
+} // namespace gearbox
 
 #endif // GDMPROXY_H

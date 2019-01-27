@@ -4,6 +4,8 @@
 #include <QAbstractTableModel>
 #include <QVector>
 
+namespace gearbox {
+
 class FitResultsModel : public QAbstractTableModel {
 public:
   enum DataID : int {
@@ -31,5 +33,7 @@ private:
   QVector<Result> m_data;
   QString m_name;
 };
+
+} // namespace gearbox
 
 #endif // FITRESULTSMODEL_H

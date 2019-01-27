@@ -1,19 +1,22 @@
 #ifndef CONSTITUENTVALIDATOR_H
 #define CONSTITUENTVALIDATOR_H
 
-#include "../gdm/core/constituent/constituent.h"
+#include <gdm/core/constituent/constituent.h>
 
 #include <QObject>
 
-class DatabaseProxy;
+namespace gearbox {
+  class DatabaseProxy;
+  class GDMProxy;
+} // namespace gearbox
+
 class EditConstituentDialog;
-class GDMProxy;
 class IConstituentEditor;
 
-class ConstituentManipulator : public QObject
-{
-  Q_OBJECT
+namespace gearbox {
 
+class ConstituentManipulator : public QObject {
+  Q_OBJECT
 public:
   explicit ConstituentManipulator(const GDMProxy &proxy, const bool viscosityCorrectionEnabled);
   EditConstituentDialog * makeEditDialog(const std::string &name, GDMProxy &proxy, DatabaseProxy &dbProxy);
@@ -29,5 +32,7 @@ private:
   const GDMProxy &h_proxy;
   const bool m_viscosityCorrectionEnabled;
 };
+
+} // namespace gearbox
 
 #endif // CONSTITUENTVALIDATOR_H

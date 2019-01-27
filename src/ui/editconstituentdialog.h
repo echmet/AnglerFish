@@ -7,21 +7,24 @@
 
 namespace Ui {
   class EditConstituentDialog;
-}
+} // namespace Ui
 
 namespace gdm {
   class PhysicalProperties;
-}
+} // namespace gdm
 
-class DatabaseProxy;
+namespace gearbox {
+  class DatabaseProxy;
+} // namespace gearbox
+
 class EditChargesWidgetSimple;
 class FloatingValueDelegate;
 
 class EditConstituentDialog : public QDialog, public IConstituentEditor {
   Q_OBJECT
 public:
-  explicit EditConstituentDialog(DatabaseProxy &dbProxy, const bool viscosityCorrectionEnabled, QWidget *parent = nullptr);
-  explicit EditConstituentDialog(DatabaseProxy &dbProxy, const QString &name, const EditConstituentDialog::ConstituentType type,
+  explicit EditConstituentDialog(gearbox::DatabaseProxy &dbProxy, const bool viscosityCorrectionEnabled, QWidget *parent = nullptr);
+  explicit EditConstituentDialog(gearbox::DatabaseProxy &dbProxy, const QString &name, const EditConstituentDialog::ConstituentType type,
                                  const gdm::PhysicalProperties &props, const bool allowTypeChange, const bool viscosityCorrectionEnabled,
                                  QWidget *parent = nullptr);
   ~EditConstituentDialog() override;
@@ -42,7 +45,7 @@ private:
 
   EditChargesWidgetSimple *m_editChargesWidget;
 
-  DatabaseProxy &h_dbProxy;
+  gearbox::DatabaseProxy &h_dbProxy;
 
   static const double VISCOSITY_COEFF_VERY_SMALL;
   static const double VISCOSITY_COEFF_SMALL;

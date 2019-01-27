@@ -3,9 +3,13 @@
 
 #include <stdexcept>
 
+namespace gearbox {
+  class IonicEffectsModel;
+} // namespace gearbox
+
 namespace gdm {
   class GDM;
-}
+} // gdm;
 
 class CAESInterface {
 public:
@@ -20,11 +24,12 @@ public:
     const double ionicStrength;
   };
 
-  explicit CAESInterface(const gdm::GDM &model);
+  explicit CAESInterface(const gdm::GDM &model, const gearbox::IonicEffectsModel &ionEffs);
   BufferProperties bufferProperties();
 
 private:
   const gdm::GDM &h_model;
+  const gearbox::IonicEffectsModel &h_ionEffs;
 };
 
 #endif // CAESINTERFACE_H

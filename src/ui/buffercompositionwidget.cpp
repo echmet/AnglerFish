@@ -10,7 +10,9 @@
 #include <gearbox/gdmproxy.h>
 #include <QMessageBox>
 
-BufferCompositionWidget::BufferCompositionWidget(GDMProxy &gdmProxy, DatabaseProxy &dbProxy, QWidget *parent) :
+BufferCompositionWidget::BufferCompositionWidget(gearbox::GDMProxy &gdmProxy,
+                                                 gearbox::DatabaseProxy &dbProxy,
+                                                 QWidget *parent) :
   QWidget{parent},
   ui{new Ui::BufferCompositionWidget},
   h_gdmProxy{gdmProxy},
@@ -18,7 +20,7 @@ BufferCompositionWidget::BufferCompositionWidget(GDMProxy &gdmProxy, DatabasePro
 {
   ui->setupUi(this);
 
-  m_fltDelegate = new FloatingValueDelegate{this};
+  m_fltDelegate = new gearbox::FloatingValueDelegate{this};
   m_model = new BufferCompositionModel{h_gdmProxy, this};
   ui->qtbv_composition->setModel(m_model);
   ui->qtbv_composition->setItemDelegateForColumn(1, m_fltDelegate);
@@ -47,13 +49,13 @@ BufferCompositionWidget::~BufferCompositionWidget()
 
 void BufferCompositionWidget::editConstituent(const QString &name)
 {
-  ConstituentManipulator manipulator{h_gdmProxy, false};
+  gearbox::ConstituentManipulator manipulator{h_gdmProxy, false};
 
   EditConstituentDialog *dlg = manipulator.makeEditDialog(name.toStdString(), h_gdmProxy, h_dbProxy);
   if (dlg == nullptr)
     return;
 
-  connect(dlg, &EditConstituentDialog::validateInput, &manipulator, &ConstituentManipulator::onValidateConstituentInputUpdate);
+  connect(dlg, &EditConstituentDialog::validateInput, &manipulator, &gearbox::ConstituentManipulator::onValidateConstituentInputUpdate);
   connect(dlg, &EditConstituentDialog::addToDatabase, this, &BufferCompositionWidget::onAddToDatabase);
 
   if (dlg->exec() == QDialog::Accepted) {
@@ -80,12 +82,12 @@ void BufferCompositionWidget::onAddConstituent()
   static QSize dlgSize{};
 
   EditConstituentDialog dlg{h_dbProxy, false, this};
-  ConstituentManipulator manipulator{h_gdmProxy, false};
+  gearbox::ConstituentManipulator manipulator{h_gdmProxy, false};
 
   if (!dlgSize.isEmpty())
     dlg.resize(dlgSize);
 
-  connect(&dlg, &EditConstituentDialog::validateInput, &manipulator, &ConstituentManipulator::onValidateConstituentInput);
+  connect(&dlg, &EditConstituentDialog::validateInput, &manipulator, &gearbox::ConstituentManipulator::onValidateConstituentInput);
   connect(&dlg, &EditConstituentDialog::addToDatabase, this, &BufferCompositionWidget::onAddToDatabase);
 
   if (dlg.exec() == QDialog::Accepted) {
@@ -104,10 +106,10 @@ void BufferCompositionWidget::onAddConstituent()
 
 void BufferCompositionWidget::onAddToDatabase(const EditConstituentDialog *dlg)
 {
-  if (!ConstituentManipulator::validateConstituentProperties(dlg))
+  if (!gearbox::ConstituentManipulator::validateConstituentProperties(dlg))
     return;
 
-  const auto ctuent = ConstituentManipulator::makeConstituent(dlg);
+  const auto ctuent = gearbox::ConstituentManipulator::makeConstituent(dlg);
   h_dbProxy.addConstituent(ctuent.name(), ctuent.physicalProperties().pKas(), ctuent.physicalProperties().mobilities(), ctuent.physicalProperties().charges().low(), ctuent.physicalProperties().charges().high());
 }
 

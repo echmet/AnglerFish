@@ -4,6 +4,7 @@
 #include "bufferwidget.h"
 
 #include <gearbox/gearbox.h>
+#include <gearbox/chemicalbuffersmodel.h>
 #include <persistence/persistence.h>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -11,9 +12,10 @@
 #include <QVBoxLayout>
 #include <cassert>
 
-BuffersInputWidget::BuffersInputWidget(QWidget *parent) :
+BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) :
   QWidget{parent},
   ui{new Ui::BuffersInputWidget},
+  h_gbox{gbox},
   m_saveBufferDlg{this, tr("Save buffer as PeakMaster 6 file"), {}, "PeakMaster 6 JSON file (*.json)"}
 {
   ui->setupUi(this);
@@ -40,9 +42,9 @@ BuffersInputWidget::~BuffersInputWidget()
   delete ui;
 }
 
-void BuffersInputWidget::onBufferAdded(ChemicalBuffer &buffer)
+void BuffersInputWidget::onBufferAdded(gearbox::ChemicalBuffer &buffer)
 {
-  auto w = new BufferWidget{buffer};
+  auto w = new BufferWidget{h_gbox, buffer};
   auto idx = m_scrollLayout->count() - 1;
   assert(idx >= 0);
 
@@ -78,7 +80,7 @@ void BuffersInputWidget::onBufferChanged(const BufferWidget *)
 
 void BuffersInputWidget::onCloneBuffer(const BufferWidget *w)
 {
-  ChemicalBuffer buf = w->buffer();
+  gearbox::ChemicalBuffer buf = w->buffer();
   buf.setExperimentalMobilities({});
 
   emit addBuffer(std::move(buf));
@@ -86,9 +88,7 @@ void BuffersInputWidget::onCloneBuffer(const BufferWidget *w)
 
 void BuffersInputWidget::onEndBuffersReset()
 {
-  auto gbox = Gearbox::instance();
-
-  for (auto &buf : gbox->chemicalBuffersModel())
+  for (auto &buf : h_gbox.chemicalBuffersModel())
     onBufferAdded(buf);
 }
 
@@ -121,7 +121,7 @@ void BuffersInputWidget::onLoadBuffer()
   if (dlg.exec() == QDialog::Accepted) {
     for (const auto &path : dlg.selectedFiles()) {
       try {
-        persistence::loadPeakMasterBuffer(path);
+        persistence::loadPeakMasterBuffer(path, h_gbox);
         lastPath = path;
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Cannot load buffer"),

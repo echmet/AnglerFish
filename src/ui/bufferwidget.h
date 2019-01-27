@@ -4,28 +4,33 @@
 #include <QVector>
 #include <QWidget>
 
+namespace gearbox {
+  class Gearbox;
+  class ChemicalBuffer;
+} // namespace gearbox
+
 namespace Ui {
-class BufferWidget;
-}
+  class BufferWidget;
+} // namespace Ui
 
 class BufferCompositionWidget;
-class ChemicalBuffer;
 class ExperimentalMobilityWidget;
 class QVBoxLayout;
 
 class BufferWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit BufferWidget(ChemicalBuffer &buffer, QWidget *parent = nullptr);
+  explicit BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buffer, QWidget *parent = nullptr);
   ~BufferWidget();
 
-  const ChemicalBuffer & buffer() const noexcept;
+  const gearbox::ChemicalBuffer & buffer() const noexcept;
 
 private:
   void setWidgetSizes();
   void setupIcons();
 
   Ui::BufferWidget *ui;
+  gearbox::Gearbox &h_gbox;
 
   BufferCompositionWidget *m_compositionWidget;
   QWidget *m_expValuesScrollWidget;
@@ -33,7 +38,7 @@ private:
 
   QVector<ExperimentalMobilityWidget *> m_expValueWidgets;
 
-  ChemicalBuffer &h_buffer;
+  gearbox::ChemicalBuffer &h_buffer;
 
 private slots:
   void onAddExpValue();

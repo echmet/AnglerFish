@@ -3,8 +3,9 @@
 
 #include "editchargeswidgetestimates.h"
 
-#include <gearbox/doubletostringconvertor.h>
 #include <gearbox/gearbox.h>
+#include <gearbox/fitresultsmodel.h>
+#include <gearbox/doubletostringconvertor.h>
 #include <gearbox/curvetoclipboardexporter.h>
 #include <gearbox/scalarfitresultsmapping.h>
 #include <QClipboard>
@@ -48,9 +49,11 @@ int fitResultsHeight(const QFontMetrics &fm)
 }
 
 
-AnalyteDataWidget::AnalyteDataWidget(QWidget *parent) :
-  QWidget(parent),
-  ui(new Ui::AnalyteDataWidget)
+AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
+                                     QWidget *parent) :
+  QWidget{parent},
+  ui{new Ui::AnalyteDataWidget},
+  h_gbox{gbox}
 {
   ui->setupUi(this);
 
@@ -61,23 +64,23 @@ AnalyteDataWidget::AnalyteDataWidget(QWidget *parent) :
 
   ui->qvlay_estimates->addWidget(m_estimatedParamsWidget);
 
-  ui->qtbv_fittedMobilities->setModel(&Gearbox::instance()->mobilitiesResultsModel());
-  ui->qtbv_fittedpKas->setModel(&Gearbox::instance()->pKaResultsModel());
+  ui->qtbv_fittedMobilities->setModel(&h_gbox.fittedMobilitiesModel());
+  ui->qtbv_fittedpKas->setModel(&h_gbox.fittedpKasModel());
 
   {
-    auto model = Gearbox::instance()->scalarFitResultsModel();
+    auto &model = h_gbox.scalarResultsModel();
 
     m_scalarFitResultsMapper = new QDataWidgetMapper{this};
-    m_scalarFitResultsMapper->setModel(model);
-    m_scalarFitResultsMapper->addMapping(ui->qle_rSquared, model->indexFromItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED));
+    m_scalarFitResultsMapper->setModel(&model);
+    m_scalarFitResultsMapper->addMapping(ui->qle_rSquared, model.indexFromItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED));
     m_scalarFitResultsMapper->toFirst();
   }
 
   connect(ui->qpb_resultsToClipboard, &QPushButton::clicked, this, &AnalyteDataWidget::onResultsToClipboard);
   connect(ui->qpb_curveToClipboard, &QPushButton::clicked,
-          []() { try {
-                   CurveToClipboardExporter::write();
-                 } catch (const CurveToClipboardExporter::Exception &ex) {
+          [this]() { try {
+                   gearbox::CurveToClipboardExporter::write(h_gbox);
+                 } catch (const gearbox::CurveToClipboardExporter::Exception &ex) {
                    QMessageBox mbox{QMessageBox::Critical, tr("Internal error"),
                                     QString{tr("Failed to copy curve to clipboard: %1")}.arg(ex.what())};
                    mbox.exec();
@@ -140,8 +143,6 @@ void AnalyteDataWidget::onResultsToClipboard()
   const QString ABS_ERR{tr("Abs. error")};
   const QString REL_ERR{tr("Rel. error")};
 
-  const auto gbox = Gearbox::instance();
-
   QString buf{};
   QTextStream str{&buf};
   str.setCodec("UTF-8");
@@ -152,25 +153,25 @@ void AnalyteDataWidget::onResultsToClipboard()
     str << "\n";
   };
 
-  auto write = [&str](const FitResultsModel &model) {
-    const auto &loc = DoubleToStringConvertor::locale();
+  auto write = [&str](const gearbox::FitResultsModel &model) {
+    const auto &loc = gearbox::DoubleToStringConvertor::locale();
 
     for (int row = 0; row < model.rowCount(); row++) {
       str << model.data(model.index(row, 0), Qt::UserRole + 1).toInt(nullptr) << SEP;
-      str << loc.toString(model.data(model.index(row, FitResultsModel::ID_VALUE), Qt::DisplayRole).toDouble(nullptr)) << SEP;
-      str << loc.toString(model.data(model.index(row, FitResultsModel::ID_ABS_ERR), Qt::DisplayRole).toDouble(nullptr)) << SEP;
-      str << loc.toString(model.data(model.index(row, FitResultsModel::ID_REL_ERR), Qt::DisplayRole).toDouble(nullptr)) << SEP;
+      str << loc.toString(model.data(model.index(row, gearbox::FitResultsModel::ID_VALUE), Qt::DisplayRole).toDouble(nullptr)) << SEP;
+      str << loc.toString(model.data(model.index(row, gearbox::FitResultsModel::ID_ABS_ERR), Qt::DisplayRole).toDouble(nullptr)) << SEP;
+      str << loc.toString(model.data(model.index(row, gearbox::FitResultsModel::ID_REL_ERR), Qt::DisplayRole).toDouble(nullptr)) << SEP;
       str << "\n";
     }
   };
 
   str << tr("--- Mobilities ---") << "\n";
   hdr({tr("Mobility"), ABS_ERR, REL_ERR});
-  write(gbox->mobilitiesResultsModel());
+  write(h_gbox.fittedMobilitiesModel());
 
   str << "\n" << tr("--- pKas ---") << "\n";
   hdr({tr("pKa"), ABS_ERR, REL_ERR});
-  write(gbox->pKaResultsModel());
+  write(h_gbox.fittedpKasModel());
 
   auto clip = QApplication::clipboard();
   if (clip != nullptr)
@@ -184,7 +185,7 @@ void AnalyteDataWidget::onScreenChanged()
 
 void AnalyteDataWidget::setEstimatesFromCurrent()
 {
-  const auto &analyte = Gearbox::instance()->analyteInputParameters();
+  const auto &analyte = h_gbox.analyteEstimates();
 
   std::map<int, std::pair<double, bool>> pKas{};
 

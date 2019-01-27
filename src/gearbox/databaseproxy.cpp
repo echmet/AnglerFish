@@ -7,6 +7,8 @@
 #include <QDir>
 #include <QString>
 
+namespace gearbox {
+
 #ifdef Q_OS_LINUX
 #ifdef PMNG_FLATPAK_BUILD
   const char *DatabaseProxy::DATABASE_PATH = "/app/share/PeakMasterNG/pmng_db.sql";
@@ -184,3 +186,5 @@ std::vector<DatabaseConstituent> DatabaseProxy::search(const std::string &name, 
 
   return doSearch(m_db, match, name);
 }
+
+} // namespace gearbox

@@ -50,13 +50,13 @@ void EditChargesWidgetEstimates::setCharges(std::map<int, std::pair<double, bool
 
 void EditChargesWidgetEstimates::setupChargesModel(QTableView *tbv)
 {
-  auto mustBePositiveAV = std::shared_ptr<AdditionalFloatingValidator>{new AdditionalFloatingValidator{[](const double d) { return d >= 0.0; }}};
+  auto mustBePositiveAV = std::shared_ptr<gearbox::AdditionalFloatingValidator>{new gearbox::AdditionalFloatingValidator{[](const double d) { return d >= 0.0; }}};
 
-  auto fltDelegate = new FloatingValueDelegate{this};
-  auto fltDelegatePos = new FloatingValueDelegate{this};
+  auto fltDelegate = new gearbox::FloatingValueDelegate{this};
+  auto fltDelegatePos = new gearbox::FloatingValueDelegate{this};
 
-  fltDelegatePos->setProperty(AdditionalFloatingValidator::PROPERTY_NAME,
-                              QVariant::fromValue<AdditionalFloatingValidatorVec>({ mustBePositiveAV }));
+  fltDelegatePos->setProperty(gearbox::AdditionalFloatingValidator::PROPERTY_NAME,
+                              QVariant::fromValue<gearbox::AdditionalFloatingValidatorVec>({ mustBePositiveAV }));
 
   m_chargesModel = new ConstituentChargesModelFixable{this};
 

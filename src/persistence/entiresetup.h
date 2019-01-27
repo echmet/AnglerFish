@@ -1,7 +1,7 @@
 #ifndef ENTIRESETUP_H
 #define ENTIRESETUP_H
 
-#include <gearbox/analyteinputparameters.h>
+#include <gearbox/analyteestimates.h>
 #include <gearbox/chemicalbuffersmodel.h>
 #include <QString>
 #include <tuple>
@@ -16,16 +16,16 @@ class EntireSetup {
 public:
   EntireSetup() = delete;
 
-  static std::tuple<std::vector<ChemicalBuffer>, AnalyteInputParameters> load(const QString &path);
-  static void save(QString path, const ChemicalBuffersModel &buffers, const AnalyteInputParameters &analyte);
+  static std::tuple<std::vector<gearbox::ChemicalBuffer>, gearbox::AnalyteEstimates> load(const QString &path, const gearbox::IonicEffectsModel &ionEffs);
+  static void save(QString path, const gearbox::ChemicalBuffersModel &buffers, const gearbox::AnalyteEstimates &analyte);
 
 private:
-  static AnalyteInputParameters::ParameterVec arrayToParamVec(const QJsonArray &array);
-  static AnalyteInputParameters deserializeAnalyte(const QJsonObject &obj);
-  static std::vector<ChemicalBuffer> deserializeBuffers(const QJsonArray &array);
-  static QJsonArray aParamVecToArray(const AnalyteInputParameters::ParameterVec &vec);
-  static QJsonObject serializeAnalyte(const AnalyteInputParameters &analyte);
-  static QJsonArray serializeBuffers(const ChemicalBuffersModel &buffers);
+  static gearbox::AnalyteEstimates::ParameterVec arrayToParamVec(const QJsonArray &array);
+  static gearbox::AnalyteEstimates deserializeAnalyte(const QJsonObject &obj);
+  static std::vector<gearbox::ChemicalBuffer> deserializeBuffers(const QJsonArray &array, const gearbox::IonicEffectsModel &ionEffs);
+  static QJsonArray aParamVecToArray(const gearbox::AnalyteEstimates::ParameterVec &vec);
+  static QJsonObject serializeAnalyte(const gearbox::AnalyteEstimates &analyte);
+  static QJsonArray serializeBuffers(const gearbox::ChemicalBuffersModel &buffers);
 
   static const QString ROOT_BUFFERS;
   static const QString ROOT_ANALYTE;

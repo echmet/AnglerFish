@@ -5,16 +5,20 @@
 #include <gdm/core/gdm.h>
 #include <calculators/caesinterface.h>
 
+namespace gearbox {
+
 static const double MIN_CONCENTRATION{1.0e-11};
 
-ChemicalBuffer::ChemicalBuffer() :
+ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel &ionEffs) :
+  h_ionEffs{ionEffs},
   m_gdmModel{new gdm::GDM{}},
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
   m_needsRecalculation{true}
 {
 }
 
-ChemicalBuffer::ChemicalBuffer(gdm::GDM *model) :
+ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel &ionEffs, gdm::GDM *model) :
+  h_ionEffs{ionEffs},
   m_gdmModel{model},
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
   m_needsRecalculation{true}
@@ -23,6 +27,7 @@ ChemicalBuffer::ChemicalBuffer(gdm::GDM *model) :
 }
 
 ChemicalBuffer::ChemicalBuffer(const ChemicalBuffer &other) :
+  h_ionEffs{other.h_ionEffs},
   m_gdmModel{new gdm::GDM{}},
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
   m_experimentalMobilities{other.experimentalMobilities()},
@@ -34,6 +39,7 @@ ChemicalBuffer::ChemicalBuffer(const ChemicalBuffer &other) :
 }
 
 ChemicalBuffer::ChemicalBuffer(ChemicalBuffer &&other) noexcept :
+  h_ionEffs{other.h_ionEffs},
   m_gdmModel{other.m_gdmModel},
   m_composition{other.m_composition},
   m_experimentalMobilities{std::move(other.experimentalMobilities())},
@@ -105,7 +111,7 @@ void ChemicalBuffer::recalculate()
   if (!m_needsRecalculation)
     return;
 
-  CAESInterface iface{*m_gdmModel};
+  CAESInterface iface{*m_gdmModel, h_ionEffs};
 
   try {
     auto props = iface.bufferProperties();
@@ -123,3 +129,5 @@ void ChemicalBuffer::setExperimentalMobilities(std::vector<double> mobilities)
 {
   m_experimentalMobilities = std::move(mobilities);
 }
+
+} // namespace gearbox

@@ -4,6 +4,10 @@
 
 #include <gdm/conversion/conversion.h>
 #include <gearbox/gearbox.h>
+#include <gearbox/chemicalbuffersmodel.h>
+#include <gearbox/ioniceffectsmodel.h>
+#include <gearbox/fitresultsmodel.h>
+#include <gearbox/mobilitycurvemodel.h>
 #include <echmetelmigparamsfitter.h>
 #include <algorithm>
 #include <limits>
@@ -45,6 +49,8 @@ using InSystemWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::InSystem,
 using FixerWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::ParametersFixer,
                                   decltype(&fixerReleaser)>;
 
+namespace calculators {
+
 inline
 std::tuple<QVector<QPointF>, QVector<QPointF>>
 expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
@@ -73,11 +79,12 @@ expectedAndResidual(const InSystemWrap &system, const FitResultsPtr &results)
 }
 
 inline
-void fixParameters(FixerWrap &fixer)
+void fixParameters(FixerWrap &fixer, gearbox::Gearbox &gbox)
 {
-  auto &params = Gearbox::instance()->analyteInputParameters();
+  auto &params = gbox.analyteEstimates();
 
-  auto work = [&fixer, &params](const AnalyteInputParameters::ParameterVec &vec, const ECHMET::ElmigParamsFitter::FixedParameterType fpt)
+  auto work = [&fixer, &params](const gearbox::AnalyteEstimates::ParameterVec &vec,
+                                const ECHMET::ElmigParamsFitter::FixedParameterType fpt)
   {
     int charge = params.chargeLow;
     for (const auto &val : vec) {
@@ -98,9 +105,9 @@ void fixParameters(FixerWrap &fixer)
 }
 
 inline
-void makeAnalyte(InSystemWrap &inSystem)
+void makeAnalyte(InSystemWrap &inSystem, gearbox::Gearbox &gbox)
 {
-  auto &params = Gearbox::instance()->analyteInputParameters();
+  auto &params = gbox.analyteEstimates();
 
   InConstituentPtr analyte{new ECHMET::SysComp::InConstituent, inConstituentReleaser};
   analyte->name = nullptr;
@@ -156,23 +163,21 @@ makeBuffer(const gdm::GDM *model)
 }
 
 inline
-InSystemWrap prepare()
+InSystemWrap prepare(gearbox::Gearbox &gbox)
 {
-  auto gbox = Gearbox::instance();
-
   InSystemWrap inSystem{new ECHMET::ElmigParamsFitter::InSystem{}, inSystemReleaser};
   inSystem->buffers = nullptr;
 
-  makeAnalyte(inSystem);
+  makeAnalyte(inSystem, gbox);
 
   auto inBufVec = InBufferVecWrap{ECHMET::ElmigParamsFitter::createInBufferVec(), ECHMET::ElmigParamsFitter::releaseInBufferVec};
   if (inBufVec == nullptr) {
-   throw EMPFitterInterface::Exception{trstr("Insufficient memory")};
+    throw EMPFitterInterface::Exception{trstr("Insufficient memory")};
   }
 
   ECHMET::RetCode tRet{};
 
-  for (const auto &b : gbox->chemicalBuffersModel()) {
+  for (const auto &b : gbox.chemicalBuffersModel()) {
     try {
       for (const auto &uExp : b.experimentalMobilities()) {
         ECHMET::ElmigParamsFitter::InBuffer inBuf{nullptr, nullptr, 0.0};
@@ -196,9 +201,9 @@ InSystemWrap prepare()
   }
 
   ECHMET::NonidealityCorrections corrs = ECHMET::defaultNonidealityCorrections();
-  if (gbox->ionicEffectsModel().debyeHuckel())
+  if (gbox.ionicEffectsModel().debyeHuckel())
     ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
-  if (gbox->ionicEffectsModel().onsagerFuoss())
+  if (gbox.ionicEffectsModel().onsagerFuoss())
     ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
 
   inSystem->buffers = inBufVec.release();
@@ -208,28 +213,28 @@ InSystemWrap prepare()
 }
 
 inline
-void setResults(const InSystemWrap &system, const FitResultsPtr &results)
+void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbox::Gearbox &gbox)
 {
   static const auto relStDev = [](auto v, auto stDev) {
     return (std::abs(stDev / v) * 100.0);
   };
 
-  static const auto set = [](const auto &r, QVector<FitResultsModel::Result> &data) {
-    data.push_back(FitResultsModel::Result{r.charge, r.value, r.stDev, relStDev(r.value, r.stDev)});
+  static const auto set = [](const auto &r, QVector<gearbox::FitResultsModel::Result> &data) {
+    data.push_back(gearbox::FitResultsModel::Result{r.charge, r.value, r.stDev, relStDev(r.value, r.stDev)});
   };
 
-  static const auto walk = [](const auto v, FitResultsModel &model) {
-    QVector<FitResultsModel::Result> vec{};
+  static const auto walk = [](const auto v, gearbox::FitResultsModel &model) {
+    QVector<gearbox::FitResultsModel::Result> vec{};
     for (size_t idx = 0; idx < v->size(); idx++)
       set(v->at(idx), vec);
 
     model.setNewData(std::move(vec));
   };
 
-  walk(results->mobilities, Gearbox::instance()->mobilitiesResultsModel());
-  walk(results->pKas, Gearbox::instance()->pKaResultsModel());
+  walk(results->mobilities, gbox.fittedMobilitiesModel());
+  walk(results->pKas, gbox.fittedpKasModel());
 
-  auto &model = Gearbox::instance()->mobilityCurveModel();
+  auto &model = gbox.mobilityCurveModel();
   const auto t = expectedAndResidual(system, results);
 
   auto fitted = std::move(std::get<0>(t));
@@ -240,18 +245,22 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results)
 
   model.setFitted(std::move(fitted));
   model.setResiduals(std::move(residuals));
-  Gearbox::instance()->scalarFitResultsModel()->setItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED,
-                                                        results->rSquared,
-                                                        Qt::EditRole);
+  gbox.scalarResultsModel().setItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED,
+                                    results->rSquared, Qt::EditRole);
+}
+
+EMPFitterInterface::EMPFitterInterface(gearbox::Gearbox &gbox) :
+  h_gbox{gbox}
+{
 }
 
 void EMPFitterInterface::fit()
 {
   /* Panzer vor! */
-  auto system = prepare();
+  auto system = prepare(h_gbox);
 
   auto fixer = FixerWrap{ECHMET::ElmigParamsFitter::createParametersFixer(), fixerReleaser};
-  fixParameters(fixer);
+  fixParameters(fixer, h_gbox);
 
   auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr, 0.0}, resultsReleaser};
   auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), *results);
@@ -260,5 +269,7 @@ void EMPFitterInterface::fit()
     throw Exception{err.toStdString()};
   }
 
-  setResults(system, results);
+  setResults(system, results, h_gbox);
 }
+
+} // namespace calculators

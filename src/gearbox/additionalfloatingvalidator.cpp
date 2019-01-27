@@ -1,5 +1,7 @@
 #include "additionalfloatingvalidator.h"
 
+namespace gearbox {
+
 const char *AdditionalFloatingValidator::PROPERTY_NAME{"ADDITIONAL_VALIDATORS"};
 
 AdditionalFloatingValidator::InvalidValidatorException::InvalidValidatorException() :
@@ -56,3 +58,5 @@ bool AdditionalFloatingValidator::validate(const double dv)
 
   return m_func(dv);
 }
+
+} // namespace gearbox

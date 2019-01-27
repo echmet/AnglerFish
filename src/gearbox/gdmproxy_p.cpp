@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+namespace gearbox {
+
 void GDMProxy_p::eraseComplexations(gdm::GDM::const_iterator ctuentIt, gdm::GDM &gdm)
 {
   for (auto it = gdm.cbegin(); it != gdm.cend(); it++) {
@@ -26,3 +28,5 @@ bool GDMProxy_p::typeChangeOk(const gdm::Constituent &newCtuent, const gdm::Cons
     return false;
   return true;
 }
+
+} // namespace gearbox

@@ -15,9 +15,9 @@
 
 namespace persistence {
 
-AnalyteInputParameters::ParameterVec EntireSetup::arrayToParamVec(const QJsonArray &array)
+gearbox::AnalyteEstimates::ParameterVec EntireSetup::arrayToParamVec(const QJsonArray &array)
 {
-  AnalyteInputParameters::ParameterVec vec{};
+  gearbox::AnalyteEstimates::ParameterVec vec{};
 
   for (const auto &item : array) {
     if (!item.isObject())
@@ -36,7 +36,7 @@ AnalyteInputParameters::ParameterVec EntireSetup::arrayToParamVec(const QJsonArr
   return vec;
 }
 
-AnalyteInputParameters EntireSetup::deserializeAnalyte(const QJsonObject &obj)
+gearbox::AnalyteEstimates EntireSetup::deserializeAnalyte(const QJsonObject &obj)
 {
   DeserializeCommon::checkIfContainsInt(ANAL_CHARGE_LOW, obj);
   const int chargeLow = obj[ANAL_CHARGE_LOW].toInt();
@@ -60,9 +60,9 @@ AnalyteInputParameters EntireSetup::deserializeAnalyte(const QJsonObject &obj)
   return {chargeLow, chargeHigh, std::move(mobs), std::move(pKas)};
 }
 
-std::vector<ChemicalBuffer> EntireSetup::deserializeBuffers(const QJsonArray &array)
+std::vector<gearbox::ChemicalBuffer> EntireSetup::deserializeBuffers(const QJsonArray &array, const gearbox::IonicEffectsModel &ionEffs)
 {
-  std::vector<ChemicalBuffer> buffers{};
+  std::vector<gearbox::ChemicalBuffer> buffers{};
 
   for (const auto &item : array) {
     if (!item.isObject())
@@ -89,7 +89,7 @@ std::vector<ChemicalBuffer> EntireSetup::deserializeBuffers(const QJsonArray &ar
       expMobs.emplace_back(d.toDouble());
     }
 
-    ChemicalBuffer buf{gdmModel.release()};
+    gearbox::ChemicalBuffer buf{ionEffs, gdmModel.release()};
     buf.setExperimentalMobilities(std::move(expMobs));
 
     buffers.emplace_back(std::move(buf));
@@ -98,7 +98,8 @@ std::vector<ChemicalBuffer> EntireSetup::deserializeBuffers(const QJsonArray &ar
   return buffers;
 }
 
-std::tuple<std::vector<ChemicalBuffer>, AnalyteInputParameters> EntireSetup::load(const QString &path)
+std::tuple<std::vector<gearbox::ChemicalBuffer>, gearbox::AnalyteEstimates> EntireSetup::load(const QString &path,
+                                                                                              const gearbox::IonicEffectsModel &ionEffs)
 {
   QFile fh{path};
 
@@ -115,7 +116,7 @@ std::tuple<std::vector<ChemicalBuffer>, AnalyteInputParameters> EntireSetup::loa
     throw Exception{trstr("Bad root object")};
 
   DeserializeCommon::checkIfContains(ROOT_BUFFERS, root, QJsonValue::Array);
-  auto buffers = deserializeBuffers(root[ROOT_BUFFERS].toArray());
+  auto buffers = deserializeBuffers(root[ROOT_BUFFERS].toArray(), ionEffs);
 
   DeserializeCommon::checkIfContains(ROOT_ANALYTE, root, QJsonValue::Object);
   auto analyte = deserializeAnalyte(root[ROOT_ANALYTE].toObject());

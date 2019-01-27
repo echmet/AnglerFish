@@ -4,6 +4,8 @@
 #include <QLocale>
 #include <QVector>
 
+namespace gearbox {
+
 class INumberFormatChangeable;
 
 class DoubleToStringConvertor : public QObject
@@ -37,5 +39,7 @@ private:
 
   static DoubleToStringConvertor *s_me;
 };
+
+} // namespace gearbox
 
 #endif // DOUBLETOSTRINGCONVERTOR_H

@@ -3,17 +3,25 @@
 
 #include <QObject>
 
+namespace gearbox {
+  class Gearbox;
+
 class CalcWorker : public QObject {
   Q_OBJECT
 public:
-  CalcWorker() = default;
+  explicit CalcWorker(gearbox::Gearbox &gbox);
   void process();
 
   bool failed;
   QString error;
 
+private:
+  gearbox::Gearbox &h_gbox;
+
 signals:
   void finished();
 };
+
+} // namespace gearbox
 
 #endif // CALCWORKER_H

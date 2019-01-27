@@ -101,7 +101,7 @@ void CopiableItemsTableView::selectionToClipboard(const QModelIndexList &indexes
     bool ok;
     var.toDouble(&ok);
     if (ok)
-      return DoubleToStringConvertor::locale().toString(var.toDouble(nullptr));
+      return gearbox::DoubleToStringConvertor::locale().toString(var.toDouble(nullptr));
     return var.toString();
   };
 

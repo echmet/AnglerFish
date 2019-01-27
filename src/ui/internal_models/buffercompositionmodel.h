@@ -3,12 +3,14 @@
 
 #include <QAbstractTableModel>
 
-class GDMProxy;
+namespace gearbox {
+  class GDMProxy;
+} // namespace gearbox
 
 class BufferCompositionModel : public QAbstractTableModel {
   Q_OBJECT
 public:
-  BufferCompositionModel(GDMProxy &proxy, QObject *parent = nullptr);
+  BufferCompositionModel(gearbox::GDMProxy &proxy, QObject *parent = nullptr);
 
   void add(QString name);
   virtual int columnCount(const QModelIndex &parent = {}) const override;
@@ -21,7 +23,7 @@ public:
   void updateName(const QString &oldName, const QString &newName);
 
 private:
-  GDMProxy &h_proxy;
+  gearbox::GDMProxy &h_proxy;
   QVector<QString> m_names;
 };
 

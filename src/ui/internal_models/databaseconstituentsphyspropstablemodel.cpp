@@ -60,7 +60,7 @@ int DatabaseConstituentsPhysPropsTableModel::columnCount(const QModelIndex &pare
   return 2 * m_span - 1;
 }
 
-const DatabaseConstituent & DatabaseConstituentsPhysPropsTableModel::constituentAt(const int idx) const
+const gearbox::DatabaseConstituent & DatabaseConstituentsPhysPropsTableModel::constituentAt(const int idx) const
 {
   const size_t uidx = static_cast<size_t>(idx);
   if (uidx >= m_constituents.size())
@@ -113,7 +113,7 @@ QVariant DatabaseConstituentsPhysPropsTableModel::data(const QModelIndex &index,
   }
 }
 
-void DatabaseConstituentsPhysPropsTableModel::refreshData(std::vector<DatabaseConstituent> &&constituents) noexcept
+void DatabaseConstituentsPhysPropsTableModel::refreshData(std::vector<gearbox::DatabaseConstituent> &&constituents) noexcept
 {
   beginResetModel();
 

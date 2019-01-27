@@ -4,9 +4,14 @@
 #include <QFileDialog>
 #include <QWidget>
 
+namespace gearbox {
+  class Gearbox;
+  class ChemicalBuffer;
+} // namespace gearbox
+
 namespace Ui {
-class BuffersInputWidget;
-}
+  class BuffersInputWidget;
+} // namespace Ui
 
 class BufferWidget;
 class ChemicalBuffer;
@@ -15,13 +20,14 @@ class QVBoxLayout;
 class BuffersInputWidget : public QWidget {
   Q_OBJECT
 public:
-  explicit BuffersInputWidget(QWidget *parent = nullptr);
+  explicit BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent = nullptr);
   ~BuffersInputWidget();
 
 private:
   void setupIcons();
 
   Ui::BuffersInputWidget *ui;
+  gearbox::Gearbox &h_gbox;
 
   QWidget *m_scrollWidget;
   QVBoxLayout *m_scrollLayout;
@@ -37,14 +43,14 @@ private slots:
 
 public slots:
   void onBeginBuffersReset();
-  void onBufferAdded(ChemicalBuffer &buffer);
+  void onBufferAdded(gearbox::ChemicalBuffer &buffer);
   void onEndBuffersReset();
   void onRemoveBuffer(BufferWidget *w);
 
 signals:
   void addBuffer();
-  void addBuffer(const ChemicalBuffer &buffer);
-  void removeBuffer(const ChemicalBuffer &buffer);
+  void addBuffer(const gearbox::ChemicalBuffer &buffer);
+  void removeBuffer(const gearbox::ChemicalBuffer &buffer);
   void buffersChanged();
 };
 

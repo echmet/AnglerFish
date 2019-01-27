@@ -3,7 +3,9 @@
 
 #include "editchargeswidget.h"
 
-class FloatingValueDelegate;
+namespace gearbox {
+  class FloatingValueDelegate;
+} // namespace gearbox
 
 class EditChargesWidgetSimple : public EditChargesWidget {
   Q_OBJECT
@@ -14,7 +16,7 @@ protected:
   virtual void setupChargesModel(QTableView *tbv) override;
 
 private:
-  FloatingValueDelegate *m_fltDelegate;
+  gearbox::FloatingValueDelegate *m_fltDelegate;
 };
 
 #endif // EDITCHARGESWIDGETSIMPLE_H

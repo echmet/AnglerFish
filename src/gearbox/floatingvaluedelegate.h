@@ -4,6 +4,8 @@
 #include <QLocale>
 #include <QItemDelegate>
 
+namespace gearbox {
+
 class FloatingValueDelegate : public QItemDelegate {
   Q_OBJECT
 public:
@@ -22,5 +24,7 @@ signals:
   void editorCommit();
 
 };
+
+} // namespace gearbox
 
 #endif // FLOATINGVALUEDELEGATE_H

@@ -5,6 +5,8 @@
 
 #include <cassert>
 
+namespace gearbox {
+
 GDMProxyImpl::GDMProxyImpl(gdm::GDM &model, const double minimumConcentration) :
   GDMProxy{minimumConcentration},
   h_model{model}
@@ -123,3 +125,5 @@ bool GDMProxyImpl::update(const std::string &name, const gdm::Constituent &ctuen
 
   return std::get<1>(ret);
 }
+
+} // namespace gearbox

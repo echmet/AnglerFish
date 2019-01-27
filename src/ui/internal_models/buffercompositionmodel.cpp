@@ -3,7 +3,7 @@
 #include <util_lowlevel.h>
 #include <gearbox/gdmproxy.h>
 
-BufferCompositionModel::BufferCompositionModel(GDMProxy &proxy, QObject *parent) :
+BufferCompositionModel::BufferCompositionModel(gearbox::GDMProxy &proxy, QObject *parent) :
   QAbstractTableModel{parent},
   h_proxy{proxy}
 {

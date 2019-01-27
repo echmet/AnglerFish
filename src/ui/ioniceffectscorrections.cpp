@@ -1,24 +1,23 @@
 #include "ioniceffectscorrections.h"
 #include "ui_ioniceffectscorrections.h"
 
-#include <gearbox/gearbox.h>
+#include <gearbox/ioniceffectsmodel.h>
 
-IonicEffectsCorrections::IonicEffectsCorrections(QWidget *parent) :
-  QDialog(parent),
-  ui(new Ui::IonicEffectsCorrections)
+namespace gearbox {
+
+IonicEffectsCorrections::IonicEffectsCorrections(gearbox::IonicEffectsModel &ionEffs, QWidget *parent) :
+  QDialog{parent},
+  ui{new Ui::IonicEffectsCorrections},
+  h_ionEffs{ionEffs}
 {
   ui->setupUi(this);
 
-  const auto &model = Gearbox::instance()->ionicEffectsModel();
-
-  ui->qcb_debyeHuckel->setChecked(model.debyeHuckel());
-  ui->qcb_onsagerFuoss->setChecked(model.onsagerFuoss());
+  ui->qcb_debyeHuckel->setChecked(h_ionEffs.debyeHuckel());
+  ui->qcb_onsagerFuoss->setChecked(h_ionEffs.onsagerFuoss());
 
   connect(ui->buttonBox, &QDialogButtonBox::accepted, [this]() {
-    auto &_model = Gearbox::instance()->ionicEffectsModel();
-
-    _model.setDebyeHuckel(ui->qcb_debyeHuckel->isChecked());
-    _model.setOnsagerFuoss(ui->qcb_onsagerFuoss->isChecked());
+    h_ionEffs.setDebyeHuckel(ui->qcb_debyeHuckel->isChecked());
+    h_ionEffs.setOnsagerFuoss(ui->qcb_onsagerFuoss->isChecked());
   });
 }
 
@@ -26,3 +25,5 @@ IonicEffectsCorrections::~IonicEffectsCorrections()
 {
   delete ui;
 }
+
+} // namespace gearbox

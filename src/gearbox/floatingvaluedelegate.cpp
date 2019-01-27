@@ -4,7 +4,7 @@
 #include <QLineEdit>
 #include <QEvent>
 
-#include <QDebug>
+namespace gearbox {
 
 FloatingValueDelegate::FloatingValueDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -110,3 +110,5 @@ void FloatingValueDelegate::onTextChanged(const QString &)
     lineEdit->setPalette(palette);
   }
 }
+
+} // namespace gearbox

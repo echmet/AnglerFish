@@ -11,6 +11,8 @@
 #include <globals.h>
 #include <softwareupdater.h>
 #include <gearbox/gearbox.h>
+#include <gearbox/chemicalbuffersmodel.h>
+#include <gearbox/mobilitycurvemodel.h>
 #include <gearbox/calcworker.h>
 #include <persistence/persistence.h>
 #include <QCloseEvent>
@@ -21,9 +23,11 @@
 #include <QThread>
 #include <QVBoxLayout>
 
-AFMainWindow::AFMainWindow(QWidget *parent) :
-  QMainWindow(parent),
-  ui(new Ui::AFMainWindow),
+AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
+                           QWidget *parent) :
+  QMainWindow{parent},
+  ui{new Ui::AFMainWindow},
+  h_gbox{gbox},
   m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)}
 {
   ui->setupUi(this);
@@ -36,8 +40,8 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   m_fitPlotWidget = new FitPlotWidget{};
   m_fitPlotWidget->setMinimumHeight(150);
 
-  m_bufInpWidget = new BuffersInputWidget{};
-  m_analDataWidget = new AnalyteDataWidget{};
+  m_bufInpWidget = new BuffersInputWidget{h_gbox};
+  m_analDataWidget = new AnalyteDataWidget{h_gbox};
 
   m_checkForUpdateDlg = new CheckForUpdateDialog{this};
 
@@ -77,25 +81,29 @@ AFMainWindow::AFMainWindow(QWidget *parent) :
   connect(ui->actionExit, &QAction::triggered, this, &AFMainWindow::close);
   connect(m_bufInpWidget, &BuffersInputWidget::buffersChanged, this, &AFMainWindow::onBuffersChanged);
   connect(ui->actionAbout, &QAction::triggered, this, &AFMainWindow::onAboutTriggered);
-  connect(ui->actionIonic_effects_corrections, &QAction::triggered, []() {
-    IonicEffectsCorrections dlg{};
+  connect(ui->actionIonic_effects_corrections, &QAction::triggered, [this]() {
+    gearbox::IonicEffectsCorrections dlg{h_gbox.ionicEffectsModel()};
     dlg.exec();
   });
 
-  /* Connect to gearbox */
-  auto gbox = Gearbox::instance();
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
-          [&]() { Gearbox::instance()->chemicalBuffersModel().add({}); });
-  connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)(const ChemicalBuffer &)>(&BuffersInputWidget::addBuffer),
-          [&](const ChemicalBuffer &buf) { Gearbox::instance()->chemicalBuffersModel().add(buf); });
+          [&]() { h_gbox.chemicalBuffersModel().add(h_gbox.ionicEffectsModel()); });
+  connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)(const gearbox::ChemicalBuffer &)>(&BuffersInputWidget::addBuffer),
+          [&](const gearbox::ChemicalBuffer &buf) { h_gbox.chemicalBuffersModel().add(buf); });
   connect(m_bufInpWidget, &BuffersInputWidget::removeBuffer,
-          [](const ChemicalBuffer &buf) { Gearbox::instance()->chemicalBuffersModel().remove(buf); });
-  connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::bufferAdded, m_bufInpWidget, &BuffersInputWidget::onBufferAdded);
-  connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::beginModelReset, m_bufInpWidget, &BuffersInputWidget::onBeginBuffersReset);
-  connect(&gbox->chemicalBuffersModel(), &ChemicalBuffersModel::endModelReset, m_bufInpWidget, &BuffersInputWidget::onEndBuffersReset);
-  connect(&gbox->mobilityCurveModel(), &MobilityCurveModel::experimentalChanged, this, &AFMainWindow::onCurveExperimentalChanged);
-  connect(&gbox->mobilityCurveModel(), &MobilityCurveModel::fittedChanged, this, &AFMainWindow::onCurveFittedChanged);
-  connect(&gbox->mobilityCurveModel(), &MobilityCurveModel::residualsChanged, this, &AFMainWindow::onCurveResidualsChanged);
+          [this](const gearbox::ChemicalBuffer &buf) { h_gbox.chemicalBuffersModel().remove(buf); });
+  connect(&h_gbox.chemicalBuffersModel(), &gearbox::ChemicalBuffersModel::bufferAdded,
+          m_bufInpWidget, &BuffersInputWidget::onBufferAdded);
+  connect(&h_gbox.chemicalBuffersModel(), &gearbox::ChemicalBuffersModel::beginModelReset,
+          m_bufInpWidget, &BuffersInputWidget::onBeginBuffersReset);
+  connect(&h_gbox.chemicalBuffersModel(), &gearbox::ChemicalBuffersModel::endModelReset,
+          m_bufInpWidget, &BuffersInputWidget::onEndBuffersReset);
+  connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::experimentalChanged,
+          this, &AFMainWindow::onCurveExperimentalChanged);
+  connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::fittedChanged,
+          this, &AFMainWindow::onCurveFittedChanged);
+  connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::residualsChanged,
+          this, &AFMainWindow::onCurveResidualsChanged);
 }
 
 AFMainWindow::~AFMainWindow()
@@ -120,11 +128,7 @@ void AFMainWindow::connectUpdater(SoftwareUpdater *updater)
 
 void AFMainWindow::invalidateResults()
 {
-  auto gbox = Gearbox::instance();
-
-  gbox->mobilitiesResultsModel().setNewData({});
-  gbox->pKaResultsModel().setNewData({});
-  gbox->mobilityCurveModel().invalidate();
+  h_gbox.invalidateResults();
 }
 
 void AFMainWindow::onAboutTriggered()
@@ -145,13 +149,13 @@ void AFMainWindow::onCalculate()
   setEstimates();
 
   OperationInProgressDialog inProgDlg{"Fit in progress..."};
-  CalcWorker worker{};
+  gearbox::CalcWorker worker{h_gbox};
   QThread thread{};
 
   worker.moveToThread(&thread);
-  connect(&thread, &QThread::started, &worker, &CalcWorker::process);
-  connect(&worker, &CalcWorker::finished, &thread, &QThread::quit);
-  connect(&worker, &CalcWorker::finished, &inProgDlg, &OperationInProgressDialog::onOperationCompleted);
+  connect(&thread, &QThread::started, &worker, &gearbox::CalcWorker::process);
+  connect(&worker, &gearbox::CalcWorker::finished, &thread, &QThread::quit);
+  connect(&worker, &gearbox::CalcWorker::finished, &inProgDlg, &OperationInProgressDialog::onOperationCompleted);
 
   thread.start();
   inProgDlg.exec();
@@ -173,18 +177,19 @@ void AFMainWindow::onCheckForUpdate()
 
 void AFMainWindow::onCurveExperimentalChanged()
 {
-  m_fitPlotWidget->setExperimentalData(Gearbox::instance()->mobilityCurveModel().experimental());
+  auto data = h_gbox.mobilityCurveModel().experimental();
+  m_fitPlotWidget->setExperimentalData(std::move(data));
 }
 
 void AFMainWindow::onCurveFittedChanged()
 {
-  auto data = MobilityCurveModel::compact(Gearbox::instance()->mobilityCurveModel().fitted());
+  auto data = gearbox::MobilityCurveModel::compact(h_gbox.mobilityCurveModel().fitted());
   m_fitPlotWidget->setFittedData(std::move(data));
 }
 
 void AFMainWindow::onCurveResidualsChanged()
 {
-  auto data = MobilityCurveModel::compact(Gearbox::instance()->mobilityCurveModel().residuals());
+  auto data = gearbox::MobilityCurveModel::compact(h_gbox.mobilityCurveModel().residuals());
   m_fitPlotWidget->setResidualsData(std::move(data));
 }
 
@@ -201,7 +206,7 @@ void AFMainWindow::onLoad()
   if (dlg.exec() == QDialog::Accepted) {
     if (!dlg.selectedFiles().empty()) {
       try {
-        persistence::loadEntireSetup(dlg.selectedFiles().first());
+        persistence::loadEntireSetup(dlg.selectedFiles().first(), h_gbox);
         m_analDataWidget->setEstimatesFromCurrent();
 
         lastPath = dlg.selectedFiles().first();
@@ -224,9 +229,8 @@ void AFMainWindow::onNew()
   if (mbox.exec() != QMessageBox::Yes)
     return;
 
-  auto gbox = Gearbox::instance();
-  gbox->chemicalBuffersModel().clear();
-  gbox->clearAnalyteInputParameters();
+  h_gbox.chemicalBuffersModel().clear();
+  h_gbox.clearAnalyteEstimates();
   m_analDataWidget->setEstimatesFromCurrent();
 }
 
@@ -240,13 +244,11 @@ void AFMainWindow::onSave()
   if (m_saveDlg.exec() == QDialog::Accepted) {
     if (!m_saveDlg.selectedFiles().empty()) {
       try {
-        const auto gbox = Gearbox::instance();
-
         setEstimates();
 
         persistence::saveEntireSetup(m_saveDlg.selectedFiles().first(),
-                                     gbox->chemicalBuffersModel(),
-                                     gbox->analyteInputParameters());
+                                     h_gbox.chemicalBuffersModel(),
+                                     h_gbox.analyteEstimates());
 
         lastPath = m_saveDlg.selectedFiles().first();
       } catch (const persistence::Exception &ex) {
@@ -262,16 +264,16 @@ void AFMainWindow::setEstimates()
   auto mobs = m_analDataWidget->estimatedMobilities();
   auto pKas = m_analDataWidget->estimatedpKas();
 
-  AnalyteInputParameters::ParameterVec aMobs{};
-  AnalyteInputParameters::ParameterVec apKas{};
+  gearbox::AnalyteEstimates::ParameterVec aMobs{};
+  gearbox::AnalyteEstimates::ParameterVec apKas{};
 
   for (const auto &p : mobs)
     aMobs.emplace_back(p.first, p.second);
   for (const auto &p :pKas)
     apKas.emplace_back(p.first, p.second);
 
-  Gearbox::instance()->setAnalyteInputParameters(m_analDataWidget->chargeLow(), m_analDataWidget->chargeHigh(),
-                                                 std::move(aMobs), std::move(apKas));
+  h_gbox.setAnalyteEstimates(m_analDataWidget->chargeLow(), m_analDataWidget->chargeHigh(),
+                             std::move(aMobs), std::move(apKas));
 }
 
 void AFMainWindow::setupIcons()
@@ -309,8 +311,7 @@ void AFMainWindow::setupIcons()
 
 void AFMainWindow::updatePlotExperimental()
 {
-  auto gbox = Gearbox::instance();
-  auto &bufsModel = gbox->chemicalBuffersModel();
+  auto &bufsModel = h_gbox.chemicalBuffersModel();
 
   QVector<QPointF> data{};
   for (const auto &buf : bufsModel) {
@@ -321,5 +322,5 @@ void AFMainWindow::updatePlotExperimental()
       data.push_back({buf.pH(), uExp});
   }
 
-  gbox->mobilityCurveModel().setExperimental(std::move(data));
+  h_gbox.mobilityCurveModel().setExperimental(std::move(data));
 }

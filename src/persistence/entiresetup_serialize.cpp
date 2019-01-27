@@ -11,7 +11,7 @@
 
 namespace persistence {
 
-QJsonArray EntireSetup::aParamVecToArray(const AnalyteInputParameters::ParameterVec &vec)
+QJsonArray EntireSetup::aParamVecToArray(const gearbox::AnalyteEstimates::ParameterVec &vec)
 {
   QJsonArray arr{};
 
@@ -27,7 +27,7 @@ QJsonArray EntireSetup::aParamVecToArray(const AnalyteInputParameters::Parameter
   return arr;
 }
 
-QJsonObject EntireSetup::serializeAnalyte(const AnalyteInputParameters &analyte)
+QJsonObject EntireSetup::serializeAnalyte(const gearbox::AnalyteEstimates &analyte)
 {
   QJsonObject serAnal{};
 
@@ -40,7 +40,7 @@ QJsonObject EntireSetup::serializeAnalyte(const AnalyteInputParameters &analyte)
   return serAnal;
 }
 
-QJsonArray EntireSetup::serializeBuffers(const ChemicalBuffersModel &buffers)
+QJsonArray EntireSetup::serializeBuffers(const gearbox::ChemicalBuffersModel &buffers)
 {
   QJsonArray serArr{};
 
@@ -63,7 +63,8 @@ QJsonArray EntireSetup::serializeBuffers(const ChemicalBuffersModel &buffers)
   return serArr;
 }
 
-void EntireSetup::save(QString path, const ChemicalBuffersModel &buffers, const AnalyteInputParameters &analyte)
+void EntireSetup::save(QString path, const gearbox::ChemicalBuffersModel &buffers,
+                       const gearbox::AnalyteEstimates &analyte)
 {
   if (!path.endsWith(".json", Qt::CaseInsensitive))
     path.append(".json");

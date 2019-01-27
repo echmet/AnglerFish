@@ -1,106 +1,84 @@
 #include "gearbox.h"
 
-#include <cassert>
+#include "analyteestimates.h"
+#include "gearboxprivate.h"
 
-std::unique_ptr<Gearbox> Gearbox::s_me{nullptr};
-
-void Gearbox::initialize()
-{
-  s_me = std::unique_ptr<Gearbox>(new Gearbox{});
-}
-
-Gearbox * Gearbox::instance()
-{
-  assert(s_me != nullptr);
-
-  return s_me.get();
-}
+namespace gearbox {
 
 Gearbox::Gearbox() :
-  m_analInputParams{0, 0, {}, {}},
-  m_mobilitiesResultsModel{"Mobility"},
-  m_pKaResultsModel{"pKa"},
-  m_scalFitResultsModel{nullptr}
+  m_gboxPriv{new GearboxPrivate{}}
 {
-  m_scalFitResultsData.resize(1);
-  m_scalFitResultsModel.setUnderlyingData(&m_scalFitResultsData);
 }
 
-const AnalyteInputParameters & Gearbox::analyteInputParameters() const noexcept
+Gearbox::~Gearbox()
 {
-  return m_analInputParams;
+  delete m_gboxPriv;
 }
 
-void Gearbox::clearAnalyteInputParameters()
+const AnalyteEstimates & Gearbox::analyteEstimates() const
 {
-  m_analInputParams = AnalyteInputParameters(0, 0, {{0, false}}, {});
+  return m_gboxPriv->m_analyteEstimates;
 }
 
-ChemicalBuffersModel & Gearbox::chemicalBuffersModel() noexcept
+void Gearbox::clearAnalyteEstimates()
 {
-  return m_chemBufsModel;
+  m_gboxPriv->m_analyteEstimates = AnalyteEstimates{};
 }
 
-DatabaseProxy & Gearbox::databaseProxy() noexcept
+ChemicalBuffersModel & Gearbox::chemicalBuffersModel() const
 {
-  return m_databaseProxy;
+  return m_gboxPriv->m_chemBufsModel;
+}
+
+DatabaseProxy & Gearbox::databaseProxy() const
+{
+  return m_gboxPriv->m_databaseProxy;
+}
+
+FitResultsModel & Gearbox::fittedMobilitiesModel() const
+{
+  return m_gboxPriv->m_fittedMobilities;
+}
+
+FitResultsModel & Gearbox::fittedpKasModel() const
+{
+  return m_gboxPriv->m_fittedpKas;
 }
 
 void Gearbox::invalidateResults()
 {
-  m_mobilitiesResultsModel.setNewData({});
-  m_pKaResultsModel.setNewData({});
-  m_mobCurveModel.invalidate();
+  m_gboxPriv->m_fittedpKas.setNewData({});
+  m_gboxPriv->m_fittedMobilities.setNewData({});
+  m_gboxPriv->m_mobilityCurveModel.invalidate();
 }
 
 IonicEffectsModel & Gearbox::ionicEffectsModel()
 {
-  return m_ionEffsModel;
+  return m_gboxPriv->m_ionEffsModel;
 }
 
-MobilityCurveModel & Gearbox::mobilityCurveModel()
+MobilityCurveModel & Gearbox::mobilityCurveModel() const
 {
-  return m_mobCurveModel;
+  return m_gboxPriv->m_mobilityCurveModel;
 }
 
-const MobilityCurveModel & Gearbox::mobilityCurveModel() const
+ScalarFitResultsMapping::MapperModel & Gearbox::scalarResultsModel() const
 {
-  return m_mobCurveModel;
+  return m_gboxPriv->m_scalFRMapping;
 }
 
-FitResultsModel & Gearbox::mobilitiesResultsModel()
+void Gearbox::setAnalyteEstimates(const int chargeLow, const int chargeHigh,
+                                          AnalyteEstimates::ParameterVec mobilities, AnalyteEstimates::ParameterVec pKas)
 {
-  return m_mobilitiesResultsModel;
+  m_gboxPriv->m_analyteEstimates = AnalyteEstimates{chargeLow,
+                                                   chargeHigh,
+                                                   std::move(mobilities),
+                                                   std::move(pKas)};
 }
 
-const FitResultsModel & Gearbox::mobilitiesResultsModel() const
+void Gearbox::setAnalyteEstimates(AnalyteEstimates estimates)
 {
-  return m_mobilitiesResultsModel;
+  m_gboxPriv->m_analyteEstimates = std::move(estimates);
 }
 
-FitResultsModel & Gearbox::pKaResultsModel()
-{
-  return m_pKaResultsModel;
-}
-
-const FitResultsModel & Gearbox::pKaResultsModel() const
-{
-  return m_pKaResultsModel;
-}
-
-gearbox::ScalarFitResultsMapping::MapperModel *Gearbox::scalarFitResultsModel()
-{
-  return &m_scalFitResultsModel;
-}
-
-void Gearbox::setAnalyteInputParameters(const int chargeLow, const int chargeHigh,
-                                        AnalyteInputParameters::ParameterVec mobilities, AnalyteInputParameters::ParameterVec pKas)
-{
-  m_analInputParams = AnalyteInputParameters{chargeLow, chargeHigh,
-                                             std::move(mobilities), std::move(pKas)};
-}
-
-void Gearbox::setAnalyteInputParameters(AnalyteInputParameters params)
-{
-  m_analInputParams = std::move(params);
-}
+} // namespace gearbox

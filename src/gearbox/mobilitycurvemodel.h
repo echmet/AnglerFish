@@ -5,6 +5,8 @@
 #include <QPointF>
 #include <QVector>
 
+namespace gearbox {
+
 class MobilityCurveModel : public QObject {
   Q_OBJECT
 public:
@@ -32,5 +34,7 @@ signals:
   void fittedChanged();
   void residualsChanged();
 };
+
+} // namespace gearbox
 
 #endif // MOBILITYCURVEMODEL_H

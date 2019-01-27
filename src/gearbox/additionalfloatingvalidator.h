@@ -8,6 +8,8 @@
 #include <QVariant>
 #include <QVector>
 
+namespace gearbox {
+
 class AdditionalFloatingValidator {
 public:
   class InvalidValidatorException : public std::runtime_error {
@@ -36,7 +38,9 @@ private:
 };
 using AdditionalFloatingValidatorVec = QVector<std::shared_ptr<AdditionalFloatingValidator>>;
 
-Q_DECLARE_METATYPE(AdditionalFloatingValidator)
-Q_DECLARE_METATYPE(AdditionalFloatingValidatorVec)
+} // namespace gearbox
+
+Q_DECLARE_METATYPE(gearbox::AdditionalFloatingValidator)
+Q_DECLARE_METATYPE(gearbox::AdditionalFloatingValidatorVec)
 
 #endif // ADDITIONALVALIDATOR_H

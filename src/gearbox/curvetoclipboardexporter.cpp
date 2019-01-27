@@ -3,6 +3,7 @@
 #include <trstr.h>
 #include <gearbox/gearbox.h>
 #include <gearbox/doubletostringconvertor.h>
+#include <gearbox/mobilitycurvemodel.h>
 #include <QApplication>
 #include <QClipboard>
 #include <QTextStream>
@@ -12,6 +13,8 @@
 #include <cassert>
 
 #define DBL_INF std::numeric_limits<double>::infinity()
+
+namespace gearbox {
 
 class Block {
 public:
@@ -93,9 +96,9 @@ void writeClipboard(const std::vector<Block> &blocks)
   QApplication::clipboard()->setText(data);
 }
 
-void CurveToClipboardExporter::write()
+void CurveToClipboardExporter::write(const Gearbox &gbox)
 {
-  const auto &model = Gearbox::instance()->mobilityCurveModel();
+  const auto &model = gbox.mobilityCurveModel();
 
   std::vector<Block> blocks{};
 
@@ -133,3 +136,5 @@ void CurveToClipboardExporter::write()
 
   writeClipboard(blocks);
 }
+
+} // namespace gearbox

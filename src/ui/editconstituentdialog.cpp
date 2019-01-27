@@ -15,7 +15,7 @@ const double EditConstituentDialog::VISCOSITY_COEFF_VERY_SMALL{0.0};
 const double EditConstituentDialog::VISCOSITY_COEFF_SMALL{1.0e-4};
 const double EditConstituentDialog::VISCOSITY_COEFF_LARGE{3.0e-3};
 
-EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, const bool viscosityCorrectionEnabled, QWidget *parent) :
+EditConstituentDialog::EditConstituentDialog(gearbox::DatabaseProxy &dbProxy, const bool viscosityCorrectionEnabled, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::EditConstituentDialog},
   h_dbProxy{dbProxy}
@@ -30,7 +30,7 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, const bool 
   ui->qgbox_viscosity->setVisible(viscosityCorrectionEnabled);
 }
 
-EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
+EditConstituentDialog::EditConstituentDialog(gearbox::DatabaseProxy &dbProxy,
                                              const QString &name, const EditConstituentDialog::ConstituentType type, const gdm::PhysicalProperties &props,
                                              const bool allowTypeChange,
                                              const bool viscosityCorrectionEnabled,
@@ -132,7 +132,7 @@ void EditConstituentDialog::onViscosityCoefficientIndexChanged(const int idx)
     ui->qle_customCoefficient->setReadOnly(false);
   else {
     ui->qle_customCoefficient->setReadOnly(true);
-    ui->qle_customCoefficient->setText(DoubleToStringConvertor::convert(k));
+    ui->qle_customCoefficient->setText(gearbox::DoubleToStringConvertor::convert(k));
   }
 }
 
@@ -167,7 +167,7 @@ void EditConstituentDialog::setViscosityElements(const double viscosityCoefficie
 
   ui->qcbox_viscosityCoefficient->setCurrentIndex(lastIdx);
   onViscosityCoefficientIndexChanged(lastIdx);
-  ui->qle_customCoefficient->setText(DoubleToStringConvertor::convert(viscosityCoefficient));
+  ui->qle_customCoefficient->setText(gearbox::DoubleToStringConvertor::convert(viscosityCoefficient));
 }
 
 void EditConstituentDialog::setupWidget()
@@ -201,7 +201,7 @@ EditConstituentDialog::ConstituentType EditConstituentDialog::type() const
 double EditConstituentDialog::viscosityCoefficient() const
 {
   bool ok;
-  const double d = DoubleToStringConvertor::back(ui->qle_customCoefficient->text(), &ok);
+  const double d = gearbox::DoubleToStringConvertor::back(ui->qle_customCoefficient->text(), &ok);
   if (!ok)
     return -1.0;
 
