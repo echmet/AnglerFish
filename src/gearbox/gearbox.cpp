@@ -50,6 +50,7 @@ void Gearbox::invalidateAll()
   m_gboxPriv->m_fittedpKas.setNewData({});
   m_gboxPriv->m_fittedMobilities.setNewData({});
   m_gboxPriv->m_mobilityCurveModel.invalidateAll();
+  m_gboxPriv->m_scalFRMapping.setData(m_gboxPriv->m_scalFRMapping.modelIndexFromItem(ScalarFitResultsMapping::Items::R_SQUARED), QVariant{0}, Qt::EditRole);
 }
 
 void Gearbox::invalidateResults()
@@ -57,6 +58,7 @@ void Gearbox::invalidateResults()
   m_gboxPriv->m_fittedpKas.setNewData({});
   m_gboxPriv->m_fittedMobilities.setNewData({});
   m_gboxPriv->m_mobilityCurveModel.invalidateResults();
+  m_gboxPriv->m_scalFRMapping.setData(m_gboxPriv->m_scalFRMapping.modelIndexFromItem(ScalarFitResultsMapping::Items::R_SQUARED), QVariant{0}, Qt::EditRole);
 }
 
 IonicEffectsModel & Gearbox::ionicEffectsModel()
