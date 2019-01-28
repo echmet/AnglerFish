@@ -71,7 +71,7 @@ include_directories(${INCLUDE_DIRECTORIES}
 
 if (WIN32)
     include_directories(${INCLUDE_DIRECTORIES}
-						SYSTEM "${SQLITE3_DIR}")
+                        SYSTEM "${SQLITE3_DIR}")
 endif ()
 
 link_directories(${LINK_DIRECTORIES}
