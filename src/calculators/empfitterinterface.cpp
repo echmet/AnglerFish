@@ -10,6 +10,7 @@
 #include <gearbox/mobilitycurvemodel.h>
 #include <echmetelmigparamsfitter.h>
 #include <algorithm>
+#include <fstream>
 #include <limits>
 #include <tuple>
 
@@ -39,6 +40,12 @@ void resultsReleaser(ECHMET::ElmigParamsFitter::FitResults *results)
   delete results;
 }
 
+inline
+void tpiVecReleaser(ECHMET::ElmigParamsFitter::TracepointInfoVec *vec)
+{
+  vec->destroy();
+}
+
 using FitResultsPtr = std::unique_ptr<ECHMET::ElmigParamsFitter::FitResults,
                                       decltype(&resultsReleaser)>;
 using InBufferVecWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::InBufferVec,
@@ -48,6 +55,9 @@ using InSystemWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::InSystem,
                                      decltype(&inSystemReleaser)>;
 using FixerWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::ParametersFixer,
                                   decltype(&fixerReleaser)>;
+
+using TPIVWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::TracepointInfoVec,
+                                 decltype(&tpiVecReleaser)>;
 
 namespace calculators {
 
@@ -274,6 +284,53 @@ void EMPFitterInterface::fit()
   }
 
   setResults(system, results, h_gbox);
+}
+
+void EMPFitterInterface::setTracepoints(const std::vector<TracepointState> &states)
+{
+  if (states.empty())
+    ECHMET::ElmigParamsFitter::toggleAllTracepoints(false);
+  else {
+    for (const auto &item : states)
+      ECHMET::ElmigParamsFitter::toggleTracepoint(item.TPID, item.enabled);
+  }
+}
+
+std::vector<EMPFitterInterface::TracepointInfo> EMPFitterInterface::tracepointInformation()
+{
+  std::vector<TracepointInfo> tpi{};
+
+  auto tpiVec = TPIVWrap{ECHMET::ElmigParamsFitter::tracepointInfo(), tpiVecReleaser};
+  if (tpiVec == nullptr)
+    return tpi;
+
+  for (size_t idx = 0; idx < tpiVec->size(); idx++) {
+    const auto &t = tpiVec->at(idx);
+    tpi.emplace_back(t.id, t.description->c_str());
+  }
+
+  return tpi;
+}
+
+bool EMPFitterInterface::writeTrace(const std::string &path)
+{
+  if (path.empty())
+    return true;
+
+  auto traceRaw = ECHMET::ElmigParamsFitter::trace();
+  if (traceRaw == nullptr)
+    return false;
+
+  std::string trace = traceRaw->c_str();
+  traceRaw->destroy();
+
+  std::ofstream ofs{path};
+  if (!ofs.is_open())
+    return false;
+
+  ofs << trace;
+
+  return ofs.good();
 }
 
 } // namespace calculators

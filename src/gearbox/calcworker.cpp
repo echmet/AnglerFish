@@ -1,11 +1,10 @@
 #include "calcworker.h"
 
-#include <calculators/empfitterinterface.h>
-
 namespace gearbox {
 
-CalcWorker::CalcWorker(gearbox::Gearbox &gbox) :
-  h_gbox{gbox}
+CalcWorker::CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitterInterface::TracepointState> tpStates) :
+  m_iface{gbox},
+  m_tpStates{std::move(tpStates)}
 {
 }
 
@@ -14,15 +13,23 @@ void CalcWorker::process()
   failed = false;
 
   try {
-    calculators::EMPFitterInterface iface{h_gbox};
+    m_iface.setTracepoints(m_tpStates);
 
-    iface.fit();
+    m_iface.fit();
   } catch (const calculators::EMPFitterInterface::Exception &ex) {
     failed = true;
     error = ex.what();
   }
 
   emit finished();
+}
+
+bool CalcWorker::writeTrace(const std::string &path)
+{
+  if (failed)
+    return false;
+
+  return m_iface.writeTrace(path);
 }
 
 } // namespace gearbox

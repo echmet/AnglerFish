@@ -93,8 +93,14 @@ public:
   };
 
   explicit EMPFitterInterface(gearbox::Gearbox &gbox);
+  EMPFitterInterface(const EMPFitterInterface &other) = delete;
   ~EMPFitterInterface() = default;
   void fit();
+
+  void setTracepoints(const std::vector<TracepointState> &states);
+  bool writeTrace(const std::string &path);
+
+  static std::vector<TracepointInfo> tracepointInformation();
 
   static const char *ANALYTE_NAME;
 

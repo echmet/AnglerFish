@@ -1,6 +1,8 @@
 #ifndef AFMAINWINDOW_H
 #define AFMAINWINDOW_H
 
+#include "toggletracepointsdialog.h"
+
 #include <QFileDialog>
 #include <QMainWindow>
 
@@ -56,6 +58,9 @@ private:
   CheckForUpdateDialog *m_checkForUpdateDlg;
 
   QFileDialog m_saveDlg;
+
+  ToggleTracepointsDialog *m_tptsDlg;
+  ToggleTracepointsDialog::TracingSetup m_tracingSetup;
 
 private slots:
   void onBuffersChanged();

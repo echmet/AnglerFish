@@ -46,6 +46,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   m_checkForUpdateDlg = new CheckForUpdateDialog{this};
 
+  m_tptsDlg = new ToggleTracepointsDialog{calculators::EMPFitterInterface::tracepointInformation(), m_tracingSetup, this};
+
   ui->centralwidget->layout()->addWidget(qsp_controlsChart);
   qsp_controlsChart->addWidget(m_buffersAnalyte);
   qsp_controlsChart->addWidget(m_fitPlotWidget);
@@ -151,7 +153,8 @@ void AFMainWindow::onCalculate()
   setEstimates();
 
   OperationInProgressDialog inProgDlg{"Fit in progress..."};
-  gearbox::CalcWorker worker{h_gbox};
+  gearbox::CalcWorker worker{h_gbox, m_tracingSetup.tracingEnabled ? m_tracingSetup.tracepointStates :
+                                                                     std::vector<calculators::EMPFitterInterface::TracepointState>{}};
   QThread thread{};
 
   worker.moveToThread(&thread);
@@ -168,6 +171,13 @@ void AFMainWindow::onCalculate()
 
     QMessageBox mbox{QMessageBox::Warning, tr("Calculation failed"), worker.error};
     mbox.exec();
+  } else {
+    if (m_tracingSetup.tracingEnabled) {
+      if (!worker.writeTrace(m_tracingSetup.outputFilePath.toStdString())) {
+        QMessageBox mbox{QMessageBox::Warning, tr("Operation failed"), tr("Failed to write calculation trace")};
+        mbox.exec();
+      }
+    }
   }
 }
 
@@ -274,11 +284,18 @@ void AFMainWindow::onSave()
 
 void AFMainWindow::onSetDebuggingOutput()
 {
-  ToggleTracepointsDialog::TracingSetup setup{};
+  static QSize dlgSize{};
 
-  ToggleTracepointsDialog dlg{{}, setup};
+  if (!dlgSize.isEmpty())
+    m_tptsDlg->resize(dlgSize);
 
-  dlg.exec();
+  int ret = m_tptsDlg->exec();
+  dlgSize = m_tptsDlg->size();
+
+  if (ret != QDialog::Accepted)
+    return;
+
+  m_tracingSetup = m_tptsDlg->result();
 }
 
 void AFMainWindow::setEstimates()
