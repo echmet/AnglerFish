@@ -184,6 +184,10 @@ void BufferWidget::setWidgetSizes()
 
   ui->qcap_composition->resize(qRound(fm.width(tr("Composition")) * 1.2), ui->qcap_composition->height());
   ui->qcap_expValues->setMinimumWidth(qRound(fm.width(tr("Experimental mobilities")) * 1.2));
+
+  int nw = fm.width(" 99,9999 ");
+  ui->qle_ionicStrength->setMinimumWidth(nw);
+  ui->qle_pH->setMinimumWidth(nw);
 }
 
 void BufferWidget::setupIcons()
