@@ -11,6 +11,7 @@ GearboxPrivate::GearboxPrivate() :
 {
   m_scalFRData.resize(m_scalFRMapping.indexFromItem(ScalarFitResultsMapping::Items::LAST_INDEX));
   m_scalFRMapping.setUnderlyingData(&m_scalFRData);
+  m_scalFRMapping.setData( m_scalFRMapping.modelIndexFromItem(ScalarFitResultsMapping::Items::R_SQUARED), QVariant{5}, Qt::UserRole + 1);
 }
 
 } // namespace gearbox

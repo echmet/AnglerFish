@@ -83,6 +83,13 @@ public:
                            roles);
   }
 
+  template<typename X>
+  QModelIndex modelIndexFromItem(const X x)
+  {
+    const int idx = this->indexFromItem(x);
+    return this->createIndex(0, idx);
+  }
+
   QModelIndex parent(const QModelIndex &child) const override
   {
     Q_UNUSED(child);

@@ -1,11 +1,11 @@
 #ifndef ANALYTEDATAWIDGET_H
 #define ANALYTEDATAWIDGET_H
 
-#include <gearbox/floatingvaluedelegate.h>
 #include <QWidget>
 
 namespace gearbox {
   class Gearbox;
+  class FloatingValueDelegate;
 } // namespace gearbox
 
 namespace Ui {
@@ -36,6 +36,7 @@ private:
   EditChargesWidgetEstimates *m_estimatedParamsWidget;
 
   QDataWidgetMapper *m_scalarFitResultsMapper;
+  gearbox::FloatingValueDelegate *m_fltDelegate;
 
   gearbox::Gearbox &h_gbox;
 

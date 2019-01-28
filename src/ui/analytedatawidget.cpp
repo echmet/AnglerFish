@@ -5,6 +5,7 @@
 
 #include <gearbox/gearbox.h>
 #include <gearbox/fitresultsmodel.h>
+#include <gearbox/floatingvaluedelegate.h>
 #include <gearbox/doubletostringconvertor.h>
 #include <gearbox/curvetoclipboardexporter.h>
 #include <gearbox/scalarfitresultsmapping.h>
@@ -69,8 +70,10 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
   {
     auto &model = h_gbox.scalarResultsModel();
 
+    m_fltDelegate = new gearbox::FloatingValueDelegate{this};
     m_scalarFitResultsMapper = new QDataWidgetMapper{this};
     m_scalarFitResultsMapper->setModel(&model);
+    m_scalarFitResultsMapper->setItemDelegate(m_fltDelegate);
     m_scalarFitResultsMapper->addMapping(ui->qle_rSquared, model.indexFromItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED));
     m_scalarFitResultsMapper->toFirst();
   }
