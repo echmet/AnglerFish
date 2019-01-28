@@ -108,10 +108,9 @@ public:
 
   bool setItem(const I item, const T &value, int role)
   {
-	  const int midx = this->indexFromItem(item);
-	  const QModelIndex index = this->createIndex(0, midx);
+    const QModelIndex idx = this->modelIndexFromItem(item);
 
-	  return this->setData(index, QVariant::fromValue<T>(value), role);
+    return this->setData(idx, QVariant::fromValue<T>(value), role);
   }
 
   virtual void setUnderlyingData(QVector<T> *data)
@@ -119,7 +118,7 @@ public:
     m_data = data;
     m_maxColumns = m_data->length();
     m_lastIndex = createIndex(0, m_maxColumns - 1);
-    emit dataChanged(m_firstIndex, m_lastIndex, { Qt::EditRole });
+    emit dataChanged(m_firstIndex, m_lastIndex, { Qt::EditRole, Qt::DisplayRole });
   }
 
 protected:
