@@ -200,5 +200,6 @@ void BuffersInputWidget::setupIcons()
 #else
   ui->qpb_addBuffer->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
   ui->qpb_loadBuffer->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+  ui->qpb_sortBypH->setIcon(style()->standardIcon(QStyle::SP_ToolBarVerticalExtensionButton));
 #endif // Q_OS_
 }
