@@ -34,7 +34,7 @@ elseif (UNIX)
                 CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.4)
             message(FATAL_ERROR "Clang 3.4 or newer is required to build AnglerFish")
         endif ()
-    
+
         add_definitions("-DECHMET_COMPILER_GCC_LIKE")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
 
@@ -83,14 +83,16 @@ link_directories(${LINK_DIRECTORIES}
 
 if (WIN32)
     link_directories(${LINK_DIRECTORIES}
-	                 "${SQLITE3_DIR}")
+                     "${SQLITE3_DIR}"
+                     )
 endif ()
 
 set(CMAKE_CXX_FLAGS
     ${CMAKE_CXX_FLAGS}
     ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}
     ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}
-    ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS})
+    ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}
+    )
 
 set(AnglerFish_SRCS
     "src/main.cpp"
@@ -215,7 +217,7 @@ endif ()
 
 if (WIN32)
     set(WIN32_DBGHELP
-	    "dbghelp")
+        "dbghelp")
 endif ()
 
 target_link_libraries(AnglerFish
@@ -231,4 +233,5 @@ target_link_libraries(AnglerFish
                       PRIVATE sqlite3
                       PRIVATE ECHMETUpdateCheck
                       PRIVATE ${LINK_PTHREAD}
-                      PRIVATE ${WIN32_DBGHELP})
+                      PRIVATE ${WIN32_DBGHELP}
+                      )
