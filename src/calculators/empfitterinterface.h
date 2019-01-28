@@ -101,6 +101,7 @@ public:
   bool writeTrace(const std::string &path);
 
   static std::vector<TracepointInfo> tracepointInformation();
+  static const char * versionString();
 
   static const char *ANALYTE_NAME;
 

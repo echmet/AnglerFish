@@ -312,6 +312,11 @@ std::vector<EMPFitterInterface::TracepointInfo> EMPFitterInterface::tracepointIn
   return tpi;
 }
 
+const char * EMPFitterInterface::versionString()
+{
+  return ECHMET::ElmigParamsFitter::versionString();
+}
+
 bool EMPFitterInterface::writeTrace(const std::string &path)
 {
   if (path.empty())

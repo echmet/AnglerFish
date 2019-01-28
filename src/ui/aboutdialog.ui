@@ -100,6 +100,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="ql_empfVersion">
+     <property name="text">
+      <string>&lt;EMPF_VERSION&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="qpb_close">
      <property name="text">
       <string>Close</string>

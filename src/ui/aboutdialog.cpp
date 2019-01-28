@@ -2,6 +2,7 @@
 #include "ui_aboutdialog.h"
 
 #include <globals.h>
+#include <calculators/empfitterinterface.h>
 
 AboutDialog::AboutDialog(QWidget *parent) :
   QDialog(parent),
@@ -18,7 +19,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
                                           QGuiApplication::platformName(),
                                           QSysInfo::buildCpuArchitecture()));
 
-  m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(100 * scaleFactor());
+  m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(qRound(100 * scaleFactor()));
   ui->ql_echmetLogo->setText("");
   ui->ql_echmetLogo->setPixmap(m_echmetPix);
 
@@ -35,6 +36,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
     QFontMetricsF fm(ui->ql_thankYouQt->font());
     setMinimumWidth(qRound(fm.boundingRect(ui->ql_thankYouQt->text()).width() * 1.15));
   }
+
+  ui->ql_empfVersion->setText(QString{tr("ElmigParamsFitter library version: %1")}.arg(calculators::EMPFitterInterface::versionString()));
 
   connect(ui->qpb_close, &QPushButton::clicked, this, &AboutDialog::accept);
 }
