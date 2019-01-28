@@ -8,6 +8,12 @@ CalcWorker::CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitte
 {
 }
 
+CalcWorker::~CalcWorker()
+{
+  if (!failed)
+    m_iface.propagateRSquared();
+}
+
 void CalcWorker::process()
 {
   failed = false;

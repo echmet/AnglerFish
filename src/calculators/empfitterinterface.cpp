@@ -228,7 +228,8 @@ InSystemWrap prepare(gearbox::Gearbox &gbox)
 }
 
 inline
-void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbox::Gearbox &gbox)
+void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbox::Gearbox &gbox,
+                double &rSquared)
 {
   static const auto relStDev = [](auto v, auto stDev) {
     return (std::abs(stDev / v) * 100.0);
@@ -259,8 +260,7 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbo
   std::sort(residuals.begin(), residuals.end());
 
   model.setFitted(std::move(fitted), std::move(residuals));
-  gbox.scalarResultsModel().setItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED,
-                                    results->rSquared, Qt::EditRole);
+  rSquared = results->rSquared;
 }
 
 EMPFitterInterface::EMPFitterInterface(gearbox::Gearbox &gbox) :
@@ -270,6 +270,8 @@ EMPFitterInterface::EMPFitterInterface(gearbox::Gearbox &gbox) :
 
 void EMPFitterInterface::fit()
 {
+  m_rSquared = 0.0;
+
   /* Panzer vor! */
   auto system = prepare(h_gbox);
 
@@ -283,7 +285,22 @@ void EMPFitterInterface::fit()
     throw Exception{err.toStdString()};
   }
 
-  setResults(system, results, h_gbox);
+  setResults(system, results, h_gbox, m_rSquared);
+}
+
+void EMPFitterInterface::propagateRSquared()
+{
+  /* Yes, you are reading this right. Although it would make perfect sense to update
+     this value from setReslults(), we cannot do that because setResults() is called
+     by fit() which is expected to be executed from a worker thread. Why is that
+     a problem? Well, apparently on Win32 the dataChanged() signal does not propagate
+     correctly, leading to the View ignore the change.
+     Hence we provide this method that can be executed separately from the main thread.
+     It is nasty but it seems to fix the problem. Great, another three hours of my life
+     flushed down the drain...
+  */
+  h_gbox.scalarResultsModel().setItem(gearbox::ScalarFitResultsMapping::Items::R_SQUARED,
+                                      m_rSquared, Qt::EditRole);
 }
 
 void EMPFitterInterface::setTracepoints(const std::vector<TracepointState> &states)

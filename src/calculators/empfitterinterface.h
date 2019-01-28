@@ -96,6 +96,7 @@ public:
   EMPFitterInterface(const EMPFitterInterface &other) = delete;
   ~EMPFitterInterface() = default;
   void fit();
+  void propagateRSquared();
 
   void setTracepoints(const std::vector<TracepointState> &states);
   bool writeTrace(const std::string &path);
@@ -107,6 +108,7 @@ public:
 
 private:
   gearbox::Gearbox &h_gbox;
+  double m_rSquared;
 };
 
 } // namespace calculator

@@ -11,6 +11,7 @@ class CalcWorker : public QObject {
   Q_OBJECT
 public:
   explicit CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitterInterface::TracepointState> tpStates);
+  ~CalcWorker();
   void process();
   bool writeTrace(const std::string &path);
 
