@@ -8,7 +8,7 @@ const QString Globals::ORG_DOMAIN{"echmet.natur.cuni.cz"};
 const QString Globals::ORG_NAME{"ECHMET"};
 const QString Globals::SOFTWARE_NAME{"AnglerFish"};
 const int Globals::VERSION_MAJ{0};
-const int Globals::VERSION_MIN{0};
+const int Globals::VERSION_MIN{1};
 const QString Globals::VERSION_REV{"a"};
 
 const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
