@@ -17,10 +17,10 @@
    <item>
     <widget class="QScrollArea" name="qscr_bufferList">
      <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOn</enum>
+      <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
+      <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -33,7 +33,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>364</width>
+        <width>384</width>
         <height>16</height>
        </rect>
       </property>
