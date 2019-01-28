@@ -146,7 +146,10 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="FloatingValueLineEdit" name="qle_rSquared">
+        <widget class="QLineEdit" name="qle_rSquared">
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -158,13 +161,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>FloatingValueLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>src/ui/elementaries/floatingvaluelineedit.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
