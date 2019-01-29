@@ -47,7 +47,6 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   /* Vertical alignment hack */
   {
     ui->qcap_expValues->setDisabled(true);
-    ui->qcap_composition->setDisabled(true);
 
     auto p = ui->qcap_expValues->palette();
     p.setColor(QPalette::Disabled, QPalette::WindowText, p.color(QPalette::Active, QPalette::WindowText));
@@ -55,7 +54,6 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
     p.setColor(QPalette::Disabled, QPalette::Base, p.color(QPalette::Active, QPalette::Window));
 
     ui->qcap_expValues->setPalette(p);
-    ui->qcap_composition->setPalette(p);
   }
 
   setupIcons();
@@ -182,7 +180,6 @@ void BufferWidget::setWidgetSizes()
 {
   const auto &fm = fontMetrics();
 
-  ui->qcap_composition->resize(qRound(fm.width(tr("Composition")) * 1.2), ui->qcap_composition->height());
   ui->qcap_expValues->setMinimumWidth(qRound(fm.width(tr("Experimental mobilities")) * 1.2));
 
   int nw = fm.width(" 99,9999 ");
