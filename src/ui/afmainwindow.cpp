@@ -8,6 +8,7 @@
 #include "operationinprogressdialog.h"
 #include "checkforupdatedialog.h"
 #include "toggletracepointsdialog.h"
+#include "afuserguidedialog.h"
 
 #include <globals.h>
 #include <softwareupdater.h>
@@ -93,6 +94,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
     dlg.exec();
   });
   connect(ui->actionSet_debugging_output, &QAction::triggered, this, &AFMainWindow::onSetDebuggingOutput);
+  connect(ui->actionUser_guide, &QAction::triggered, this, [this] { AFUserGuideDialog dlg{this}; dlg.exec(); } );
 
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
           [&]() { h_gbox.chemicalBuffersModel().add(h_gbox.ionicEffectsModel()); });
@@ -326,6 +328,7 @@ void AFMainWindow::setupIcons()
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
   ui->actionCheck_for_update->setIcon(QIcon::fromTheme("system-software-update"));
+  ui->actionUser_guide->setIcon(QIcon::fromTheme("help-contents"));
 
   /* Button bar */
   m_qpb_new->setIcon(QIcon::fromTheme("document-new"));
@@ -342,6 +345,7 @@ void AFMainWindow::setupIcons()
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
   ui->actionCheck_for_update->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
+  ui->actionUser_guide->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 
   /* Button bar */
   m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));

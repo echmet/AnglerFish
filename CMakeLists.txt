@@ -136,6 +136,7 @@ set(AnglerFish_SRCS
     "src/ui/autoupdatecheckdialog.cpp"
     "src/ui/checkforupdatedialog.cpp"
     "src/ui/toggletracepointsdialog.cpp"
+    "src/ui/afuserguidedialog.cpp"
     "src/ui/internal_models/constituentchargesmodel.cpp"
     "src/ui/internal_models/constituentchargesmodelfixable.cpp"
     "src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp"

@@ -37,8 +37,9 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionCheck_for_update"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionUser_guide"/>
+    <addaction name="actionCheck_for_update"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -101,7 +102,7 @@
   </action>
   <action name="actionCheck_for_update">
    <property name="text">
-    <string>&amp;Check for update</string>
+    <string>Check for update</string>
    </property>
   </action>
   <action name="actionNew_buffers">
@@ -111,7 +112,12 @@
   </action>
   <action name="actionSet_debugging_output">
    <property name="text">
-    <string>Set debugging output</string>
+    <string>&amp;Set debugging output</string>
+   </property>
+  </action>
+  <action name="actionUser_guide">
+   <property name="text">
+    <string>User guide</string>
    </property>
   </action>
  </widget>
