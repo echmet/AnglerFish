@@ -12,7 +12,7 @@
 #include <limits>
 #include <cassert>
 
-#define DBL_INF std::numeric_limits<double>::infinity()
+#define DBL_NAN std::numeric_limits<double>::quiet_NaN()
 
 namespace gearbox {
 
@@ -95,12 +95,12 @@ void CurveToClipboardExporter::write(const Gearbox &gbox)
 
   std::vector<Block> blocks{};
 
-  double prevX = DBL_INF;
+  double prevX = DBL_NAN;
   std::vector<double> v{};
   for (const auto &pt : model.experimental()) {
     if (pt.x() != prevX) {
       if (v.size() > 0)
-        blocks.emplace_back(prevX, std::move(v), DBL_INF, DBL_INF);
+        blocks.emplace_back(prevX, std::move(v), DBL_NAN, DBL_NAN);
 
       v = {pt.y()};
       prevX = pt.x();
@@ -108,7 +108,7 @@ void CurveToClipboardExporter::write(const Gearbox &gbox)
       v.emplace_back(pt.y());
   }
   if (v.size() > 0)
-    blocks.emplace_back(prevX, std::move(v), DBL_INF, DBL_INF);
+    blocks.emplace_back(prevX, std::move(v), DBL_NAN, DBL_NAN);
 
   /* Yes, this is nasty, horrible, dull and slow
    * staircase-behaving stinking pile of garbage */
@@ -118,7 +118,7 @@ void CurveToClipboardExporter::write(const Gearbox &gbox)
       if (it != blocks.end())
         (*it).*field = pt.y();
       else {
-        Block b{pt.x(), {}, DBL_INF, DBL_INF};
+        Block b{pt.x(), {}, DBL_NAN, DBL_NAN};
         b.*field = pt.y();
         blocks.emplace_back(std::move(b));
       }
