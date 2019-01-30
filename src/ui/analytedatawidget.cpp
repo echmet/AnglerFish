@@ -153,6 +153,7 @@ void AnalyteDataWidget::onResultsToClipboard()
   str.setCodec("UTF-8");
 
   auto hdr = [&str](const QStringList &list) {
+    str << tr("Charge") << SEP;
     for (const auto &i : list)
       str << i << SEP;
     str << "\n";
