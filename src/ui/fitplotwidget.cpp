@@ -15,6 +15,13 @@
 const QString FitPlotWidget::s_uEffUnit{"(m<sup>2</sup>/V/s)"};
 const QString FitPlotWidget::s_uEffCoeff{"10<sup>-9</sup>"};
 
+template <typename T>
+constexpr inline
+int cxsgn(const T &v)
+{
+  return (v > T{0}) - (v < T{0});
+}
+
 inline
 QwtSymbol * makeSymbol(const QwtSymbol::Style s, const QColor &clr, const QFontMetrics &fm)
 {
@@ -85,7 +92,17 @@ void FitPlotWidget::setResidualsData(const QVector<QPointF> &data)
   m_curveResiduals->setSamples(data);
 
   auto brect = m_curveResiduals->boundingRect();
-  m_plot->setAxisScale(QwtPlot::yRight, brect.top(), brect.bottom());
+  qreal rMax = brect.top();
+  qreal rMin = brect.bottom();
+
+  if (cxsgn(rMin) != cxsgn(rMax)) {
+    qreal ref = std::abs(rMax) > std::abs(rMin) ? std::abs(rMax) : std::abs(rMin);
+
+    rMax = ref;
+    rMin = -ref;
+  }
+
+  m_plot->setAxisScale(QwtPlot::yRight, rMin, rMax);
 
   refreshPlot();
 }
