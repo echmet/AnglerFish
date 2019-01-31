@@ -61,12 +61,14 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_load = new QPushButton{tr("Load setup"), this};
   m_qpb_save = new QPushButton{tr("Save setup"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
+  m_qpb_summarize = new QPushButton{tr("Summarize"), this};
 
   ui->qtb_mainToolBar->addWidget(m_qpb_new);
   ui->qtb_mainToolBar->addWidget(m_qpb_newBuffers);
   ui->qtb_mainToolBar->addWidget(m_qpb_load);
   ui->qtb_mainToolBar->addWidget(m_qpb_save);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
+  ui->qtb_mainToolBar->addWidget(m_qpb_summarize);
 
   m_saveDlg.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -79,6 +81,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(m_qpb_newBuffers, &QPushButton::clicked, this, &AFMainWindow::onNewBuffers);
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
+  connect(m_qpb_summarize, &QPushButton::clicked, this, &AFMainWindow::onSummarize);
 
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &AFMainWindow::onCheckForUpdate);
 
@@ -300,6 +303,11 @@ void AFMainWindow::onSetDebuggingOutput()
   m_tracingSetup = m_tptsDlg->result();
 }
 
+void AFMainWindow::onSummarize()
+{
+
+}
+
 void AFMainWindow::setEstimates()
 {
   auto mobs = m_analDataWidget->estimatedMobilities();
@@ -336,6 +344,7 @@ void AFMainWindow::setupIcons()
   m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
+  m_qpb_summarize->setIcon(QIcon::fromTheme("document-properties"));
 #else
   /* Menu bar */
   ui->actionNew->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));

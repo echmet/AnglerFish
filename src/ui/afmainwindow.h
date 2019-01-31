@@ -54,6 +54,7 @@ private:
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
+  QPushButton *m_qpb_summarize;
 
   CheckForUpdateDialog *m_checkForUpdateDlg;
 
@@ -74,6 +75,7 @@ private slots:
   void onNewBuffers();
   void onSave();
   void onSetDebuggingOutput();
+  void onSummarize();
 };
 
 #endif // AFMAINWINDOW_H
