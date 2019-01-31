@@ -10,6 +10,7 @@ class AnalyteDataWidget;
 class BuffersInputWidget;
 class CheckForUpdateDialog;
 class SoftwareUpdater;
+class SummarizeDialog;
 class QPushButton;
 class FitPlotWidget;
 class Gearbox;
@@ -48,6 +49,7 @@ private:
   FitPlotWidget *m_fitPlotWidget;
   BuffersInputWidget *m_bufInpWidget;
   AnalyteDataWidget *m_analDataWidget;
+  SummarizeDialog *m_summarizeDlg;
 
   QPushButton *m_qpb_new;
   QPushButton *m_qpb_newBuffers;

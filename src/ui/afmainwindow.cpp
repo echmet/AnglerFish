@@ -9,6 +9,7 @@
 #include "checkforupdatedialog.h"
 #include "toggletracepointsdialog.h"
 #include "afuserguidedialog.h"
+#include "summarizedialog.h"
 
 #include <globals.h>
 #include <softwareupdater.h>
@@ -49,6 +50,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_checkForUpdateDlg = new CheckForUpdateDialog{this};
 
   m_tptsDlg = new ToggleTracepointsDialog{calculators::EMPFitterInterface::tracepointInformation(), m_tracingSetup, this};
+
+  m_summarizeDlg = new SummarizeDialog{summary::SummarizerFactory::list(), this};
 
   ui->centralwidget->layout()->addWidget(qsp_controlsChart);
   qsp_controlsChart->addWidget(m_buffersAnalyte);
@@ -306,10 +309,7 @@ void AFMainWindow::onSetDebuggingOutput()
 
 void AFMainWindow::onSummarize()
 {
-  auto list = summary::SummarizerFactory::list();
-
-  for (auto &&i : list)
-    qDebug() << i.name.c_str() << i.id;
+  m_summarizeDlg->exec();
 }
 
 void AFMainWindow::setEstimates()
