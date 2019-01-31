@@ -3,18 +3,34 @@
 
 #include "abstractsummarizer.h"
 
+#include <vector>
+
 namespace summary {
 
 using AbstractSummarizerPtr = std::shared_ptr<AbstractSummarizer>;
 
+class Info {
+public:
+  Info(std::string _name, const int _id) :
+    name{std::move(_name)},
+    id{_id}
+  {
+  }
+
+  std::string name;
+  int id;
+};
+
 class SummarizerFactory {
 public:
-  enum class Types {
-    CSV
+  enum Types : int {
+    SUMMARIZER_CSV
   };
 
   SummarizerFactory() = delete;
-  AbstractSummarizerPtr make(const Types type);
+
+  static std::vector<Info> list();
+  static AbstractSummarizerPtr make(const Types type);
 };
 
 } // namespace summary

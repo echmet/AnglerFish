@@ -22,6 +22,7 @@ class AbstractSummarizer {
 public:
   explicit AbstractSummarizer();
   virtual ~AbstractSummarizer();
+  virtual std::string name() = 0;
   virtual SpecificOptionsPtr options();
   virtual void summarize(const gearbox::Gearbox &gbox, const CommonOptions &common,
                          const SpecificOptionsPtr &specific, const std::string &output) = 0;

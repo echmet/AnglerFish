@@ -8,10 +8,10 @@ namespace summary {
 class CSVSummarizer : public AbstractSummarizer {
 public:
   explicit CSVSummarizer() = default;
+  virtual std::string name() override;
   virtual SpecificOptionsPtr options() override;
   virtual void summarize(const gearbox::Gearbox &gbox, const CommonOptions &common,
                          const SpecificOptionsPtr &specific, const std::string &output) override;
-
 };
 
 } // namespace summary

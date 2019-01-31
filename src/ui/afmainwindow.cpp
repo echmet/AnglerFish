@@ -17,6 +17,7 @@
 #include <gearbox/mobilitycurvemodel.h>
 #include <gearbox/calcworker.h>
 #include <persistence/persistence.h>
+#include <summary/summarizerfactory.h>
 #include <QCloseEvent>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -305,7 +306,10 @@ void AFMainWindow::onSetDebuggingOutput()
 
 void AFMainWindow::onSummarize()
 {
+  auto list = summary::SummarizerFactory::list();
 
+  for (auto &&i : list)
+    qDebug() << i.name.c_str() << i.id;
 }
 
 void AFMainWindow::setEstimates()

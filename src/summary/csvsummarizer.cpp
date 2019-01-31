@@ -1,6 +1,13 @@
 #include "csvsummarizer.h"
 
+#include <trstr.h>
+
 namespace summary {
+
+std::string CSVSummarizer::name()
+{
+  return trstr("CSV summary");
+}
 
 SpecificOptionsPtr CSVSummarizer::options()
 {
