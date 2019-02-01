@@ -3,6 +3,7 @@
 
 #include "abstractsummarizer.h"
 
+#include <QMetaType>
 #include <vector>
 
 namespace summary {
@@ -34,5 +35,7 @@ public:
 };
 
 } // namespace summary
+
+Q_DECLARE_METATYPE(summary::SummarizerFactory::Types)
 
 #endif // SUMMARIZERFACTORY_H

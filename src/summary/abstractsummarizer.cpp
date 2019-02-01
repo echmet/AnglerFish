@@ -2,6 +2,10 @@
 
 namespace summary {
 
+SpecificOptions::~SpecificOptions()
+{
+}
+
 AbstractSummarizer::AbstractSummarizer()
 {
 }

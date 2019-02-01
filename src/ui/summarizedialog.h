@@ -17,6 +17,12 @@ public:
 
 private:
   Ui::SummarizeDialog *ui;
+
+  summary::AbstractSummarizerPtr m_summarizer;
+
+private slots:
+  void onOptionsClicked();
+  void onSummarizerChanged(const int idx);
 };
 
 #endif // SUMMARIZEDIALOG_H
