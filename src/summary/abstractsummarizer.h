@@ -15,10 +15,10 @@ class CommonOptions;
 
 class FileType {
 public:
-  FileType(std::string _description, std::string _suffix);
+  FileType(std::string _description, std::vector<std::string> _suffix);
 
   const std::string description;
-  const std::string suffix;
+  const std::vector<std::string> suffix;
 };
 
 class SpecificOptions {

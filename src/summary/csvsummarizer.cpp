@@ -66,8 +66,7 @@ CSVSummarizer::~CSVSummarizer()
 std::vector<FileType> CSVSummarizer::allowedFileTypes() const
 {
   return {
-    { "Comma-separated values", "csv" },
-    { "Comma-separated values", "txt"}
+    { "Comma-separated values", { "csv", "txt" } },
   };
 }
 

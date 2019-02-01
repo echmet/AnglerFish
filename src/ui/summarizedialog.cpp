@@ -3,6 +3,7 @@
 
 #include <summary/commonoptions.h>
 #include <summary/exception.h>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <cassert>
 
@@ -14,9 +15,12 @@ SummarizeDialog::SummarizeDialog(const gearbox::Gearbox &gbox, const std::vector
   m_specOpts{nullptr},
   h_gbox{gbox}
 {
+  assert(sumInfo.size() > 0);
+
   ui->setupUi(this);
 
-  assert(sumInfo.size() > 0);
+  m_browseDlg = new QFileDialog{this, tr("Pick summary destination")};
+  m_browseDlg->setAcceptMode(QFileDialog::AcceptSave);
 
   for (const auto &info : sumInfo)
     ui->qcbox_summarizers->addItem(QString::fromStdString(info.name), info.id);

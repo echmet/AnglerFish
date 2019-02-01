@@ -5,6 +5,8 @@
 
 #include <QDialog>
 
+class QFileDialog;
+
 namespace gearbox {
   class Gearbox;
 } // namespace gearbox
@@ -24,6 +26,8 @@ private:
   summary::CommonOptions makeCommonOptions();
 
   Ui::SummarizeDialog *ui;
+
+  QFileDialog *m_browseDlg;
 
   summary::AbstractSummarizerPtr m_summarizer;
   summary::SpecificOptionsPtr m_specOpts;

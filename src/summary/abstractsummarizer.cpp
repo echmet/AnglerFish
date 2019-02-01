@@ -2,7 +2,7 @@
 
 namespace summary {
 
-FileType::FileType(std::string _description, std::string _suffix) :
+FileType::FileType(std::string _description, std::vector<std::string> _suffix) :
   description{std::move(_description)},
   suffix{std::move(_suffix)}
 {
