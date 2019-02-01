@@ -63,7 +63,15 @@ CSVSummarizer::~CSVSummarizer()
   delete m_optsDlg;
 }
 
-std::string CSVSummarizer::name()
+std::vector<FileType> CSVSummarizer::allowedFileTypes() const
+{
+  return {
+    { "Comma-separated values", "csv" },
+    { "Comma-separated values", "txt"}
+  };
+}
+
+std::string CSVSummarizer::name() const
 {
   return trstr("CSV summary");
 }

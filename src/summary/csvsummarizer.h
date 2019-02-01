@@ -21,7 +21,8 @@ class CSVSummarizer : public AbstractSummarizer {
 public:
   explicit CSVSummarizer();
   virtual ~CSVSummarizer() override;
-  virtual std::string name() override;
+  virtual std::vector<FileType> allowedFileTypes() const override;
+  virtual std::string name() const override;
   virtual SpecificOptionsPtr options() override;
   virtual void summarize(const gearbox::Gearbox &gbox, const CommonOptions &common,
                          const SpecificOptionsPtr &specific, const std::string &output) override;
