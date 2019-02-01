@@ -11,6 +11,7 @@
 #include <gearbox/fitresultsmodel.h>
 #include <gearbox/ioniceffectsmodel.h>
 #include <gearbox/doubletostringconvertor.h>
+#include <gearbox/curveutility.h>
 #include <QFile>
 #include <QMessageBox>
 #include <QTextStream>
@@ -216,7 +217,13 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
     stm << "\n";
   }
 
+  if (common.includeCurve) {
+    auto blocks = gearbox::CurveUtility::blockify(gbox.mobilityCurveModel());
+    auto str = gearbox::CurveUtility::blocksToCSV(blocks, DELIM);
 
+    stm << QObject::tr("Mobility curve") << "\n";
+    stm << str.c_str();
+  }
 }
 
 } // namespace summary
