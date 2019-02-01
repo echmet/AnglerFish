@@ -1,6 +1,8 @@
 #ifndef COMMONOPTIONS_H
 #define COMMONOPTIONS_H
 
+#include <string>
+
 namespace summary {
 
 class CommonOptions {
@@ -9,13 +11,15 @@ public:
                 const bool _includeBuffers,
                 const bool _includeCurve,
                 const bool _includeEstimates,
-                const bool _includeIonicEffects);
+                const bool _includeIonicEffects,
+                std::string _title);
 
   const bool abbreviateBuffers;
   const bool includeBuffers;
   const bool includeCurve;
   const bool includeEstimates;
   const bool includeIonicEffects;
+  const std::string title;
 };
 
 } // namespace summary

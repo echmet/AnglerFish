@@ -49,7 +49,8 @@ summary::CommonOptions SummarizeDialog::makeCommonOptions()
     chk(ui->qcb_includeBuffers),
     chk(ui->qcb_includeCurve),
     chk(ui->qcb_includeEstimates),
-    chk(ui->qcb_includeIonicEffects)
+    chk(ui->qcb_includeIonicEffects),
+    ui->qle_title->text().toStdString()
   };
 }
 

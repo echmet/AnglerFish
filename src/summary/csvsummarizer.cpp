@@ -109,6 +109,9 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
   QTextStream stm{&fh};
   const QLocale &loc = gearbox::DoubleToStringConvertor::locale();
 
+  if (common.title.length() > 0)
+    stm << common.title.c_str() << "\n\n";
+
   if (common.includeEstimates) {
     const auto &ests = gbox.analyteEstimates();
 
