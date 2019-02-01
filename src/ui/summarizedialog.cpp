@@ -62,15 +62,30 @@ summary::CommonOptions SummarizeDialog::makeCommonOptions()
 
 void SummarizeDialog::onBrowseClicked()
 {
-  QFileInfo finfo{ui->ql_outputFile->text()};
-  if (finfo.exists())
-    m_browseDlg->setDirectory(finfo.dir().absolutePath());
+  QDir dir{[](const QString &s) {
+#ifdef Q_OS_WIN
+    const int idx = s.lastIndexOf('\\');
+#else
+    const int idx = s.lastIndexOf('/');
+#endif // Q_OS_WIN
+    if (idx < 0)
+      return s;
+    return s.mid(0, idx);
+    }(ui->qle_outputFile->text())};
+
+  if (dir.exists())
+    m_browseDlg->setDirectory(dir.absolutePath());
 
   if (m_browseDlg->exec() == QDialog::Accepted) {
     const auto &sel = m_browseDlg->selectedFiles();
 
-    if (!sel.empty())
-      ui->qle_outputFile->setText(sel.first());
+    if (!sel.empty()) {
+      auto path = sel.first();
+#ifdef Q_OS_WIN
+      path = path.replace('/', '\\');
+#endif // Q_OS_WIN
+      ui->qle_outputFile->setText(path);
+    }
   }
 }
 
