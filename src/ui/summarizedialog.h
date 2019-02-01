@@ -19,6 +19,7 @@ private:
   Ui::SummarizeDialog *ui;
 
   summary::AbstractSummarizerPtr m_summarizer;
+  summary::SpecificOptionsPtr m_specOpts;
 
 private slots:
   void onOptionsClicked();

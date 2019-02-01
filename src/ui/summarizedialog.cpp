@@ -6,7 +6,8 @@
 SummarizeDialog::SummarizeDialog(const std::vector<summary::Info> &sumInfo, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::SummarizeDialog},
-  m_summarizer{nullptr}
+  m_summarizer{nullptr},
+  m_specOpts{nullptr}
 {
   ui->setupUi(this);
 
@@ -35,7 +36,7 @@ void SummarizeDialog::onOptionsClicked()
 {
   assert(m_summarizer != nullptr);
 
-  m_summarizer->options();
+  m_specOpts = m_summarizer->options();
 }
 
 void SummarizeDialog::onSummarizerChanged(const int idx)
@@ -44,5 +45,6 @@ void SummarizeDialog::onSummarizerChanged(const int idx)
   auto smrType = v.value<summary::SummarizerFactory::Types>();
 
   m_summarizer = summary::SummarizerFactory::make(smrType);
+  m_specOpts = nullptr;
   assert(m_summarizer != nullptr);
 }
