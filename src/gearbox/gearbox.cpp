@@ -66,6 +66,12 @@ IonicEffectsModel & Gearbox::ionicEffectsModel()
   return m_gboxPriv->m_ionEffsModel;
 }
 
+const IonicEffectsModel & Gearbox::ionicEffectsModel() const
+{
+  return m_gboxPriv->m_ionEffsModel;
+}
+
+
 MobilityCurveModel & Gearbox::mobilityCurveModel() const
 {
   return m_gboxPriv->m_mobilityCurveModel;

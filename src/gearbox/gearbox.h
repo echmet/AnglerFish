@@ -27,6 +27,7 @@ public:
   FitResultsModel & fittedMobilitiesModel() const;
   FitResultsModel & fittedpKasModel() const;
   IonicEffectsModel & ionicEffectsModel();
+  const IonicEffectsModel & ionicEffectsModel() const;
   MobilityCurveModel & mobilityCurveModel() const;
   ScalarFitResultsMapping::MapperModel & scalarResultsModel() const;
   void setAnalyteEstimates(const int chargeLow, const int chargeHigh,
