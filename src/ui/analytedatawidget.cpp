@@ -7,8 +7,8 @@
 #include <gearbox/fitresultsmodel.h>
 #include <gearbox/floatingvaluedelegate.h>
 #include <gearbox/doubletostringconvertor.h>
-#include <gearbox/curvetoclipboardexporter.h>
 #include <gearbox/scalarfitresultsmapping.h>
+#include <gearbox/curveutility.h>
 #include <QClipboard>
 #include <QDataWidgetMapper>
 #include <QMessageBox>
@@ -80,13 +80,10 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
 
   connect(ui->qpb_resultsToClipboard, &QPushButton::clicked, this, &AnalyteDataWidget::onResultsToClipboard);
   connect(ui->qpb_curveToClipboard, &QPushButton::clicked,
-          [this]() { try {
-                   gearbox::CurveToClipboardExporter::write(h_gbox);
-                 } catch (const gearbox::CurveToClipboardExporter::Exception &ex) {
-                   QMessageBox mbox{QMessageBox::Critical, tr("Internal error"),
-                                    QString{tr("Failed to copy curve to clipboard: %1")}.arg(ex.what())};
-                   mbox.exec();
-                 }
+          [this]() {
+            auto blocks = gearbox::CurveUtility::blockify(h_gbox.mobilityCurveModel());
+            auto str = gearbox::CurveUtility::blocksToCSV(blocks, ';');
+            QApplication::clipboard()->setText(str.c_str());
           });
 
   setWidgetSizes();
