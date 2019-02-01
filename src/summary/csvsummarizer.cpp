@@ -126,13 +126,17 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
       stm << QObject::tr("Charge") << DELIM << QObject::tr("Value") << DELIM << QObject::tr("Fixed") << "\n";
     };
 
-    auto block = [DELIM, &hdr, &ests, &loc](QTextStream &stm, auto vec) {
+    auto block = [DELIM, &hdr, &ests, &loc](QTextStream &stm, auto vec, const bool hasZero) {
       hdr(stm);
 
       auto it = vec.cbegin();
       for (int charge = ests.chargeLow; charge <= ests.chargeHigh; charge++) {
-        if (charge == 0)
+        if (charge == 0) {
+          if (hasZero)
+            ++it;
+
           continue;
+        }
 
         stm << charge << DELIM << loc.toString(it->value) << DELIM << int(it->fixed) << "\n";
         ++it;
@@ -140,9 +144,9 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
     };
 
     stm << QObject::tr("Estimated mobilities") << "\n";
-    block(stm, ests.mobilities);
+    block(stm, ests.mobilities, true);
     stm << QObject::tr("Estimated pKas") << "\n";
-    block(stm, ests.pKas);
+    block(stm, ests.pKas, false);
 
     stm << "\n";
   }
