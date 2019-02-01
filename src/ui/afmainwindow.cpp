@@ -104,7 +104,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(ui->actionUser_guide, &QAction::triggered, this, [this] { AFUserGuideDialog dlg{this}; dlg.exec(); } );
 
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
-          [&]() { h_gbox.chemicalBuffersModel().add(h_gbox.ionicEffectsModel()); });
+          [&]() { h_gbox.chemicalBuffersModel().add(&h_gbox.ionicEffectsModel()); });
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)(const gearbox::ChemicalBuffer &)>(&BuffersInputWidget::addBuffer),
           [&](const gearbox::ChemicalBuffer &buf) { h_gbox.chemicalBuffersModel().add(buf); });
   connect(m_bufInpWidget, &BuffersInputWidget::removeBuffer,

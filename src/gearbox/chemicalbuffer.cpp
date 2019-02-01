@@ -9,7 +9,7 @@ namespace gearbox {
 
 static const double MIN_CONCENTRATION{1.0e-11};
 
-ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel &ionEffs) :
+ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel *ionEffs) :
   h_ionEffs{ionEffs},
   m_gdmModel{new gdm::GDM{}},
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
@@ -17,7 +17,7 @@ ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel &ionEffs) :
 {
 }
 
-ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel &ionEffs, gdm::GDM *model) :
+ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel *ionEffs, gdm::GDM *model) :
   h_ionEffs{ionEffs},
   m_gdmModel{model},
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
@@ -111,7 +111,7 @@ void ChemicalBuffer::recalculate()
   if (!m_needsRecalculation)
     return;
 
-  CAESInterface iface{*m_gdmModel, h_ionEffs};
+  CAESInterface iface{*m_gdmModel, *h_ionEffs};
 
   try {
     auto props = iface.bufferProperties();
@@ -128,6 +128,22 @@ void ChemicalBuffer::recalculate()
 void ChemicalBuffer::setExperimentalMobilities(std::vector<double> mobilities)
 {
   m_experimentalMobilities = std::move(mobilities);
+}
+
+ChemicalBuffer & ChemicalBuffer::operator=(ChemicalBuffer &&other) noexcept
+{
+  h_ionEffs = other.h_ionEffs;
+  m_gdmModel = other.m_gdmModel;
+  m_composition = other.m_composition;
+  m_experimentalMobilities = std::move(other.experimentalMobilities());
+  m_pH = other.m_pH;
+  m_ionicStrength = other.m_ionicStrength;
+  m_needsRecalculation = other.m_needsRecalculation;
+
+  other.m_gdmModel = nullptr;
+  other.m_composition = nullptr;
+
+  return *this;
 }
 
 } // namespace gearbox

@@ -15,6 +15,8 @@ public:
   using const_iterator = std::list<ChemicalBuffer>::const_iterator;
 
   explicit ChemicalBuffersModel();
+  ChemicalBuffersModel(const ChemicalBuffersModel &other);
+  ChemicalBuffersModel & operator=(const ChemicalBuffersModel &other);
 
   void add(ChemicalBuffer buffer);
   ChemicalBuffer & at(const size_t idx);
@@ -28,6 +30,7 @@ public:
   void remove(const ChemicalBuffer &buffer) noexcept;
   void removeAt(const size_t idx) noexcept;
   void setBuffers(std::vector<ChemicalBuffer> buffers);
+  void sortBypH();
 
 private:
   std::list<ChemicalBuffer> m_buffers;

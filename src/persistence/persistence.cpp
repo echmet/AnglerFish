@@ -27,7 +27,7 @@ void loadPeakMasterBuffer(const QString &path, gearbox::Gearbox &gbox)
 
   auto newModel = new gdm::GDM{std::move(model)};
 
-  gbox.chemicalBuffersModel().add(gearbox::ChemicalBuffer{gbox.ionicEffectsModel(), newModel});
+  gbox.chemicalBuffersModel().add(gearbox::ChemicalBuffer{&gbox.ionicEffectsModel(), newModel});
 }
 
 void savePeakMasterBuffer(const QString &path, const gearbox::ChemicalBuffer &buffer)

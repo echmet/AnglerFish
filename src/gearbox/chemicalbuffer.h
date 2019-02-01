@@ -22,8 +22,8 @@ public:
     using std::runtime_error::runtime_error;
   };
 
-  ChemicalBuffer(const IonicEffectsModel &ionEffs);
-  ChemicalBuffer(const IonicEffectsModel &ionEffs, gdm::GDM *model);
+  ChemicalBuffer(const IonicEffectsModel *ionEffs);
+  ChemicalBuffer(const IonicEffectsModel *ionEffs, gdm::GDM *model);
   ChemicalBuffer(const ChemicalBuffer &other);
   ChemicalBuffer(ChemicalBuffer &&other) noexcept;
   ~ChemicalBuffer();
@@ -39,10 +39,12 @@ public:
   double pH() const;
   void setExperimentalMobilities(std::vector<double> mobilities);
 
+  ChemicalBuffer & operator=(ChemicalBuffer &&other) noexcept;
+
 private:
   void recalculate();
 
-  const IonicEffectsModel &h_ionEffs;
+  const IonicEffectsModel *h_ionEffs;
   gdm::GDM *m_gdmModel;
   GDMProxy *m_composition;
 

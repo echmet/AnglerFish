@@ -1,13 +1,27 @@
 #include "chemicalbuffersmodel.h"
 
-#include <cassert>
 #include <util_lowlevel.h>
+#include <algorithm>
+#include <cassert>
 
 namespace gearbox {
+
+inline
+bool operator<(const ChemicalBuffer &lhs, const ChemicalBuffer &rhs)
+{
+  return lhs.pH() < rhs.pH();
+}
 
 ChemicalBuffersModel::ChemicalBuffersModel() :
   QObject{nullptr}
 {
+}
+
+ChemicalBuffersModel::ChemicalBuffersModel(const ChemicalBuffersModel &other) :
+  QObject{nullptr}
+{
+  for (const auto &b : other.m_buffers)
+    m_buffers.emplace_back(b);
 }
 
 void ChemicalBuffersModel::add(ChemicalBuffer buffer)
@@ -95,6 +109,34 @@ void ChemicalBuffersModel:: setBuffers(std::vector<ChemicalBuffer> buffers)
     m_buffers.emplace_back(std::move(buf));
 
   emit endModelReset();
+}
+
+void ChemicalBuffersModel::sortBypH()
+{
+  emit beginModelReset();
+
+  std::vector<ChemicalBuffer> bufs{};
+  bufs.reserve(m_buffers.size());
+
+  for (auto &&b : m_buffers)
+    bufs.emplace_back(std::move(b));
+
+  std::sort(bufs.begin(), bufs.end());
+
+  m_buffers.clear();
+
+  for (auto &&b : bufs)
+    m_buffers.emplace_back(std::move(b));
+
+  emit endModelReset();
+}
+
+ChemicalBuffersModel & ChemicalBuffersModel::operator=(const ChemicalBuffersModel &other)
+{
+  for (const auto &b : other.m_buffers)
+    m_buffers.emplace_back(b);
+
+  return *this;
 }
 
 } // namespace gearbox

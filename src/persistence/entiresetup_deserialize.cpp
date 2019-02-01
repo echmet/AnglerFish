@@ -89,7 +89,7 @@ std::vector<gearbox::ChemicalBuffer> EntireSetup::deserializeBuffers(const QJson
       expMobs.emplace_back(d.toDouble());
     }
 
-    gearbox::ChemicalBuffer buf{ionEffs, gdmModel.release()};
+    gearbox::ChemicalBuffer buf{&ionEffs, gdmModel.release()};
     buf.setExperimentalMobilities(std::move(expMobs));
 
     buffers.emplace_back(std::move(buf));

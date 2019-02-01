@@ -151,11 +151,12 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
         << QObject::tr("pH") << DELIM;
     if (exppH)
       stm << QObject::tr("pH experimental") << DELIM;
-    stm << QObject::tr("Average effective obility") << DELIM
+    stm << QObject::tr("Average effective mobility") << DELIM
         << QObject::tr("Effective mobility");
     stm << "\n";
 
-    const auto &bufs = gbox.chemicalBuffersModel();
+   auto bufs = gbox.chemicalBuffersModel();
+   bufs.sortBypH();
 
     for (const auto &b : bufs) {
       const auto &bm = b.model();
