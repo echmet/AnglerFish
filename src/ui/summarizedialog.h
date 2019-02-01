@@ -35,6 +35,7 @@ private:
   const gearbox::Gearbox &h_gbox;
 
 private slots:
+  void onBrowseClicked();
   void onOptionsClicked();
   void onSummarize();
   void onSummarizerChanged(const int idx);

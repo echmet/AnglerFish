@@ -4,6 +4,7 @@
 #include <summary/commonoptions.h>
 #include <summary/exception.h>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <cassert>
 
@@ -31,6 +32,7 @@ SummarizeDialog::SummarizeDialog(const gearbox::Gearbox &gbox, const std::vector
     ui->qcb_abbreviateBuffers->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
   });
   connect(ui->qpb_options, &QPushButton::clicked, this, &SummarizeDialog::onOptionsClicked);
+  connect(ui->qpb_browse, &QPushButton::clicked, this, &SummarizeDialog::onBrowseClicked);
 
   ui->qcb_abbreviateBuffers->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
 
@@ -56,6 +58,20 @@ summary::CommonOptions SummarizeDialog::makeCommonOptions()
     chk(ui->qcb_includeIonicEffects),
     ui->qle_title->text().toStdString()
   };
+}
+
+void SummarizeDialog::onBrowseClicked()
+{
+  QFileInfo finfo{ui->ql_outputFile->text()};
+  if (finfo.exists())
+    m_browseDlg->setDirectory(finfo.dir().absolutePath());
+
+  if (m_browseDlg->exec() == QDialog::Accepted) {
+    const auto &sel = m_browseDlg->selectedFiles();
+
+    if (!sel.empty())
+      ui->qle_outputFile->setText(sel.first());
+  }
 }
 
 void SummarizeDialog::onOptionsClicked()
@@ -92,6 +108,20 @@ void SummarizeDialog::onSummarizerChanged(const int idx)
   auto smrType = v.value<summary::SummarizerFactory::Types>();
 
   m_summarizer = summary::SummarizerFactory::make(smrType);
-  m_specOpts = nullptr;
   assert(m_summarizer != nullptr);
+  m_specOpts = nullptr;
+
+  const auto &ftypes = m_summarizer->allowedFileTypes();
+  QStringList filters{};
+  for (const auto &t : ftypes) {
+    QString suff{};
+
+    for (const auto &s: t.suffix)
+      suff.append(QString{"*.%1 "}.arg(s.c_str()));
+
+    QString filter = QString{"%1 (%2)"}.arg(t.description.c_str(), suff);
+    filters.push_back(std::move(filter));
+  }
+
+  m_browseDlg->setNameFilters(std::move(filters));
 }
