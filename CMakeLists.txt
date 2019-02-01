@@ -193,6 +193,7 @@ set(AnglerFish_SRCS
     "src/summary/commonoptions.cpp"
     "src/summary/summarizerfactory.cpp"
     "src/summary/csvsummarizer.cpp"
+    "src/summary/utility.cpp"
     "src/summary/ui/csvsummarizeroptionsdialog.cpp"
     "afres.qrc"
     )

@@ -3,6 +3,7 @@
 #include "ui/csvsummarizeroptionsdialog.h"
 #include "commonoptions.h"
 #include "exception.h"
+#include "utility.h"
 
 #include <trstr.h>
 #include <gearbox/gearbox.h>
@@ -159,13 +160,10 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
    bufs.sortBypH();
 
     for (const auto &b : bufs) {
-      const auto &bm = b.model();
-
       if (b.empty())
         continue;
 
-      /* TODO: Composition! */
-      stm << DELIM;
+      stm << Utility::bufferToString(b.model(), common.abbreviateBuffers).c_str() << DELIM;
 
       stm << b.pH() << DELIM;
       if (exppH)
