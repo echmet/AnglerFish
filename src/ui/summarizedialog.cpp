@@ -72,6 +72,9 @@ void SummarizeDialog::onSummarize()
 
   try {
     m_summarizer->summarize(h_gbox, makeCommonOptions(), m_specOpts, path.toStdString());
+
+    QMessageBox mbox{QMessageBox::Information, tr("Success"), tr("Summary was succesfully created")};
+    mbox.exec();
   } catch (const summary::NoDefaultOptionsException &) {
     QMessageBox mbox{QMessageBox::Warning, tr("Invalid options"), tr("Specific options must be configured for the selected summarizer")};
     mbox.exec();
