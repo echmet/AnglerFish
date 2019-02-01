@@ -155,8 +155,8 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
   if (common.includeIonicEffects) {
     const auto &ionEffs = gbox.ionicEffectsModel();
 
-    stm << QObject::tr("Debye-H\xC3\xBC ckel correction") << DELIM << int(ionEffs.debyeHuckel()) << "\n";
-    stm << QObject::tr("Onsger-Fuoss correction") << DELIM << int(ionEffs.onsagerFuoss()) << "\n";
+    stm << QObject::tr("Debye-H\xC3\xBC""ckel correction") << DELIM << int(ionEffs.debyeHuckel()) << "\n";
+    stm << QObject::tr("Onsager-Fuoss correction") << DELIM << int(ionEffs.onsagerFuoss()) << "\n";
 
     stm << "\n";
   }
