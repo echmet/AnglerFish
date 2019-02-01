@@ -366,6 +366,7 @@ void AFMainWindow::setupIcons()
   m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   m_qpb_calculate->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+  m_qpb_summarize->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 #endif // Q_OS_
 }
 
