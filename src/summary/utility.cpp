@@ -4,6 +4,7 @@
 #include <gearbox/doubletostringconvertor.h>
 #include <algorithm>
 #include <cassert>
+#include <cctype>
 #if __cplusplus > 201402L
   #define HAVE_CPP17
   #include <execution>
