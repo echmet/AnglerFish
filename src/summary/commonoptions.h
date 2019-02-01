@@ -5,11 +5,11 @@ namespace summary {
 
 class CommonOptions {
 public:
-  explicit CommonOptions(const bool _abbreviateBuffers,
-                         const bool _includeBuffers,
-                         const bool _includeCurve,
-                         const bool _includeEstimates,
-                         const bool _includeIonicEffects);
+  CommonOptions(const bool _abbreviateBuffers,
+                const bool _includeBuffers,
+                const bool _includeCurve,
+                const bool _includeEstimates,
+                const bool _includeIonicEffects);
 
   const bool abbreviateBuffers;
   const bool includeBuffers;

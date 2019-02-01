@@ -51,7 +51,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   m_tptsDlg = new ToggleTracepointsDialog{calculators::EMPFitterInterface::tracepointInformation(), m_tracingSetup, this};
 
-  m_summarizeDlg = new SummarizeDialog{summary::SummarizerFactory::list(), this};
+  m_summarizeDlg = new SummarizeDialog{h_gbox, summary::SummarizerFactory::list(), this};
 
   ui->centralwidget->layout()->addWidget(qsp_controlsChart);
   qsp_controlsChart->addWidget(m_buffersAnalyte);

@@ -12,7 +12,7 @@ public:
 
 class NoDefaultOptionsException : public Exception {
 public:
-  using std::runtime_error::runtime_error;
+  using Exception::Exception;
 };
 
 } // namespace summary
