@@ -9,9 +9,20 @@
   #define HAVE_CPP17
   #include <execution>
 #endif // C++17
+#include <map>
 #include <sstream>
 
 namespace summary {
+
+static
+const std::map<std::string, std::string> ABBREV_SHORTHANDS{{
+  { "lithium", "Li" },
+  { "sodium", "Na" },
+  { "potassium", "K" },
+  { "magnesium", "Mg" },
+  { "calcium", "Ca" },
+  { "hydrochloric acid", "HCl" }
+}};
 
 inline
 bool isLtr(const char ch)
@@ -40,6 +51,10 @@ std::string abbreviateName(std::string name)
 #else
   std::transform(name.begin(), name.end(), name.begin(), [](char ch) { return  std::tolower(ch); });
 #endif // HAVE_CPP17
+
+  auto sit = ABBREV_SHORTHANDS.find(name);
+  if (sit != ABBREV_SHORTHANDS.cend())
+    return sit->second;
 
   auto toks = split(name);
 
