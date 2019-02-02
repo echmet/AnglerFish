@@ -74,24 +74,81 @@ std::string abbreviateName(std::string name)
   return abbrName;
 }
 
+inline
+gdm::GDM::const_iterator findDrivingConstituent(const gdm::GDM *buf)
+{
+  const auto isStrongAcid = [](const gdm::GDM::const_iterator it) {
+    const auto &props = it->physicalProperties();
+
+    /* Strong acid must have no positive states
+     * and at least one negative state */
+    if (props.charges().low() < 0 && props.charges().high() == 0)
+      return props.pKa(-1) <= 1.0;
+    return false;
+  };
+
+  const auto isStrongBase = [](const gdm::GDM::const_iterator it) {
+    const auto &props = it->physicalProperties();
+
+    /* Strong base must have no negative states
+     * and at least one positive state */
+    if (props.charges().low() == 0 && props.charges().high() > 0)
+      return props.pKa(1) >= 13.0;
+    return false;
+  };
+
+  gdm::GDM::const_iterator driving = buf->cend();
+  for (auto it = buf->cbegin(); it != buf->cend(); ++it) {
+    if (isStrongAcid(it)) {
+      if (driving != buf->cend())
+        return buf->cend(); /* We cannot have more than one driving constituent */
+      driving = it;
+    }
+
+    if (isStrongBase(it)) {
+      if (driving != buf->cend())
+        return buf->cend();
+      driving = it;
+    }
+  }
+
+  return driving;
+}
+
 std::string Utility::bufferToString(const gdm::GDM *buf, const bool abbreviate)
 {
   const auto &loc = gearbox::DoubleToStringConvertor::locale();
 
-  std::string str{};
+  auto toString = [&](const gdm::GDM::const_iterator it) {
+    assert(it != buf->cend());
 
-  auto last = buf->cend();
-  last--;
-  for (auto it = buf->cbegin(); it != buf->cend(); ++it) {
     const auto &name = it->name();
     const auto &cs = buf->concentrations(it);
 
     assert(cs.size() == 1);
 
-    str += (abbreviate ? abbreviateName(name) : name) + "(" + loc.toString(cs[0]).toStdString() + ")";
+    return (abbreviate ? abbreviateName(name) : name) + "(" + loc.toString(cs[0]).toStdString() + ")";
+  };
+
+  std::string str{};
+
+  const auto driving = findDrivingConstituent(buf);
+
+  auto last = buf->cend();
+  if (driving == buf->cend())
+    last--;
+  for (auto it = buf->cbegin(); it != buf->cend(); ++it) {
+    if (it == driving)
+      continue;
+
+    str += toString(it);
+
     if (it != last && !abbreviate)
       str += "_";
   }
+
+  if (driving != buf->cend())
+    str += toString(driving);
 
   return str;
 }
