@@ -121,6 +121,9 @@ void SummarizeDialog::onSummarize()
   } catch (const summary::NoDefaultOptionsException &) {
     QMessageBox mbox{QMessageBox::Warning, tr("Invalid options"), tr("Specific options must be configured for the selected summarizer")};
     mbox.exec();
+  } catch (const summary::Exception &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Failed to write summary"), ex.what()};
+    mbox.exec();
   }
 }
 
