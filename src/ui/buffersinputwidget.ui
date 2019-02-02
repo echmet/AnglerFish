@@ -58,7 +58,7 @@
      <item>
       <widget class="QPushButton" name="qpb_loadBuffer">
        <property name="text">
-        <string>Load buffer</string>
+        <string>Load buffer(s)</string>
        </property>
       </widget>
      </item>
