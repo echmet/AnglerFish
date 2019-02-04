@@ -69,29 +69,41 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
 include_directories(${INCLUDE_DIRECTORIES}
-                    "${CMAKE_CURRENT_SOURCE_DIR}/src"
-                    "${ECHMET_CORE_LIBS_DIR}/include/ECHMET/CoreLibs"
-                    "${EMPFITTER_DIR}/include/ECHMET"
-                    "${ECHMET_UPDATECHECK_DIR}/include"
-                    SYSTEM "${QWTPLOT_DIR}/include"
-                    )
+                    "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-if (WIN32)
+if (NOT "${ECHMET_CORE_LIBS_DIR}" STREQUAL "")
     include_directories(${INCLUDE_DIRECTORIES}
-                        SYSTEM "${SQLITE3_DIR}")
+                        "${ECHMET_CORE_LIBS_DIR}/include/ECHMET/CoreLibs")
+    link_directories(${LINK_DIRECTORIES}
+                     "${ECHMET_CORE_LIBS_DIR}/lib")
 endif ()
 
-link_directories(${LINK_DIRECTORIES}
-                 "${ECHMET_CORE_LIBS_DIR}/lib"
-                 "${EMPFITTER_DIR}/lib"
-                 "${QWTPLOT_DIR}/lib"
-                 "${ECHMET_UPDATECHECK_DIR}/lib"
-                 )
-
-if (WIN32)
+if (NOT "${ECHMET_UPDATECHECK_DIR}" STREQUAL "")
+    include_directories(${INCLUDE_DIRECTORIES}
+                        "${ECHMET_UPDATECHECK_DIR}/include")
     link_directories(${LINK_DIRECTORIES}
-                     "${SQLITE3_DIR}"
-                     )
+                     "${ECHMET_UPDATECHECK_DIR}/lib")
+endif ()
+
+if (NOT "${EMPFITTER_DIR}" STREQUAL "")
+    include_directories(${INCLUDE_DIRECTORIES}
+                        "${EMPFITTER_DIR}/include/ECHMET")
+    link_directories(${LINK_DIRECTORIES}
+                     "${EMPFITTER_DIR}/lib")
+endif ()
+
+if (NOT "${QWTPLOT_DIR}" STREQUAL "")
+    include_directories(${INCLUDE_DIRECTORIES}
+                        SYSTEM "${QWTPLOT_DIR}/include")
+    link_directories(${LINK_DIRECTORIES}
+                     "${QWTPLOT_DIR}/lib")
+endif ()
+
+if (NOT "${SQLITE3_DIR}" STREQUAL "")
+    include_directories(${INCLUDE_DIRECTORIES}
+                        SYSTEM "${SQLITE3_DIR}")
+    link_directories(${LINK_DIRECTORIES}
+                     "${SQLITE3_DIR}")
 endif ()
 
 set(CMAKE_CXX_FLAGS
