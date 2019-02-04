@@ -180,16 +180,16 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
 
       stm << Utility::bufferToString(b.model(), common.abbreviateBuffers).c_str() << DELIM;
 
-      stm << b.pH() << DELIM;
+      stm << loc.toString(b.pH()) << DELIM;
       if (exppH)
         stm << DELIM;
 
       double avgUEff = std::accumulate(b.experimentalMobilities().cbegin(), b.experimentalMobilities().cend(), 0.0);
       avgUEff /= b.experimentalMobilities().size();
-      stm << avgUEff << DELIM;
+      stm << loc.toString(avgUEff) << DELIM;
 
       for (auto &uEff : b.experimentalMobilities())
-        stm << uEff << DELIM;
+        stm << loc.toString(uEff) << DELIM;
 
       stm << "\n";
     }
@@ -205,7 +205,7 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
           << QObject::tr("Relative error");
       stm << "\n";
     };
-    auto block =[DELIM, &hdr](QTextStream &stm, const gearbox::FitResultsModel &model) {
+    auto block =[DELIM, &hdr, &loc](QTextStream &stm, const gearbox::FitResultsModel &model) {
       hdr(stm);
 
       int rc = model.rowCount();
@@ -216,9 +216,9 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
         double rr = model.data(model.index(row, gearbox::FitResultsModel::ID_REL_ERR), Qt::DisplayRole).toDouble();
 
         stm << chg << DELIM
-            << v << DELIM
-            << ar << DELIM
-            << rr << DELIM;
+            << loc.toString(v) << DELIM
+            << loc.toString(ar) << DELIM
+            << loc.toString(rr) << DELIM;
         stm << "\n";
       }
     };
