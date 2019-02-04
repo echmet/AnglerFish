@@ -57,6 +57,7 @@ private:
   QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
   QPushButton *m_qpb_summarize;
+  QPushButton *m_qpb_toggleAnalytePanel;
 
   CheckForUpdateDialog *m_checkForUpdateDlg;
 
@@ -78,6 +79,7 @@ private slots:
   void onSave();
   void onSetDebuggingOutput();
   void onSummarize();
+  void onToggleAnalytePanel();
 };
 
 #endif // AFMAINWINDOW_H

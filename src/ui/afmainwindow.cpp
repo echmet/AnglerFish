@@ -27,6 +27,8 @@
 #include <QThread>
 #include <QVBoxLayout>
 
+static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
+
 AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
                            QWidget *parent) :
   QMainWindow{parent},
@@ -66,6 +68,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_save = new QPushButton{tr("Save setup"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
   m_qpb_summarize = new QPushButton{tr("Summarize"), this};
+  m_qpb_toggleAnalytePanel = new QPushButton{HIDE_ANALYTE_PANEL, this};
+  m_qpb_toggleAnalytePanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
   ui->qtb_mainToolBar->addWidget(m_qpb_new);
   ui->qtb_mainToolBar->addWidget(m_qpb_newBuffers);
@@ -73,6 +77,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui->qtb_mainToolBar->addWidget(m_qpb_save);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
   ui->qtb_mainToolBar->addWidget(m_qpb_summarize);
+  ui->qtb_mainToolBar->addWidget(m_qpb_toggleAnalytePanel);
 
   m_saveDlg.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -86,6 +91,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
   connect(m_qpb_summarize, &QPushButton::clicked, this, &AFMainWindow::onSummarize);
+  connect(m_qpb_toggleAnalytePanel, &QPushButton::clicked, this, &AFMainWindow::onToggleAnalytePanel);
 
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &AFMainWindow::onCheckForUpdate);
 
@@ -310,6 +316,18 @@ void AFMainWindow::onSetDebuggingOutput()
 void AFMainWindow::onSummarize()
 {
   m_summarizeDlg->exec();
+}
+
+void AFMainWindow::onToggleAnalytePanel()
+{
+  const bool isVisible = m_analDataWidget->isVisible();
+
+  if (isVisible)
+    m_qpb_toggleAnalytePanel->setText(tr("Show analyte panel"));
+  else
+    m_qpb_toggleAnalytePanel->setText(HIDE_ANALYTE_PANEL);
+
+  m_analDataWidget->setVisible(!isVisible);
 }
 
 void AFMainWindow::setEstimates()
