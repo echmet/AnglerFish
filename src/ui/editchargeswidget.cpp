@@ -61,11 +61,12 @@ void EditChargesWidget::initialize(const gdm::PhysicalProperties &props)
     else
       pKas.emplace(charge, 0);
   }
+  assert(pKas.size() == mobilities.size());
 
   setupChargesModel(ui->qtblView_charges);
-  setupWidget();
-
   m_chargesModel->refreshData(pKas, mobilities, chargeLow, chargeHigh);
+
+  setupWidget();
 }
 
 void EditChargesWidget::initialize(PhysPropsMap pKas, PhysPropsMap mobilities, const int chargeLow, const int chargeHigh)
@@ -82,9 +83,9 @@ void EditChargesWidget::initialize(PhysPropsMap pKas, PhysPropsMap mobilities, c
   assert(pKas.size() == mobilities.size());
 
   setupChargesModel(ui->qtblView_charges);
-  setupWidget();
-
   m_chargesModel->refreshData(pKas, mobilities, chargeLow, chargeHigh);
+
+  setupWidget();
 }
 
 std::vector<double> EditChargesWidget::mobilities() const
