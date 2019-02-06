@@ -67,6 +67,8 @@ void BufferCompositionWidget::editConstituent(const QString &name)
         mbox.exec();
       } else {
         m_model->updateName(name, dlg->name());
+
+        emit compositionChanged();
       }
     } catch (GDMProxyException &ex) {
       QMessageBox mbox{QMessageBox::Warning, tr("Operation failed"), ex.what()};
