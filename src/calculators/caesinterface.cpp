@@ -88,6 +88,7 @@ CAESInterface::BufferProperties CAESInterface::bufferProperties()
   if (tRet != ECHMET::RetCode::OK)
     throw Exception{trstr("Failed to calculate distribution: ") + errstr(tRet)};
 
-  return {ECHMET::IonProps::calculatepH_direct(calcProps->ionicConcentrations->at(0), calcProps->ionicStrength),
-          calcProps->ionicStrength};
+  const double is = h_ionEffs.debyeHuckel() ? calcProps->ionicStrength : 0.0;
+  const double pH = ECHMET::IonProps::calculatepH_direct(calcProps->ionicConcentrations->at(0), is);
+  return {pH, calcProps->ionicStrength};
 }
