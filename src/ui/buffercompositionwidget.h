@@ -27,6 +27,7 @@ public:
 private:
   void editConstituent(const QString &name);
   void setupIcons();
+  void setWidgetSizes();
 
   Ui::BufferCompositionWidget *ui;
 

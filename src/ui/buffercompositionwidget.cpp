@@ -40,6 +40,8 @@ BufferCompositionWidget::BufferCompositionWidget(gearbox::GDMProxy &gdmProxy,
       editConstituent(v.toString());
   });
   connect(m_model, &BufferCompositionModel::dataChanged, this, [this]() { emit this->compositionChanged(); });
+
+  setWidgetSizes();
 }
 
 BufferCompositionWidget::~BufferCompositionWidget()
@@ -135,6 +137,16 @@ void BufferCompositionWidget::onRemoveConstituent()
   }
 
   emit compositionChanged();
+}
+
+void BufferCompositionWidget::setWidgetSizes()
+{
+  const auto &fm = fontMetrics();
+
+  int tbwh = fm.height() * 9;
+
+  ui->qtbv_composition->setMinimumHeight(tbwh);
+  ui->qtbv_composition->setMaximumHeight(tbwh);
 }
 
 void BufferCompositionWidget::setupIcons()
