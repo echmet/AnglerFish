@@ -43,7 +43,12 @@ void resultsReleaser(ECHMET::ElmigParamsFitter::FitResults *results)
 inline
 void tpiVecReleaser(ECHMET::ElmigParamsFitter::TracepointInfoVec *vec)
 {
-  vec->destroy();
+  if (vec != nullptr) {
+    for (size_t idx = 0; idx < vec->size(); idx++)
+      vec->elem(idx).description->destroy();
+
+    vec->destroy();
+  }
 }
 
 using FitResultsPtr = std::unique_ptr<ECHMET::ElmigParamsFitter::FitResults,
