@@ -76,6 +76,7 @@ private slots:
   void onLoad();
   void onNew();
   void onNewBuffers();
+  void onOpenDatabase();
   void onSave();
   void onSetDebuggingOutput();
   void onSummarize();

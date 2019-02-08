@@ -17,6 +17,7 @@
 #include <gearbox/chemicalbuffersmodel.h>
 #include <gearbox/mobilitycurvemodel.h>
 #include <gearbox/calcworker.h>
+#include <gearbox/databaseproxy.h>
 #include <persistence/persistence.h>
 #include <summary/summarizerfactory.h>
 #include <QCloseEvent>
@@ -108,6 +109,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   });
   connect(ui->actionSet_debugging_output, &QAction::triggered, this, &AFMainWindow::onSetDebuggingOutput);
   connect(ui->actionUser_guide, &QAction::triggered, this, [this] { AFUserGuideDialog dlg{this}; dlg.exec(); } );
+  connect(ui->actionLoad_another_database, &QAction::triggered, this, &AFMainWindow::onOpenDatabase);
 
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
           [&]() { h_gbox.chemicalBuffersModel().add(&h_gbox.ionicEffectsModel()); });
@@ -270,6 +272,26 @@ void AFMainWindow::onNewBuffers()
 
   h_gbox.invalidateAll();
   h_gbox.chemicalBuffersModel().clear();
+}
+
+void AFMainWindow::onOpenDatabase()
+{
+  QFileDialog dlg{this, tr("Load database file")};
+
+  dlg.setAcceptMode(QFileDialog::AcceptOpen);
+  dlg.setNameFilter("SQLite3 database (*.sql)");
+
+  if (dlg.exec() == QDialog::Accepted) {
+    auto &dbProxy = h_gbox.databaseProxy();
+
+    const auto &sel = dlg.selectedFiles();
+    if (!sel.empty()) {
+      if (!dbProxy.openDatabase(sel.at(0))) {
+        QMessageBox errBox{QMessageBox::Warning, tr("Database error"), tr("Cannot open selected database file")};
+        errBox.exec();
+      }
+    }
+  }
 }
 
 void AFMainWindow::onSave()

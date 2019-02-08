@@ -46,6 +46,7 @@
      <string>Optio&amp;ns</string>
     </property>
     <addaction name="actionIonic_effects_corrections"/>
+    <addaction name="actionLoad_another_database"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
@@ -102,7 +103,7 @@
   </action>
   <action name="actionCheck_for_update">
    <property name="text">
-    <string>Check for update</string>
+    <string>&amp;Check for update</string>
    </property>
   </action>
   <action name="actionNew_buffers">
@@ -117,7 +118,12 @@
   </action>
   <action name="actionUser_guide">
    <property name="text">
-    <string>User guide</string>
+    <string>&amp;User guide</string>
+   </property>
+  </action>
+  <action name="actionLoad_another_database">
+   <property name="text">
+    <string>Load another database</string>
    </property>
   </action>
  </widget>
