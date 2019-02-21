@@ -9,6 +9,7 @@
 class AnalyteDataWidget;
 class BuffersInputWidget;
 class CheckForUpdateDialog;
+class MobilityConstraintsDialog;
 class SoftwareUpdater;
 class SummarizeDialog;
 class QPushButton;
@@ -36,6 +37,7 @@ protected:
   virtual void closeEvent(QCloseEvent *evt) override;
 
 private:
+  void invalidateResults();
   void updatePlotExperimental();
   void updatePlotFitted();
   void setEstimates();
@@ -50,6 +52,7 @@ private:
   BuffersInputWidget *m_bufInpWidget;
   AnalyteDataWidget *m_analDataWidget;
   SummarizeDialog *m_summarizeDlg;
+  MobilityConstraintsDialog *m_mobConstrsDlg;
 
   QPushButton *m_qpb_new;
   QPushButton *m_qpb_newBuffers;

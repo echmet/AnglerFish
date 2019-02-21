@@ -13,6 +13,7 @@ class ChemicalBuffersModel;
 class DatabaseProxy;
 class FitResultsModel;
 class IonicEffectsModel;
+class LimitMobilityConstraintsModel;
 class MobilityCurveModel;
 
 class Gearbox {
@@ -28,6 +29,7 @@ public:
   FitResultsModel & fittedpKasModel() const;
   IonicEffectsModel & ionicEffectsModel();
   const IonicEffectsModel & ionicEffectsModel() const;
+  LimitMobilityConstraintsModel & limitMobilityConstraintsModel() const;
   MobilityCurveModel & mobilityCurveModel() const;
   ScalarFitResultsMapping::MapperModel & scalarResultsModel() const;
   void setAnalyteEstimates(const int chargeLow, const int chargeHigh,

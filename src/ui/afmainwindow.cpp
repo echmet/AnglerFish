@@ -10,6 +10,7 @@
 #include "toggletracepointsdialog.h"
 #include "afuserguidedialog.h"
 #include "summarizedialog.h"
+#include "mobilityconstraintsdialog.h"
 
 #include <globals.h>
 #include <softwareupdater.h>
@@ -55,6 +56,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_tptsDlg = new ToggleTracepointsDialog{calculators::EMPFitterInterface::tracepointInformation(), m_tracingSetup, this};
 
   m_summarizeDlg = new SummarizeDialog{h_gbox, summary::SummarizerFactory::list(), this};
+  m_mobConstrsDlg = new MobilityConstraintsDialog{h_gbox.limitMobilityConstraintsModel(), this};
 
   ui->centralwidget->layout()->addWidget(qsp_controlsChart);
   qsp_controlsChart->addWidget(m_buffersAnalyte);
@@ -109,6 +111,10 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   });
   connect(ui->actionSet_debugging_output, &QAction::triggered, this, &AFMainWindow::onSetDebuggingOutput);
   connect(ui->actionUser_guide, &QAction::triggered, this, [this] { AFUserGuideDialog dlg{this}; dlg.exec(); } );
+  connect(ui->actionLimit_mobility_constraints, &QAction::triggered, this,
+          [this] { if (m_mobConstrsDlg->exec() == QDialog::Accepted)
+                     invalidateResults();
+          });
   connect(ui->actionLoad_another_database, &QAction::triggered, this, &AFMainWindow::onOpenDatabase);
 
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
@@ -152,6 +158,12 @@ void AFMainWindow::connectUpdater(SoftwareUpdater *updater)
   connect(updater, &SoftwareUpdater::checkComplete, m_checkForUpdateDlg, &CheckForUpdateDialog::onCheckComplete);
 }
 
+void AFMainWindow::invalidateResults()
+{
+  h_gbox.invalidateAll();
+  updatePlotExperimental();
+}
+
 void AFMainWindow::onAboutTriggered()
 {
   AboutDialog dlg{};
@@ -161,8 +173,7 @@ void AFMainWindow::onAboutTriggered()
 
 void AFMainWindow::onBuffersChanged()
 {
-  h_gbox.invalidateAll();
-  updatePlotExperimental();
+  invalidateResults();
 }
 
 void AFMainWindow::onCalculate()

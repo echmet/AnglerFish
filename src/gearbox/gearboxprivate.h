@@ -6,6 +6,7 @@
 #include "databaseproxy.h"
 #include "fitresultsmodel.h"
 #include "ioniceffectsmodel.h"
+#include "limitmobilityconstraintsmodel.h"
 #include "mobilitycurvemodel.h"
 #include "scalarfitresultsmapping.h"
 
@@ -28,6 +29,8 @@ public:
   FitResultsModel m_fittedpKas;
 
   MobilityCurveModel m_mobilityCurveModel;
+
+  LimitMobilityConstraintsModel m_limMobConstrsModel;
 
   ScalarFitResultsMapping::MapperModel m_scalFRMapping;
   QVector<double> m_scalFRData;

@@ -7,6 +7,7 @@
 #include <gearbox/chemicalbuffersmodel.h>
 #include <gearbox/ioniceffectsmodel.h>
 #include <gearbox/fitresultsmodel.h>
+#include <gearbox/limitmobilityconstraintsmodel.h>
 #include <gearbox/mobilitycurvemodel.h>
 #include <echmetelmigparamsfitter.h>
 #include <algorithm>
@@ -283,8 +284,12 @@ void EMPFitterInterface::fit()
   auto fixer = FixerWrap{ECHMET::ElmigParamsFitter::createParametersFixer(), fixerReleaser};
   fixParameters(fixer, h_gbox);
 
+  auto options = ECHMET::ElmigParamsFitter::defaultFitOptions();
+  if (!h_gbox.limitMobilityConstraintsModel().enabled())
+    ECHMET::EnumOps::operator|=(options, ECHMET::ElmigParamsFitter::FO_DISABLE_MOB_CONSTRAINTS);
+
   auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr, 0.0}, resultsReleaser};
-  auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), *results);
+  auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), options, *results);
   if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
     const auto err = QString{QObject::tr("Fit failed: ")} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
     throw Exception{err.toStdString()};

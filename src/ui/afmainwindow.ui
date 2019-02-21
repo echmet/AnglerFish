@@ -46,6 +46,7 @@
      <string>Optio&amp;ns</string>
     </property>
     <addaction name="actionIonic_effects_corrections"/>
+    <addaction name="actionLimit_mobility_constraints"/>
     <addaction name="actionLoad_another_database"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
@@ -124,6 +125,11 @@
   <action name="actionLoad_another_database">
    <property name="text">
     <string>Load another database</string>
+   </property>
+  </action>
+  <action name="actionLimit_mobility_constraints">
+   <property name="text">
+    <string>Limit mobility constraints</string>
    </property>
   </action>
  </widget>

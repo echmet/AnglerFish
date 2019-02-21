@@ -71,6 +71,10 @@ const IonicEffectsModel & Gearbox::ionicEffectsModel() const
   return m_gboxPriv->m_ionEffsModel;
 }
 
+LimitMobilityConstraintsModel & Gearbox::limitMobilityConstraintsModel() const
+{
+  return m_gboxPriv->m_limMobConstrsModel;
+}
 
 MobilityCurveModel & Gearbox::mobilityCurveModel() const
 {
