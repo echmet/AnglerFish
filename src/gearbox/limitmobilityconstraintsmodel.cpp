@@ -7,6 +7,11 @@ LimitMobilityConstraintsModel::LimitMobilityConstraintsModel() :
 {
 }
 
+LimitMobilityConstraintsModel::Constraints LimitMobilityConstraintsModel::constraintsForMobility(const double mobility) const
+{
+  return {};
+}
+
 bool LimitMobilityConstraintsModel::enabled() const
 {
   return m_enabled;

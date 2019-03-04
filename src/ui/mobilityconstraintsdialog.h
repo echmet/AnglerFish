@@ -11,10 +11,10 @@ namespace gearbox {
 class LimitMobilityConstraintsModel;
 } // namespace gearbox
 
-class MobilityConstraintsDialog : public QDialog
-{
-  Q_OBJECT
+class MobilityConstraintsModel;
 
+class MobilityConstraintsDialog : public QDialog {
+  Q_OBJECT
 public:
   explicit MobilityConstraintsDialog(gearbox::LimitMobilityConstraintsModel &model, QWidget *parent = nullptr);
   ~MobilityConstraintsDialog();
@@ -22,6 +22,7 @@ public:
 private:
   Ui::MobilityConstraintsDialog *ui;
 
+  MobilityConstraintsModel *m_uiModel;
   gearbox::LimitMobilityConstraintsModel &h_model;
 };
 

@@ -1,5 +1,6 @@
 #include "mobilityconstraintsdialog.h"
 #include "ui_mobilityconstraintsdialog.h"
+#include "internal_models/mobilityconstraintsmodel.h"
 
 #include <gearbox/limitmobilityconstraintsmodel.h>
 
@@ -9,6 +10,9 @@ MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConst
   h_model{model}
 {
   ui->setupUi(this);
+
+  m_uiModel = new MobilityConstraintsModel{model, this};
+  ui->qtvb_currentConstraints->setModel(m_uiModel);
 
   ui->qcb_useMobilityConstraints->setChecked(h_model.enabled());
 

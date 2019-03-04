@@ -155,6 +155,7 @@ set(AnglerFish_SRCS
     "src/ui/internal_models/constituentchargesmodelfixable.cpp"
     "src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp"
     "src/ui/internal_models/buffercompositionmodel.cpp"
+    "src/ui/internal_models/mobilityconstraintsmodel.cpp"
     "src/database/db_constituent.cpp"
     "src/database/db_constituentsdatabase.cpp"
     "src/gearbox/doubletostringconvertor.cpp"
