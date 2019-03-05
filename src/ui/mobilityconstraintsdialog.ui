@@ -25,6 +25,16 @@
     <widget class="QTableView" name="qtvb_currentConstraints"/>
    </item>
    <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Estimated mobilities whose value exceeds the constraints of the previous ionic form will be displayed in red.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="ql_info">
      <property name="text">
       <string>NOTE: Keep in mind that the constraints currently displayed are valid only for the initial estimates and will change during fit.</string>
