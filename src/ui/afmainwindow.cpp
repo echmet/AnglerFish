@@ -40,6 +40,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 {
   ui->setupUi(this);
 
+  setWindowIcon(Globals::icon());
+
   ui->centralwidget->setLayout(new QVBoxLayout{});
 
   qsp_controlsChart = new QSplitter{Qt::Vertical};

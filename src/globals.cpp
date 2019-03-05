@@ -21,7 +21,13 @@ const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
 
 QIcon Globals::icon()
 {
-  return {};
+#ifdef Q_OS_WIN
+  static const QIcon PROGRAM_ICON{":/images/res/AFicon.ico"};
+#else
+  static const QIcon PROGRAM_ICON{":/images/res/AFicon_64.png"};
+#endif // Q_OS_WIN
+
+  return PROGRAM_ICON;
 }
 
 QString Globals::DeveloperID::linkString() const
