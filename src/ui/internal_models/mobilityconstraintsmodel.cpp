@@ -1,5 +1,6 @@
 #include "mobilityconstraintsmodel.h"
 
+#include <QPalette>
 #include <gearbox/limitmobilityconstraintsmodel.h>
 #include <cassert>
 
@@ -20,10 +21,15 @@ MobilityConstraintsModel::MobInfo::MobInfo(const int chg, const double mob, cons
 }
 
 MobilityConstraintsModel::MobilityConstraintsModel(const gearbox::LimitMobilityConstraintsModel &backend,
+                                                   const QPalette &palette,
                                                    QObject *parent) :
   QAbstractTableModel{parent},
-  h_backend{backend}
+  h_backend{backend},
+  h_palette{palette}
 {
+  m_defBrush = palette.foreground();
+  m_invalBrush = palette.foreground();
+  m_invalBrush.setColor(Qt::red);
 }
 
 QVariant MobilityConstraintsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -73,13 +79,16 @@ QVariant MobilityConstraintsModel::data(const QModelIndex &index, int role) cons
 {
   if (!index.isValid())
     return {};
-  if (role != Qt::DisplayRole)
-    return {};
 
   const auto col = index.column();
   const auto row = index.row();
 
   if (col < 0 || col >= columnCount() || row < 0 || row >= rowCount())
+    return {};
+
+  if (role == Qt::ForegroundRole)
+    return displayValidity(row, col);
+  if (role != Qt::DisplayRole)
     return {};
 
   const auto &item = m_data.at(row);
@@ -107,15 +116,50 @@ QVariant MobilityConstraintsModel::data(const QModelIndex &index, int role) cons
   return {};
 }
 
+QVariant MobilityConstraintsModel::displayValidity(const int row, const int col) const
+{
+  if (col > 0)
+    return m_defBrush;
+
+  const auto &item = m_data[row];
+  const int charge = item.charge;
+  if (charge == 1 || charge == -1)
+    return m_defBrush;
+
+  const bool hasPrev = [&]() {
+    if (charge > 1)
+      return row > 0;
+    return row < m_data.size() - 1;
+  }();
+
+  if (!hasPrev)
+    return m_defBrush;
+
+  const auto &prevItem = [&]() {
+    if (charge > 1)
+      return m_data[row - 1];
+    return m_data[row + 1];
+  }();
+
+  const bool isWithinConstrs = item.mobility > prevItem.lowerBound && item.mobility < prevItem.upperBound;
+
+  return isWithinConstrs ? m_defBrush : m_invalBrush;
+}
+
 void MobilityConstraintsModel::updateConstraints(const int chargeLow, const int chargeHigh,
                                                  const QVector<EstimatedMobility> &estimates)
 {
   beginResetModel();
 
   int size = chargeHigh - chargeLow;
-  assert(size > 0);
+  assert(size >= 0);
 
   m_data.clear();
+  if (size == 0) {
+    endResetModel();
+    return;
+  }
+
   m_data.reserve(size);
 
   for (const auto &item : estimates) {

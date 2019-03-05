@@ -3,7 +3,10 @@
 
 #include <QAbstractTableModel>
 
+#include <QBrush>
 #include <QVector>
+
+class QPalette;
 
 namespace gearbox {
 class LimitMobilityConstraintsModel;
@@ -31,6 +34,7 @@ public:
   };
 
   explicit MobilityConstraintsModel(const gearbox::LimitMobilityConstraintsModel &backend,
+                                    const QPalette &palette,
                                     QObject *parent = nullptr);
 
   // Header:
@@ -51,9 +55,15 @@ private:
     IT_UP_CONSTR
   };
 
+  QVariant displayValidity(const int row, const int col) const;
+
   QVector<MobInfo> m_data;
 
+  QBrush m_defBrush;
+  QBrush m_invalBrush;
+
   const gearbox::LimitMobilityConstraintsModel &h_backend;
+  const QPalette &h_palette;
 
 };
 

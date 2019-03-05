@@ -13,7 +13,7 @@ LimitMobilityConstraintsModel::Constraints LimitMobilityConstraintsModel::constr
 {
   auto ctrs = calculators::EMPFitterInterface::mobilityConstraints(mobility);
 
-  return { mobility - ctrs.low, mobility + ctrs.high };
+  return { mobility + ctrs.low, mobility + ctrs.high };
 }
 
 bool LimitMobilityConstraintsModel::enabled() const

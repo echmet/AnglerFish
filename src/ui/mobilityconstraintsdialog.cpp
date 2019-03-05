@@ -15,7 +15,7 @@ MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConst
 {
   ui->setupUi(this);
 
-  m_uiModel = new MobilityConstraintsModel{model, this};
+  m_uiModel = new MobilityConstraintsModel{model, this->palette(), this};
   ui->qtvb_currentConstraints->setModel(m_uiModel);
 
   ui->qcb_useMobilityConstraints->setChecked(h_model.enabled());
