@@ -92,7 +92,7 @@ public:
     using std::runtime_error::runtime_error;
   };
 
-  explicit EMPFitterInterface(gearbox::Gearbox &gbox);
+  explicit EMPFitterInterface(gearbox::Gearbox &gbox, const bool unscaledStdErrs);
   EMPFitterInterface(const EMPFitterInterface &other) = delete;
   ~EMPFitterInterface() = default;
   void fit();
@@ -109,6 +109,8 @@ public:
 private:
   gearbox::Gearbox &h_gbox;
   double m_rSquared;
+
+  const bool m_unscaledStdErrs;
 };
 
 } // namespace calculator

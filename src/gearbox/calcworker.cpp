@@ -2,8 +2,9 @@
 
 namespace gearbox {
 
-CalcWorker::CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitterInterface::TracepointState> tpStates) :
-  m_iface{gbox},
+CalcWorker::CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitterInterface::TracepointState> tpStates,
+                       const bool unscaledStdErrs) :
+  m_iface{gbox, unscaledStdErrs},
   m_tpStates{std::move(tpStates)}
 {
 }

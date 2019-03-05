@@ -10,7 +10,8 @@ namespace gearbox {
 class CalcWorker : public QObject {
   Q_OBJECT
 public:
-  explicit CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitterInterface::TracepointState> tpStates);
+  explicit CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitterInterface::TracepointState> tpStates,
+                      const bool unscaledStdErrs);
   ~CalcWorker();
   void process();
   bool writeTrace(const std::string &path);

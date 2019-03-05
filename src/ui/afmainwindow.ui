@@ -48,6 +48,7 @@
     <addaction name="actionIonic_effects_corrections"/>
     <addaction name="actionLimit_mobility_constraints"/>
     <addaction name="actionLoad_another_database"/>
+    <addaction name="actionUse_unscaled_std_errors"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
@@ -130,6 +131,14 @@
   <action name="actionLimit_mobility_constraints">
    <property name="text">
     <string>Limit mobility constraints</string>
+   </property>
+  </action>
+  <action name="actionUse_unscaled_std_errors">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use unscaled std. errors</string>
    </property>
   </action>
  </widget>

@@ -269,8 +269,9 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbo
   rSquared = results->rSquared;
 }
 
-EMPFitterInterface::EMPFitterInterface(gearbox::Gearbox &gbox) :
-  h_gbox{gbox}
+EMPFitterInterface::EMPFitterInterface(gearbox::Gearbox &gbox, const bool unscaledStdErrs) :
+  h_gbox{gbox},
+  m_unscaledStdErrs{unscaledStdErrs}
 {
 }
 
@@ -287,6 +288,8 @@ void EMPFitterInterface::fit()
   auto options = ECHMET::ElmigParamsFitter::defaultFitOptions();
   if (!h_gbox.limitMobilityConstraintsModel().enabled())
     ECHMET::EnumOps::operator|=(options, ECHMET::ElmigParamsFitter::FO_DISABLE_MOB_CONSTRAINTS);
+  if (m_unscaledStdErrs)
+    ECHMET::EnumOps::operator|=(options, ECHMET::ElmigParamsFitter::FO_UNSCALED_STDERRS);
 
   auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr, 0.0}, resultsReleaser};
   auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), options, *results);

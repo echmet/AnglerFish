@@ -116,6 +116,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
                      invalidateResults();
           });
   connect(ui->actionLoad_another_database, &QAction::triggered, this, &AFMainWindow::onOpenDatabase);
+  connect(ui->actionUse_unscaled_std_errors, &QAction::toggled, this, [this]() { invalidateResults(); });
 
   connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
           [&]() { h_gbox.chemicalBuffersModel().add(&h_gbox.ionicEffectsModel()); });
@@ -180,9 +181,12 @@ void AFMainWindow::onCalculate()
 {
   setEstimates();
 
+  const bool unscaledStdErrs = ui->actionUse_unscaled_std_errors->isChecked();
+
   OperationInProgressDialog inProgDlg{"Fit in progress..."};
   gearbox::CalcWorker worker{h_gbox, m_tracingSetup.tracingEnabled ? m_tracingSetup.tracepointStates :
-                                                                     std::vector<calculators::EMPFitterInterface::TracepointState>{}};
+                                                                     std::vector<calculators::EMPFitterInterface::TracepointState>{},
+                            unscaledStdErrs};
   QThread thread{};
 
   worker.moveToThread(&thread);
