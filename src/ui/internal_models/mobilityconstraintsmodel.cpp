@@ -123,7 +123,7 @@ QVariant MobilityConstraintsModel::displayValidity(const int row, const int col)
 
   const auto &item = m_data[row];
   const int charge = item.charge;
-  if (charge == 1 || charge == -1)
+  if (charge >= -1 && charge <= 1)
     return m_defBrush;
 
   const bool hasPrev = [&]() {
