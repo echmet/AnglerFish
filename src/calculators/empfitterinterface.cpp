@@ -237,12 +237,12 @@ inline
 void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbox::Gearbox &gbox,
                 double &rSquared)
 {
-  static const auto relStDev = [](auto v, auto stDev) {
-    return (std::abs(stDev / v) * 100.0);
+  static const auto relStdErr = [](auto v, auto stdErr) {
+    return (std::abs(stdErr / v) * 100.0);
   };
 
   static const auto set = [](const auto &r, QVector<gearbox::FitResultsModel::Result> &data) {
-    data.push_back(gearbox::FitResultsModel::Result{r.charge, r.value, r.stDev, relStDev(r.value, r.stDev)});
+    data.push_back(gearbox::FitResultsModel::Result{r.charge, r.value, r.stdErr, relStdErr(r.value, r.stdErr)});
   };
 
   static const auto walk = [](const auto v, gearbox::FitResultsModel &model) {
