@@ -216,6 +216,12 @@ set(AnglerFish_SRCS
 if (WIN32)
     set(AnglerFish_SRCS
         ${AnglerFish_SRCS}
+	AnglerFish.rc)
+endif ()
+
+if (WIN32)
+    set(AnglerFish_SRCS
+        ${AnglerFish_SRCS}
         "src/crashhandling/crashhandlerwindows.cpp"
         )
     add_definitions("-DCRASHHANDLING_WIN32")
