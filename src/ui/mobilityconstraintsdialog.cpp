@@ -44,11 +44,8 @@ void MobilityConstraintsDialog::onEstimatesChanged()
   int charge = estimates.chargeLow;
 
   QVector<MobilityConstraintsModel::EstimatedMobility> estMobs{};
-  for (const auto &mob : estimates.mobilities) {
-    if (charge != 0)
-      estMobs.push_front(MobilityConstraintsModel::EstimatedMobility{charge, mob.value});
-    charge++;
-  }
+  for (const auto &mob : estimates.mobilities)
+    estMobs.push_front(MobilityConstraintsModel::EstimatedMobility{charge++, mob.value});
 
   m_uiModel->updateConstraints(estimates.chargeLow, estimates.chargeHigh, estMobs);
 }
