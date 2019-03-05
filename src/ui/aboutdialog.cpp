@@ -19,7 +19,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
                                           QGuiApplication::platformName(),
                                           QSysInfo::buildCpuArchitecture()));
 
-  m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(qRound(100 * scaleFactor()));
+  m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(qRound(100 * scaleFactor()), Qt::SmoothTransformation);
   ui->ql_echmetLogo->setText("");
   ui->ql_echmetLogo->setPixmap(m_echmetPix);
 
