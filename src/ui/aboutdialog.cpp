@@ -23,6 +23,9 @@ AboutDialog::AboutDialog(QWidget *parent) :
   ui->ql_echmetLogo->setText("");
   ui->ql_echmetLogo->setPixmap(m_echmetPix);
 
+  auto afPix = QPixmap{":/images/res/AFicon_hires.png"}.scaledToWidth(qRound(48 * scaleFactor()), Qt::SmoothTransformation);
+  ui->ql_logo->setPixmap(afPix);
+
   for (const auto &dev : Globals::DEVELOPERS) {
     const QString s = dev.linkString();
 
