@@ -40,7 +40,6 @@ private:
   void invalidateResults();
   void updatePlotExperimental();
   void updatePlotFitted();
-  void setEstimates();
   void setupIcons();
 
   Ui::AFMainWindow *ui;

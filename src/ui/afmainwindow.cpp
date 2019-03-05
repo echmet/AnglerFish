@@ -56,7 +56,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_tptsDlg = new ToggleTracepointsDialog{calculators::EMPFitterInterface::tracepointInformation(), m_tracingSetup, this};
 
   m_summarizeDlg = new SummarizeDialog{h_gbox, summary::SummarizerFactory::list(), this};
-  m_mobConstrsDlg = new MobilityConstraintsDialog{h_gbox.limitMobilityConstraintsModel(), this};
+  m_mobConstrsDlg = new MobilityConstraintsDialog{h_gbox.limitMobilityConstraintsModel(), h_gbox, this};
 
   ui->centralwidget->layout()->addWidget(qsp_controlsChart);
   qsp_controlsChart->addWidget(m_buffersAnalyte);
@@ -115,6 +115,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           [this] { if (m_mobConstrsDlg->exec() == QDialog::Accepted)
                      invalidateResults();
           });
+  connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, m_mobConstrsDlg, &MobilityConstraintsDialog::onEstimatesChanged);
+
   connect(ui->actionLoad_another_database, &QAction::triggered, this, &AFMainWindow::onOpenDatabase);
   connect(ui->actionUse_unscaled_std_errors, &QAction::toggled, this, [this]() { invalidateResults(); });
 
@@ -179,8 +181,6 @@ void AFMainWindow::onBuffersChanged()
 
 void AFMainWindow::onCalculate()
 {
-  setEstimates();
-
   const bool unscaledStdErrs = ui->actionUse_unscaled_std_errors->isChecked();
 
   OperationInProgressDialog inProgDlg{"Fit in progress..."};
@@ -319,8 +319,6 @@ void AFMainWindow::onSave()
   if (m_saveDlg.exec() == QDialog::Accepted) {
     if (!m_saveDlg.selectedFiles().empty()) {
       try {
-        setEstimates();
-
         persistence::saveEntireSetup(m_saveDlg.selectedFiles().first(),
                                      h_gbox.chemicalBuffersModel(),
                                      h_gbox.analyteEstimates());
@@ -365,23 +363,6 @@ void AFMainWindow::onToggleAnalytePanel()
     m_qpb_toggleAnalytePanel->setText(HIDE_ANALYTE_PANEL);
 
   m_analDataWidget->setVisible(!isVisible);
-}
-
-void AFMainWindow::setEstimates()
-{
-  auto mobs = m_analDataWidget->estimatedMobilities();
-  auto pKas = m_analDataWidget->estimatedpKas();
-
-  gearbox::AnalyteEstimates::ParameterVec aMobs{};
-  gearbox::AnalyteEstimates::ParameterVec apKas{};
-
-  for (const auto &p : mobs)
-    aMobs.emplace_back(p.first, p.second);
-  for (const auto &p :pKas)
-    apKas.emplace_back(p.first, p.second);
-
-  h_gbox.setAnalyteEstimates(m_analDataWidget->chargeLow(), m_analDataWidget->chargeHigh(),
-                             std::move(aMobs), std::move(apKas));
 }
 
 void AFMainWindow::setupIcons()

@@ -87,7 +87,7 @@ ScalarFitResultsMapping::MapperModel & Gearbox::scalarResultsModel() const
 }
 
 void Gearbox::setAnalyteEstimates(const int chargeLow, const int chargeHigh,
-                                          AnalyteEstimates::ParameterVec mobilities, AnalyteEstimates::ParameterVec pKas)
+                                  AnalyteEstimates::ParameterVec mobilities, AnalyteEstimates::ParameterVec pKas)
 {
   m_gboxPriv->m_analyteEstimates = AnalyteEstimates{chargeLow,
                                                    chargeHigh,

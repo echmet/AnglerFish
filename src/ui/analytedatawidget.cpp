@@ -88,8 +88,7 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
 
   setWidgetSizes();
 
-  connect(m_estimatedParamsWidget, &EditChargesWidgetEstimates::estimatesChanged, this,
-          [this]() { emit estimatesChanged(); });
+  connect(m_estimatedParamsWidget, &EditChargesWidgetEstimates::estimatesChanged, this, &AnalyteDataWidget::onUpdateEstimates);
 
   QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &AnalyteDataWidget::onScreenChanged); }); /* This must be done from the event queue after the window is created */
 }
@@ -186,6 +185,25 @@ void AnalyteDataWidget::onScreenChanged()
   setWidgetSizes();
 }
 
+void AnalyteDataWidget::onUpdateEstimates()
+{
+  const auto &mobs = estimatedMobilities();
+  const auto &pKas = estimatedpKas();
+
+  gearbox::AnalyteEstimates::ParameterVec aMobs{};
+  gearbox::AnalyteEstimates::ParameterVec apKas{};
+
+  for (const auto &p : mobs)
+    aMobs.emplace_back(p.first, p.second);
+  for (const auto &p :pKas)
+    apKas.emplace_back(p.first, p.second);
+
+  h_gbox.setAnalyteEstimates(chargeLow(), chargeHigh(),
+                             std::move(aMobs), std::move(apKas));
+
+  emit estimatesChanged();
+}
+
 void AnalyteDataWidget::setEstimatesFromCurrent()
 {
   const auto &analyte = h_gbox.analyteEstimates();
@@ -213,6 +231,8 @@ void AnalyteDataWidget::setEstimatesFromCurrent()
     mobilities[0] = {0.0, false};
 
   m_estimatedParamsWidget->setCharges(std::move(pKas), std::move(mobilities), analyte.chargeLow, analyte.chargeHigh);
+
+  emit estimatesChanged();
 }
 
 void AnalyteDataWidget::setWidgetSizes()

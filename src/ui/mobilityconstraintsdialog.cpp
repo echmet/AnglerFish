@@ -2,12 +2,16 @@
 #include "ui_mobilityconstraintsdialog.h"
 #include "internal_models/mobilityconstraintsmodel.h"
 
+#include <gearbox/gearbox.h>
 #include <gearbox/limitmobilityconstraintsmodel.h>
 
-MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConstraintsModel &model, QWidget *parent) :
+MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConstraintsModel &model,
+                                                     const gearbox::Gearbox &gbox,
+                                                     QWidget *parent) :
   QDialog{parent},
   ui{new Ui::MobilityConstraintsDialog},
-  h_model{model}
+  h_model{model},
+  h_gbox{gbox}
 {
   ui->setupUi(this);
 
@@ -31,4 +35,20 @@ MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConst
 MobilityConstraintsDialog::~MobilityConstraintsDialog()
 {
   delete ui;
+}
+
+void MobilityConstraintsDialog::onEstimatesChanged()
+{
+  const auto estimates = h_gbox.analyteEstimates();
+
+  int charge = estimates.chargeLow;
+
+  QVector<MobilityConstraintsModel::EstimatedMobility> estMobs{};
+  for (const auto &mob : estimates.mobilities) {
+    if (charge != 0)
+      estMobs.push_front(MobilityConstraintsModel::EstimatedMobility{charge, mob.value});
+    charge++;
+  }
+
+  m_uiModel->updateConstraints(estimates.chargeLow, estimates.chargeHigh, estMobs);
 }

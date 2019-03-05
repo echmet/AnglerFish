@@ -301,6 +301,14 @@ void EMPFitterInterface::fit()
   setResults(system, results, h_gbox, m_rSquared);
 }
 
+EMPFitterInterface::MobilityConstraints EMPFitterInterface::mobilityConstraints(const double mobility)
+{
+  const auto low = ECHMET::ElmigParamsFitter::mobilityLowerBound() * mobility;
+  const auto high = ECHMET::ElmigParamsFitter::mobilityUpperBound() * mobility;
+
+  return { low, high };
+}
+
 void EMPFitterInterface::propagateRSquared()
 {
   /* Yes, you are reading this right. Although it would make perfect sense to update

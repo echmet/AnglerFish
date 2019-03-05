@@ -1,20 +1,21 @@
 #ifndef LIMITMOBILITYCONSTRAINTSMODEL_H
 #define LIMITMOBILITYCONSTRAINTSMODEL_H
 
-#include <tuple>
-
 namespace gearbox {
 
 class LimitMobilityConstraintsModel {
 public:
-  using Constraints = std::tuple<double, double>;
+  class Constraints {
+  public:
+    double low;
+    double high;
+  };
 
   LimitMobilityConstraintsModel();
 
   Constraints constraintsForMobility(const double mobility) const;
   bool enabled() const;
   void setEnabled(const bool enabled);
-
 
 private:
   bool m_enabled;

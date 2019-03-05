@@ -43,6 +43,7 @@ private:
 private slots:
   void onResultsToClipboard();
   void onScreenChanged();
+  void onUpdateEstimates();
 
 signals:
   void estimatesChanged();

@@ -1,6 +1,23 @@
 #include "mobilityconstraintsmodel.h"
 
 #include <gearbox/limitmobilityconstraintsmodel.h>
+#include <cassert>
+
+MobilityConstraintsModel::MobInfo::MobInfo() noexcept :
+  charge{0},
+  mobility{0.0},
+  lowerBound{0.0},
+  upperBound{0.0}
+{
+}
+
+MobilityConstraintsModel::MobInfo::MobInfo(const int chg, const double mob, const double lower, const double upper) noexcept :
+  charge{chg},
+  mobility{mob},
+  lowerBound{lower},
+  upperBound{upper}
+{
+}
 
 MobilityConstraintsModel::MobilityConstraintsModel(const gearbox::LimitMobilityConstraintsModel &backend,
                                                    QObject *parent) :
@@ -30,7 +47,7 @@ QVariant MobilityConstraintsModel::headerData(int section, Qt::Orientation orien
       return {};
 
     const auto &item = m_data.at(section);
-    return std::get<0>(item);
+    return item.charge;
   }
 
   return {};
@@ -66,21 +83,21 @@ QVariant MobilityConstraintsModel::data(const QModelIndex &index, int role) cons
     return {};
 
   const auto &item = m_data.at(row);
-  const auto charge = std::get<0>(item);
+  const auto charge = item.charge;
   auto getLow = [&item, charge]() -> QVariant {
     if (charge == 0)
       return "-";
-    return std::get<2>(item);
+    return item.lowerBound;
   };
   auto getUp = [&item, charge]() -> QVariant {
     if (charge == 0)
       return "-";
-    return std::get<3>(item);
+    return item.upperBound;
   };
 
   switch (col) {
   case IT_MOBILITY:
-    return std::get<1>(item);
+    return item.mobility;
   case IT_LOW_CONSTR:
     return getLow();
   case IT_UP_CONSTR:
@@ -90,9 +107,24 @@ QVariant MobilityConstraintsModel::data(const QModelIndex &index, int role) cons
   return {};
 }
 
-void MobilityConstraintsModel::estimatesUpdated(const int chargeLow, const int chargeHigh)
+void MobilityConstraintsModel::updateConstraints(const int chargeLow, const int chargeHigh,
+                                                 const QVector<EstimatedMobility> &estimates)
 {
   beginResetModel();
+
+  int size = chargeHigh - chargeLow;
+  assert(size > 0);
+
+  m_data.clear();
+  m_data.reserve(size);
+
+  for (const auto &item : estimates) {
+    const auto cstrs = h_backend.constraintsForMobility(item.mobility);
+
+    m_data.push_back({ item.charge, item.mobility, cstrs.low, cstrs.high });
+  }
+
+  std::sort(m_data.begin(), m_data.end(), [](const MobInfo &lhs, const MobInfo &rhs) { return lhs.charge < rhs.charge; });
 
   endResetModel();
 }

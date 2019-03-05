@@ -1,5 +1,7 @@
 #include "limitmobilityconstraintsmodel.h"
 
+#include <calculators/empfitterinterface.h>
+
 namespace gearbox {
 
 LimitMobilityConstraintsModel::LimitMobilityConstraintsModel() :
@@ -9,7 +11,9 @@ LimitMobilityConstraintsModel::LimitMobilityConstraintsModel() :
 
 LimitMobilityConstraintsModel::Constraints LimitMobilityConstraintsModel::constraintsForMobility(const double mobility) const
 {
-  return {};
+  auto ctrs = calculators::EMPFitterInterface::mobilityConstraints(mobility);
+
+  return { mobility - ctrs.low, mobility + ctrs.high };
 }
 
 bool LimitMobilityConstraintsModel::enabled() const

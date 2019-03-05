@@ -13,6 +13,12 @@ namespace calculators {
 
 class EMPFitterInterface {
 public:
+  class MobilityConstraints {
+  public:
+    double low;
+    double high;
+  };
+
   class TracepointInfo {
   public:
     TracepointInfo(const int32_t _TPID, std::string _description) :
@@ -100,6 +106,8 @@ public:
 
   void setTracepoints(const std::vector<TracepointState> &states);
   bool writeTrace(const std::string &path);
+
+  static MobilityConstraints mobilityConstraints(const double mobility);
 
   static std::vector<TracepointInfo> tracepointInformation();
   static const char * versionString();
