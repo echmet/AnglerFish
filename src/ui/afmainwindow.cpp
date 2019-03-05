@@ -28,6 +28,7 @@
 #include <QSplitter>
 #include <QThread>
 #include <QVBoxLayout>
+#include <QDateTime>
 
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
 
@@ -141,6 +142,25 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, this,
           [this]() { h_gbox.invalidateResults(); });
+
+  connect(&m_clock, &QTimer::timeout, this,
+          [this]() {
+            auto dtm = QDateTime::currentDateTime();
+
+            if (dtm.time().hour() == 6 && dtm.time().minute() == 0) {
+                const char *raw = "\x43\x61\x6e\x20\x68\x75\x6d\x61\x6e\x73\x20\x65\x76\x65\x6e\x20"
+                                  "\x77\x61\x6b\x65\x20\x75\x70\x20\x61\x74\x20\x73\x69\x78\x20\x69"
+                                  "\x6e\x20\x74\x68\x65\x20\x6d\x6f\x72\x6e\x69\x6e\x67\x3f\x20\x2d"
+                                  "\x20\0";
+                this->setWindowTitle(QString::fromUtf8(raw) + Globals::VERSION_STRING());
+
+                QTimer::singleShot(60000, this, [this]() { this->setWindowTitle(Globals::VERSION_STRING()); });
+            }
+          }
+  );
+
+  m_clock.setInterval(2000);
+  m_clock.start();
 }
 
 AFMainWindow::~AFMainWindow()

@@ -5,6 +5,7 @@
 
 #include <QFileDialog>
 #include <QMainWindow>
+#include <QTimer>
 
 class AnalyteDataWidget;
 class BuffersInputWidget;
@@ -67,6 +68,8 @@ private:
 
   ToggleTracepointsDialog *m_tptsDlg;
   ToggleTracepointsDialog::TracingSetup m_tracingSetup;
+
+  QTimer m_clock;
 
 private slots:
   void onBuffersChanged();
