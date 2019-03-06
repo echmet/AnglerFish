@@ -44,6 +44,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   ui->qpb_remove->setToolTip(tr("Remove buffer"));
   ui->qpb_clone->setToolTip(tr("Clone buffer"));
   ui->qpb_export->setToolTip(tr("Export buffer"));
+  ui->qpb_exclude->setToolTip(tr("Exclude buffer"));
 
   /* Vertical alignment hack */
   {
