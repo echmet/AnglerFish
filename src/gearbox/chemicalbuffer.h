@@ -30,6 +30,7 @@ public:
 
   GDMProxy & composition();
   bool empty() const;
+  bool exclude() const;
   const std::vector<double> & experimentalMobilities() const;
   double ionicStrength();
   double ionicStrength() const;
@@ -37,6 +38,7 @@ public:
   const gdm::GDM * model() const;
   double pH();
   double pH() const;
+  void setExclude(const bool exclude);
   void setExperimentalMobilities(std::vector<double> mobilities);
 
   ChemicalBuffer & operator=(ChemicalBuffer &&other) noexcept;
@@ -52,6 +54,8 @@ private:
 
   double m_pH;
   double m_ionicStrength;
+
+  bool m_exclude;
 
   bool m_needsRecalculation;
 };

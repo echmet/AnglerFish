@@ -39,6 +39,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   ui->qpb_remove->setText("");
   ui->qpb_clone->setText("");
   ui->qpb_export->setText("");
+  ui->qpb_exclude->setText("");
 
   ui->qpb_remove->setToolTip(tr("Remove buffer"));
   ui->qpb_clone->setToolTip(tr("Clone buffer"));
@@ -73,6 +74,12 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   connect(m_compositionWidget, &BufferCompositionWidget::compositionChanged, this, &BufferWidget::onCompositionChanged);
   connect(ui->qpb_clone, &QPushButton::clicked, this, [this]() { emit this->cloneMe(this); });
   connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
+  connect(ui->qpb_exclude, &QPushButton::clicked, this,
+          [this]() {
+            h_buffer.setExclude(ui->qpb_exclude->isChecked());
+            this->onCompositionChanged();
+          }
+  );
 
   connect(&h_gbox.ionicEffectsModel(), &gearbox::IonicEffectsModel::changed, this, &BufferWidget::onIonicEffectsChanged);
   QTimer::singleShot(0, this, [this]() {
@@ -194,6 +201,7 @@ void BufferWidget::setupIcons()
   ui->qpb_remove->setIcon(QIcon::fromTheme("edit-delete"));
   ui->qpb_clone->setIcon(QIcon::fromTheme("edit-copy"));
   ui->qpb_export->setIcon(QIcon::fromTheme("document-save"));
+  ui->qpb_exclude->setIcon(QIcon::fromTheme("window-close"));
 #else
   ui->qpb_addExpValue->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
   ui->qpb_remove->setIcon(style()->standardIcon(QStyle::SP_DialogDiscardButton));

@@ -136,7 +136,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="qvlay_controls" stretch="0,0,0,0">
+    <layout class="QVBoxLayout" name="qvlay_controls" stretch="0,0,0,0,0">
      <item>
       <widget class="QPushButton" name="qpb_remove">
        <property name="text">
@@ -170,6 +170,22 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpb_exclude">
+       <property name="text">
+        <string>EX</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

@@ -196,7 +196,7 @@ InSystemWrap prepare(gearbox::Gearbox &gbox)
   ECHMET::RetCode tRet{};
 
   for (const auto &b : gbox.chemicalBuffersModel()) {
-    if (b.empty())
+    if (b.empty() || b.exclude())
       continue;
 
     try {

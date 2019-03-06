@@ -13,6 +13,7 @@ ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel *ionEffs) :
   h_ionEffs{ionEffs},
   m_gdmModel{new gdm::GDM{}},
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
+  m_exclude{false},
   m_needsRecalculation{true}
 {
 }
@@ -21,6 +22,7 @@ ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel *ionEffs, gdm::G
   h_ionEffs{ionEffs},
   m_gdmModel{model},
   m_composition{new GDMProxyImpl{*m_gdmModel, MIN_CONCENTRATION}},
+  m_exclude{false},
   m_needsRecalculation{true}
 {
   recalculate();
@@ -33,6 +35,7 @@ ChemicalBuffer::ChemicalBuffer(const ChemicalBuffer &other) :
   m_experimentalMobilities{other.experimentalMobilities()},
   m_pH{other.m_pH},
   m_ionicStrength{other.m_ionicStrength},
+  m_exclude{other.m_exclude},
   m_needsRecalculation{other.m_needsRecalculation}
 {
   *m_gdmModel = *other.m_gdmModel;
@@ -45,6 +48,7 @@ ChemicalBuffer::ChemicalBuffer(ChemicalBuffer &&other) noexcept :
   m_experimentalMobilities{std::move(other.experimentalMobilities())},
   m_pH{other.m_pH},
   m_ionicStrength{other.m_ionicStrength},
+  m_exclude{other.m_exclude},
   m_needsRecalculation{other.m_needsRecalculation}
 {
   other.m_gdmModel = nullptr;
@@ -65,6 +69,11 @@ GDMProxy & ChemicalBuffer::composition()
 bool ChemicalBuffer::empty() const
 {
   return m_gdmModel->size() == 0;
+}
+
+bool ChemicalBuffer::exclude() const
+{
+  return m_exclude;
 }
 
 const std::vector<double> & ChemicalBuffer::experimentalMobilities() const
@@ -123,6 +132,11 @@ void ChemicalBuffer::recalculate()
   } catch (const CAESInterface::Exception &ex) {
     throw Exception{ex.what()};
   }
+}
+
+void ChemicalBuffer::setExclude(const bool exclude)
+{
+  m_exclude = exclude;
 }
 
 void ChemicalBuffer::setExperimentalMobilities(std::vector<double> mobilities)
