@@ -46,6 +46,7 @@ FitPlotWidget::FitPlotWidget(QWidget *parent) :
   layout()->addWidget(m_plot);
 
   m_curveExperimental = new QwtPlotCurve{};
+  m_curveExcluded = new QwtPlotCurve{};
   m_curveFitted = new QwtPlotCurve{};
   m_curveResiduals = new QwtPlotCurve{};
   m_plotZoomer = new DoubleClickableQwtPlotZoomer(m_plot->canvas());
@@ -65,6 +66,9 @@ void FitPlotWidget::refreshPlot()
 {
   auto brect = m_curveExperimental->boundingRect();
 
+  if (m_curveExcluded->data()->size() > 0)
+    brect = brect.united(m_curveExcluded->boundingRect());
+
   if (m_curveFitted->data()->size() > 0)
     brect = brect.united(m_curveFitted->boundingRect());
 
@@ -73,9 +77,10 @@ void FitPlotWidget::refreshPlot()
   m_plotZoomer->setZoomBase(brect);
 }
 
-void FitPlotWidget::setExperimentalData(const QVector<QPointF> &data)
+void FitPlotWidget::setExperimentalData(const QVector<QPointF> &experimental, const QVector<QPointF> &excluded)
 {
-  m_curveExperimental->setSamples(data);
+  m_curveExperimental->setSamples(experimental);
+  m_curveExcluded->setSamples(excluded);
 
   refreshPlot();
 }
@@ -125,7 +130,9 @@ void FitPlotWidget::setupPlot()
   m_curveResiduals->setYAxis(QwtPlot::yRight);
 
   m_curveExperimental->attach(m_plot);
+  m_curveExcluded->attach(m_plot);
   m_curveFitted->attach(m_plot);
+
 
   m_plotZoomer->setTrackerMode(QwtPicker::AlwaysOn);
   m_plotZoomer->setMousePattern(QwtEventPattern::MouseSelect3, Qt::LeftButton, Qt::ShiftModifier);
@@ -134,6 +141,9 @@ void FitPlotWidget::setupPlot()
 
   m_curveExperimental->setStyle(QwtPlotCurve::NoCurve);
   m_curveExperimental->setSymbol(makeSymbol(QwtSymbol::Cross, Qt::black, fontMetrics()));
+
+  m_curveExcluded->setStyle(QwtPlotCurve::NoCurve);
+  m_curveExcluded->setSymbol(makeSymbol(QwtSymbol::Cross, Qt::red, fontMetrics()));
 
   m_curveFitted->setStyle(QwtPlotCurve::NoCurve);
   m_curveFitted->setSymbol(makeSymbol(QwtSymbol::XCross, Qt::blue, fontMetrics()));

@@ -44,7 +44,8 @@ std::vector<CurveUtility::Block> CurveUtility::blockify(const MobilityCurveModel
 
   double prevX = DBL_NAN;
   std::vector<double> v{};
-  for (const auto &pt : model.experimental()) {
+  const auto &experimental = std::get<0>(model.experimental());
+  for (const auto &pt : experimental) {
     if (pt.x() != prevX) {
       if (v.size() > 0)
         blocks.emplace_back(prevX, std::move(v), DBL_NAN, DBL_NAN);

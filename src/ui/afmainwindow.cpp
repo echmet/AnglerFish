@@ -243,7 +243,8 @@ void AFMainWindow::onCheckForUpdate()
 void AFMainWindow::onCurveExperimentalChanged()
 {
   auto data = h_gbox.mobilityCurveModel().experimental();
-  m_fitPlotWidget->setExperimentalData(std::move(data));
+
+  m_fitPlotWidget->setExperimentalData(std::get<0>(data), std::get<1>(data));
 }
 
 void AFMainWindow::onCurveFittedChanged()
@@ -432,14 +433,21 @@ void AFMainWindow::updatePlotExperimental()
 {
   auto &bufsModel = h_gbox.chemicalBuffersModel();
 
-  QVector<QPointF> data{};
+  QVector<QPointF> included{};
+  QVector<QPointF> excluded{};
   for (const auto &buf : bufsModel) {
     if (buf.empty())
       continue;
 
-    for (const auto &uExp : buf.experimentalMobilities())
-      data.push_back({buf.pH(), uExp});
+    for (const auto &uExp : buf.experimentalMobilities()) {
+      auto pt = QPointF{buf.pH(), uExp};
+
+      if (buf.exclude())
+        excluded.push_back(std::move(pt));
+      else
+        included.push_back(std::move(pt));
+    }
   }
 
-  h_gbox.mobilityCurveModel().setExperimental(std::move(data));
+  h_gbox.mobilityCurveModel().setExperimental(std::move(included), std::move(excluded));
 }

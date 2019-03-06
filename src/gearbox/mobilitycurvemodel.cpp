@@ -37,9 +37,9 @@ QVector<QPointF> MobilityCurveModel::compact(const QVector<QPointF> &src)
   return compacted;
 }
 
-const QVector<QPointF> & MobilityCurveModel::experimental() const
+MobilityCurveModel::ExperimentalPack MobilityCurveModel::experimental() const
 {
-  return m_experimental;
+  return { m_experimentalIncl, m_experimentalExcl };
 }
 
 const QVector<QPointF> & MobilityCurveModel::fitted() const
@@ -54,7 +54,7 @@ const QVector<QPointF> & MobilityCurveModel::residuals() const
 
 void MobilityCurveModel::invalidateAll()
 {
-  setExperimental({});
+  setExperimental({}, {});
   setFitted({}, {});
 }
 
@@ -63,9 +63,10 @@ void MobilityCurveModel::invalidateResults()
   setFitted({}, {});
 }
 
-void MobilityCurveModel::setExperimental(QVector<QPointF> data)
+void MobilityCurveModel::setExperimental(QVector<QPointF> included, QVector<QPointF> excluded)
 {
-  m_experimental = std::move(data);
+  m_experimentalIncl = std::move(included);
+  m_experimentalExcl = std::move(excluded);
 
   emit experimentalChanged();
 }

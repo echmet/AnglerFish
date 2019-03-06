@@ -19,7 +19,7 @@ class FitPlotWidget : public QWidget
 public:
   explicit FitPlotWidget(QWidget *parent = nullptr);
   ~FitPlotWidget();
-  void setExperimentalData(const QVector<QPointF> &data);
+  void setExperimentalData(const QVector<QPointF> &experimental, const QVector<QPointF> &excluded);
   void setFittedData(const QVector<QPointF> &data);
   void setResidualsData(const QVector<QPointF> &data);
 
@@ -31,6 +31,7 @@ private:
 
   QwtPlot *m_plot;
   QwtPlotCurve *m_curveExperimental;
+  QwtPlotCurve *m_curveExcluded;
   QwtPlotCurve *m_curveFitted;
   QwtPlotCurve *m_curveResiduals;
   QwtPlotPicker *m_plotPicker;
