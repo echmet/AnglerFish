@@ -69,7 +69,7 @@ void EditChargesWidget::initialize(const gdm::PhysicalProperties &props)
   setupWidget();
 }
 
-void EditChargesWidget::initialize(PhysPropsMap pKas, PhysPropsMap mobilities, const int chargeLow, const int chargeHigh)
+void EditChargesWidget::initialize(PhysPropsMap pKas, const PhysPropsMap &mobilities, const int chargeLow, const int chargeHigh)
 {
   assert(pKas.size() == mobilities.size() + 1);
 

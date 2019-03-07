@@ -26,7 +26,7 @@ public:
   int baseCharge(const int chargeLow, const int chargeHigh);
   void initialize();
   void initialize(const gdm::PhysicalProperties &props);
-  void initialize(PhysPropsMap pKas, PhysPropsMap mobilities, const int chargeLow, const int chargeHigh);
+  void initialize(PhysPropsMap pKas, const PhysPropsMap &mobilities, const int chargeLow, const int chargeHigh);
   int chargeHigh() const;
   int chargeLow() const;
   std::vector<double> mobilities() const;
