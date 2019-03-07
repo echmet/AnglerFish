@@ -19,7 +19,7 @@ void FloatingValueLineEdit::ensureSanity(QString text)
 
   QString _text = text.replace(QChar::Nbsp, QString(""), Qt::CaseInsensitive);
 
-  const double dv = gearbox::DoubleToStringConvertor::back(text, &ok);
+  const double dv = gearbox::DoubleToStringConvertor::back(_text, &ok);
   if (ok)
     ok = gearbox::AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
 

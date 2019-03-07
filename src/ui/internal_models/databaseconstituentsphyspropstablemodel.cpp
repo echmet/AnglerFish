@@ -21,7 +21,7 @@ QVariant DatabaseConstituentsPhysPropsTableModel::headerData(int section, Qt::Or
   if (role != Qt::DisplayRole)
     return {};
 
-  const size_t usection = static_cast<size_t>(section);
+  const auto usection = static_cast<size_t>(section);
 
   if (orientation == Qt::Vertical) {
     if (usection >= m_constituents.size())
@@ -54,7 +54,7 @@ int DatabaseConstituentsPhysPropsTableModel::columnCount(const QModelIndex &pare
 {
   Q_UNUSED(parent);
 
-  if (m_constituents.size() < 1)
+  if (m_constituents.empty())
     return 0;
 
   return 2 * m_span - 1;
@@ -62,7 +62,7 @@ int DatabaseConstituentsPhysPropsTableModel::columnCount(const QModelIndex &pare
 
 const gearbox::DatabaseConstituent & DatabaseConstituentsPhysPropsTableModel::constituentAt(const int idx) const
 {
-  const size_t uidx = static_cast<size_t>(idx);
+  const auto uidx = static_cast<size_t>(idx);
   if (uidx >= m_constituents.size())
     throw std::out_of_range{"Constituent index out of range"};
 
@@ -79,7 +79,7 @@ QVariant DatabaseConstituentsPhysPropsTableModel::data(const QModelIndex &index,
 
   const int row = index.row();
   const int col = index.column();
-  const size_t urow = static_cast<size_t>(row);
+  const auto urow = static_cast<size_t>(row);
 
   if (urow >= m_constituents.size())
     return  {};

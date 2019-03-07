@@ -22,7 +22,7 @@ public:
     double relativeError;
   };
 
-  explicit FitResultsModel(const QString &name, QObject *parent = nullptr);
+  explicit FitResultsModel(QString name, QObject *parent = nullptr);
   virtual int columnCount(const QModelIndex &index = {}) const override;
   virtual QVariant data(const QModelIndex &index, int role) const override;
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

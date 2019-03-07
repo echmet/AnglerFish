@@ -112,7 +112,7 @@ gdm::GDM::const_iterator findDrivingConstituent(const gdm::GDM *buf)
     return false;
   };
 
-  gdm::GDM::const_iterator driving = buf->cend();
+  auto driving = buf->cend();
   for (auto it = buf->cbegin(); it != buf->cend(); ++it) {
     if (isStrongAcid(it)) {
       if (driving != buf->cend())

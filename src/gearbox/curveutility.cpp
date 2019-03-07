@@ -47,7 +47,7 @@ std::vector<CurveUtility::Block> CurveUtility::blockify(const MobilityCurveModel
   const auto &experimental = std::get<0>(model.experimental());
   for (const auto &pt : experimental) {
     if (pt.x() != prevX) {
-      if (v.size() > 0)
+      if (!v.empty())
         blocks.emplace_back(prevX, std::move(v), DBL_NAN, DBL_NAN);
 
       v = {pt.y()};
@@ -55,7 +55,7 @@ std::vector<CurveUtility::Block> CurveUtility::blockify(const MobilityCurveModel
     } else
       v.emplace_back(pt.y());
   }
-  if (v.size() > 0)
+  if (!v.empty())
     blocks.emplace_back(prevX, std::move(v), DBL_NAN, DBL_NAN);
 
   /* Yes, this is nasty, horrible, dull and slow

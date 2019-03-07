@@ -41,7 +41,7 @@ bool GDMProxyImpl::complexes(const std::string &name) const noexcept
   assert(it != h_model.cend());
 
   const auto found = gdm::findComplexations(h_model.composition(), it);
-  return (found.size() > 0);
+  return !found.empty();
 }
 
 bool GDMProxyImpl::contains(const std::string &name) const noexcept

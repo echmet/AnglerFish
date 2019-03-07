@@ -2,9 +2,9 @@
 
 namespace gearbox {
 
-FitResultsModel::FitResultsModel(const QString &name, QObject *parent) :
+FitResultsModel::FitResultsModel(QString name, QObject *parent) :
   QAbstractTableModel{parent},
-  m_name{name}
+  m_name{std::move(name)}
 {
 }
 

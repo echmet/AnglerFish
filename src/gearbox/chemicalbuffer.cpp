@@ -68,7 +68,7 @@ GDMProxy & ChemicalBuffer::composition()
 
 bool ChemicalBuffer::empty() const
 {
-  return m_gdmModel->size() == 0;
+  return m_gdmModel->empty();
 }
 
 bool ChemicalBuffer::exclude() const

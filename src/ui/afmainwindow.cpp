@@ -128,7 +128,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(ui->actionExit, &QAction::triggered, this, &AFMainWindow::close);
   connect(m_bufInpWidget, &BuffersInputWidget::buffersChanged, this, &AFMainWindow::onBuffersChanged);
   connect(ui->actionAbout, &QAction::triggered, this, &AFMainWindow::onAboutTriggered);
-  connect(ui->actionIonic_effects_corrections, &QAction::triggered, [this]() {
+  connect(ui->actionIonic_effects_corrections, &QAction::triggered, this, [this]() {
     gearbox::IonicEffectsCorrections dlg{h_gbox.ionicEffectsModel()};
     dlg.exec();
   });
@@ -143,11 +143,11 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(ui->actionLoad_another_database, &QAction::triggered, this, &AFMainWindow::onOpenDatabase);
   connect(ui->actionUse_unscaled_std_errors, &QAction::toggled, this, [this]() { invalidateResults(); });
 
-  connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer),
+  connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)()>(&BuffersInputWidget::addBuffer), this,
           [&]() { h_gbox.chemicalBuffersModel().add(&h_gbox.ionicEffectsModel()); });
-  connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)(const gearbox::ChemicalBuffer &)>(&BuffersInputWidget::addBuffer),
+  connect(m_bufInpWidget, static_cast<void (BuffersInputWidget:: *)(const gearbox::ChemicalBuffer &)>(&BuffersInputWidget::addBuffer), this,
           [&](const gearbox::ChemicalBuffer &buf) { h_gbox.chemicalBuffersModel().add(buf); });
-  connect(m_bufInpWidget, &BuffersInputWidget::removeBuffer,
+  connect(m_bufInpWidget, &BuffersInputWidget::removeBuffer, this,
           [this](const gearbox::ChemicalBuffer &buf) { h_gbox.chemicalBuffersModel().remove(buf); });
   connect(&h_gbox.chemicalBuffersModel(), &gearbox::ChemicalBuffersModel::bufferAdded,
           m_bufInpWidget, &BuffersInputWidget::onBufferAdded);

@@ -227,7 +227,7 @@ void AnalyteDataWidget::setEstimatesFromCurrent()
     mobilities[charge] = {item.value, item.fixed};
     charge++;
   }
-  if (mobilities.size() == 0)
+  if (mobilities.empty())
     mobilities[0] = {0.0, false};
 
   m_estimatedParamsWidget->setCharges(std::move(pKas), std::move(mobilities), analyte.chargeLow, analyte.chargeHigh);

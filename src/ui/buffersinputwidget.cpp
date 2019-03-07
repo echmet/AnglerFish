@@ -177,7 +177,7 @@ void BuffersInputWidget::onSortBypH()
   while (m_scrollLayout->count() > 1) {
     QLayoutItem *item = m_scrollLayout->itemAt(0);
     QWidget *w = item->widget();
-    BufferWidget *bw = qobject_cast<BufferWidget *>(w);
+    auto bw = qobject_cast<BufferWidget *>(w);
     if (bw != nullptr) {
       m_scrollLayout->removeWidget(bw);
       wBufs.emplace_back(bw);

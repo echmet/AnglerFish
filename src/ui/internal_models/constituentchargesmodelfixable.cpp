@@ -47,7 +47,7 @@ int ConstituentChargesModelFixable::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
 
-  assert(m_charges.size() != 0);
+  assert(!m_charges.empty());
   return static_cast<int>(m_charges.size());
 }
 
