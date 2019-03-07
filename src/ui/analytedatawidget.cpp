@@ -79,7 +79,7 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
   }
 
   connect(ui->qpb_resultsToClipboard, &QPushButton::clicked, this, &AnalyteDataWidget::onResultsToClipboard);
-  connect(ui->qpb_curveToClipboard, &QPushButton::clicked,
+  connect(ui->qpb_curveToClipboard, &QPushButton::clicked, this,
           [this]() {
             auto blocks = gearbox::CurveUtility::blockify(h_gbox.mobilityCurveModel());
             auto str = gearbox::CurveUtility::blocksToCSV(blocks, ';');

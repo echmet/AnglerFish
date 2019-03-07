@@ -110,7 +110,7 @@ void BuffersInputWidget::onExportBuffer(const BufferWidget *w)
       return;
 
     try {
-      persistence::savePeakMasterBuffer(m_saveBufferDlg.selectedFiles().first(), w->buffer());
+      persistence::savePeakMasterBuffer(m_saveBufferDlg.selectedFiles().constFirst(), w->buffer());
     } catch (const persistence::Exception &ex) {
       QMessageBox mbox{QMessageBox::Warning, tr("Cannot save buffer"), ex.what()};
       mbox.exec();
@@ -130,7 +130,8 @@ void BuffersInputWidget::onLoadBuffer()
     dlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
 
   if (dlg.exec() == QDialog::Accepted) {
-    for (const auto &path : dlg.selectedFiles()) {
+    const auto &selectedFiles = dlg.selectedFiles();
+    for (const auto &path : selectedFiles) {
       try {
         persistence::loadPeakMasterBuffer(path, h_gbox);
         lastPath = path;

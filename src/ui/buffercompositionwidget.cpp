@@ -31,7 +31,7 @@ BufferCompositionWidget::BufferCompositionWidget(gearbox::GDMProxy &gdmProxy,
 
   connect(ui->qpb_add, &QPushButton::clicked, this, &BufferCompositionWidget::onAddConstituent);
   connect(ui->qpb_remove, &QPushButton::clicked, this, &BufferCompositionWidget::onRemoveConstituent);
-  connect(ui->qtbv_composition, &QTableView::doubleClicked,
+  connect(ui->qtbv_composition, &QTableView::doubleClicked, this,
           [this](const QModelIndex &idx) {
     if (idx.column() != 0)
       return;

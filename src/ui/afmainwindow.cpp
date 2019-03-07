@@ -299,10 +299,10 @@ void AFMainWindow::onLoad()
   if (dlg.exec() == QDialog::Accepted) {
     if (!dlg.selectedFiles().empty()) {
       try {
-        persistence::loadEntireSetup(dlg.selectedFiles().first(), h_gbox);
+        persistence::loadEntireSetup(dlg.selectedFiles().constFirst(), h_gbox);
         m_analDataWidget->setEstimatesFromCurrent();
 
-        lastPath = dlg.selectedFiles().first();
+        lastPath = dlg.selectedFiles().constFirst();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
         mbox.exec();
@@ -372,11 +372,11 @@ void AFMainWindow::onSave()
   if (m_saveDlg.exec() == QDialog::Accepted) {
     if (!m_saveDlg.selectedFiles().empty()) {
       try {
-        persistence::saveEntireSetup(m_saveDlg.selectedFiles().first(),
+        persistence::saveEntireSetup(m_saveDlg.selectedFiles().constFirst(),
                                      h_gbox.chemicalBuffersModel(),
                                      h_gbox.analyteEstimates());
 
-        lastPath = m_saveDlg.selectedFiles().first();
+        lastPath = m_saveDlg.selectedFiles().constFirst();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to save setup"), ex.what()};
         mbox.exec();
