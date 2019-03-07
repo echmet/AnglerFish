@@ -29,8 +29,28 @@
 #include <QThread>
 #include <QVBoxLayout>
 #include <QDateTime>
+#include <QShortcut>
 
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
+
+class WidgetCommiter {
+public:
+  WidgetCommiter()
+  {
+    m_focused = qApp->focusWidget();
+    if (m_focused)
+      m_focused->clearFocus();
+  }
+
+  ~WidgetCommiter()
+  {
+    if (m_focused)
+      m_focused->setFocus();
+  }
+
+private:
+  QWidget *m_focused;
+};
 
 AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
                            QWidget *parent) :
@@ -159,6 +179,14 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           }
   );
 
+  auto recalcShortcut = new QShortcut{QKeySequence::Refresh, this};
+  auto recalcShortcutTwo = new QShortcut{QKeySequence{Qt::CTRL + Qt::Key_Return}, this};
+
+  connect(recalcShortcut, &QShortcut::activated, this, &AFMainWindow::onCalculate);
+  connect(recalcShortcutTwo, &QShortcut::activated, this, &AFMainWindow::onCalculate);
+
+
+
   m_clock.setInterval(2000);
   m_clock.start();
 }
@@ -203,6 +231,8 @@ void AFMainWindow::onBuffersChanged()
 
 void AFMainWindow::onCalculate()
 {
+  WidgetCommiter wcomm{};
+
   const bool unscaledStdErrs = ui->actionUse_unscaled_std_errors->isChecked();
 
   OperationInProgressDialog inProgDlg{"Fit in progress..."};
