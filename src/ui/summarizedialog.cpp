@@ -106,7 +106,7 @@ void SummarizeDialog::onSummarize()
     return;
   }
 
-  if (QFileInfo{path}.exists()) {
+  if (QFileInfo::exists(path)) {
     QMessageBox mbox{QMessageBox::Question, tr("File exists"), tr("Selected file already exists. Overwrite?"),
                      QMessageBox::Yes | QMessageBox::No};
     if (mbox.exec() != QMessageBox::Yes)
