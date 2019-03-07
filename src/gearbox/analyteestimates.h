@@ -13,7 +13,7 @@ public:
     const bool fixed;
 
     Parameter(const double v, const bool f);
-    Parameter(const Parameter &other) noexcept;
+    Parameter(const Parameter &other) noexcept = default;
     Parameter & operator=(const Parameter &other) noexcept;
   };
 

@@ -14,12 +14,6 @@ AdditionalFloatingValidator::AdditionalFloatingValidator() :
 {
 }
 
-AdditionalFloatingValidator::AdditionalFloatingValidator(const AdditionalFloatingValidator &other) :
-  m_valid{other.m_valid},
-  m_func{other.m_func}
-{
-}
-
 AdditionalFloatingValidator::AdditionalFloatingValidator(ValidFunc &&func) noexcept :
   m_valid{true},
   m_func(std::move(func))

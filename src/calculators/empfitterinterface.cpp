@@ -257,7 +257,7 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbo
   walk(results->pKas, gbox.fittedpKasModel());
 
   auto &model = gbox.mobilityCurveModel();
-  const auto t = expectedAndResidual(system, results);
+  auto t = expectedAndResidual(system, results);
 
   auto fitted = std::move(std::get<0>(t));
   auto residuals = std::move(std::get<1>(t));
@@ -271,6 +271,7 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbo
 
 EMPFitterInterface::EMPFitterInterface(gearbox::Gearbox &gbox, const bool unscaledStdErrs) :
   h_gbox{gbox},
+  m_rSquared{-1.0},
   m_unscaledStdErrs{unscaledStdErrs}
 {
 }

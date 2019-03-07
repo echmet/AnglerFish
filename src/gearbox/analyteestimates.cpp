@@ -8,12 +8,6 @@ AnalyteEstimates::Parameter::Parameter(const double v, const bool f) :
 {
 }
 
-AnalyteEstimates::Parameter::Parameter(const Parameter &other) noexcept :
-  value{other.value},
-  fixed{other.fixed}
-{
-}
-
 AnalyteEstimates::Parameter & AnalyteEstimates::Parameter::operator=(const Parameter &other) noexcept
 {
   const_cast<double&>(value) = other.value;
@@ -67,8 +61,8 @@ AnalyteEstimates & AnalyteEstimates::operator=(AnalyteEstimates &&other) noexcep
 {
   const_cast<int&>(chargeLow) = other.chargeLow;
   const_cast<int&>(chargeHigh) = other.chargeHigh;
-  const_cast<ParameterVec&>(mobilities) = std::move(other.mobilities);
-  const_cast<ParameterVec&>(pKas) = std::move(other.pKas);
+  const_cast<ParameterVec&>(mobilities) = std::move(const_cast<ParameterVec&>(other.mobilities));
+  const_cast<ParameterVec&>(pKas) = std::move(const_cast<ParameterVec&>(other.pKas));
 
   return *this;
 }

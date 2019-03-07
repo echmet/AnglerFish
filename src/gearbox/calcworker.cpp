@@ -4,6 +4,7 @@ namespace gearbox {
 
 CalcWorker::CalcWorker(gearbox::Gearbox &gbox, std::vector<calculators::EMPFitterInterface::TracepointState> tpStates,
                        const bool unscaledStdErrs) :
+  failed{false},
   m_iface{gbox, unscaledStdErrs},
   m_tpStates{std::move(tpStates)}
 {

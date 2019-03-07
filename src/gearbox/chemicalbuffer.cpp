@@ -45,7 +45,7 @@ ChemicalBuffer::ChemicalBuffer(ChemicalBuffer &&other) noexcept :
   h_ionEffs{other.h_ionEffs},
   m_gdmModel{other.m_gdmModel},
   m_composition{other.m_composition},
-  m_experimentalMobilities{std::move(other.experimentalMobilities())},
+  m_experimentalMobilities{std::move(other.m_experimentalMobilities)},
   m_pH{other.m_pH},
   m_ionicStrength{other.m_ionicStrength},
   m_exclude{other.m_exclude},
@@ -149,7 +149,7 @@ ChemicalBuffer & ChemicalBuffer::operator=(ChemicalBuffer &&other) noexcept
   h_ionEffs = other.h_ionEffs;
   m_gdmModel = other.m_gdmModel;
   m_composition = other.m_composition;
-  m_experimentalMobilities = std::move(other.experimentalMobilities());
+  m_experimentalMobilities = std::move(other.m_experimentalMobilities);
   m_pH = other.m_pH;
   m_ionicStrength = other.m_ionicStrength;
   m_needsRecalculation = other.m_needsRecalculation;

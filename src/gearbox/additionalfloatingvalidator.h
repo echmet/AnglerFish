@@ -20,7 +20,7 @@ public:
   using ValidFunc = std::function<bool (const double)>;
 
   AdditionalFloatingValidator();
-  AdditionalFloatingValidator(const AdditionalFloatingValidator &other);
+  AdditionalFloatingValidator(const AdditionalFloatingValidator &other) = default;
   AdditionalFloatingValidator(ValidFunc &&func) noexcept;
   virtual ~AdditionalFloatingValidator() = default;
   AdditionalFloatingValidator & operator=(AdditionalFloatingValidator &&other) noexcept;
