@@ -40,6 +40,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   ui->qpb_remove->setText("");
   ui->qpb_clone->setText("");
   ui->qpb_export->setText("");
+  ui->qpb_correctConcentration->setText("");
   ui->qpb_exclude->setText("");
 
   ui->qpb_remove->setToolTip(tr("Remove buffer"));
@@ -221,6 +222,7 @@ void BufferWidget::setupIcons()
   ui->qpb_remove->setIcon(QIcon::fromTheme("edit-delete"));
   ui->qpb_clone->setIcon(QIcon::fromTheme("edit-copy"));
   ui->qpb_export->setIcon(QIcon::fromTheme("document-save"));
+  ui->qpb_correctConcentration->setIcon(QIcon::fromTheme("accessories-calculator"));
   ui->qpb_exclude->setIcon(QIcon::fromTheme("window-close"));
 #else
   ui->qpb_addExpValue->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
