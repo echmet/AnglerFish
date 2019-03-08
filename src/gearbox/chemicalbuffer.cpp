@@ -90,13 +90,10 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
   assert(weak != m_gdmModel->cend());
 
   const double cOriginal{m_gdmModel->concentrations(weak).front()};
-  double cLeft{m_gdmModel->concentrations(strong).front() * 0.5};
-  double cRight{50.0 * cLeft};
+  double cLeft{PREC};
+  double cRight{50.0 * m_gdmModel->concentrations(strong).front()};
 
   assert(cLeft < cRight);
-
-  if (cLeft > cOriginal)
-    throw Exception{trstr("Concentration of weak component must be at least 50 % of the strong component")};
 
   double cNow = (cRight - cLeft) / 2.0 + cLeft;
 
