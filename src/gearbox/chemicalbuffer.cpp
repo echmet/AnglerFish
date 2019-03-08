@@ -99,17 +99,31 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
     throw Exception{trstr("Concentration of weak component must be at least 50 % of the strong component")};
 
   double cNow = (cRight - cLeft) / 2.0 + cLeft;
-  const bool weakIsAcid = utility::isAcid(weak);
-  if (!weakIsAcid && !utility::isBase(weak))
-    throw Exception{"Weak component cannot be an ampholyte"};
 
-  if ((weakIsAcid && utility::isAcid(strong)) || (!weakIsAcid && utility::isBase(strong)))
+  if ((utility::isAcid(weak) && utility::isAcid(strong)) || (utility::isBase(weak) && utility::isBase(strong)))
     throw Exception{"Buffer must consist of weak acid and strong base or vice versa"};
 
+  std::vector<double> cVec{cLeft};
+  const bool acidic = [&, this]() {
+    cVec[0] = cLeft;
+    this->m_gdmModel->setConcentrations(weak, cVec);
+
+    recalculate(true);
+    const double pHLeft = this->m_pH;
+
+    cVec[0] = cRight;
+    this->m_gdmModel->setConcentrations(weak, cVec);
+
+    recalculate(true);
+    const double pHRight = this->m_pH;
+
+    return pHRight < pHLeft;
+  }();
+
   size_t iters{0};
-  std::vector<double> cVec{cNow};
+  cVec[0] = cNow;
   auto adjustCNow = [&,this]() -> std::function<void()> {
-    if (utility::isAcid(weak)) {
+    if (acidic) {
       return [&,this]() {
         if (this->m_pH > targetpH)
           cLeft = cNow;
