@@ -4,6 +4,7 @@
 #include <gdm/conversion/conversion.h>
 #include <gdm/core/gdm.h>
 #include <calculators/caesinterface.h>
+#include <gearbox/utility.h>
 #include <trstr.h>
 
 namespace gearbox {
@@ -67,10 +68,85 @@ GDMProxy & ChemicalBuffer::composition()
   return *m_composition;
 }
 
-void ChemicalBuffer::correctConcentration()
+void ChemicalBuffer::correctConcentration(const double targetpH)
 {
+  static const size_t MAX_ITERS{300};
+  static const double PREC{1.0e-6};
+
   if (m_gdmModel->size() != 2)
     throw Exception{trstr("Automatic correction works with binary buffers only")};
+
+  auto strong = utility::findDrivingConstituent(m_gdmModel);
+  if (strong == m_gdmModel->cend())
+    throw Exception{trstr("Driving component not identified")};
+
+  /* Find weak component */
+  auto weak = m_gdmModel->cbegin();
+  for (;weak != m_gdmModel->cend(); weak++) {
+    if (weak != strong)
+      break;
+  }
+  assert(weak != m_gdmModel->cend());
+
+  const double cOriginal{m_gdmModel->concentrations(weak).front()};
+  double cLeft{m_gdmModel->concentrations(strong).front()};
+  double cRight{50.0 * cLeft};
+
+  assert(cLeft < cRight);
+
+  if (cLeft >= cOriginal)
+    throw Exception{trstr("Concentration of weak component must be greater than that of strong component")};
+
+  double cNow = (cRight - cLeft) / 2.0 + cLeft;
+  const bool weakIsAcid = utility::isAcid(weak);
+  if (!weakIsAcid && !utility::isBase(weak))
+    throw Exception{"Weak component cannot be an ampholyte"};
+
+  if ((weakIsAcid && utility::isAcid(strong)) || (!weakIsAcid && utility::isBase(strong)))
+    throw Exception{"Buffer must consist of weak acid and strong base or vice versa"};
+
+  size_t iters{0};
+  std::vector<double> cVec{cNow};
+  auto adjustCNow = [&,this]() -> std::function<void(void)> {
+    if (utility::isAcid(weak)) {
+      return [&,this]() {
+        if (this->m_pH > targetpH)
+          cLeft = cNow;
+        else
+          cRight = cNow;
+      };
+    }
+    return [&,this]() {
+      if (this->m_pH > targetpH)
+        cRight = cNow;
+      else
+        cLeft = cNow;
+    };
+  }();
+
+  auto pHMatches = [&,this]() {
+    return targetpH + PREC > this->m_pH && targetpH - PREC < this->m_pH;
+  };
+
+  m_gdmModel->setConcentrations(weak, cVec);
+  recalculate(true);
+  while (!pHMatches() && iters < MAX_ITERS) {
+    adjustCNow();
+    cNow = (cRight - cLeft) / 2.0 + cLeft;
+    cVec[0] = cNow;
+    m_gdmModel->setConcentrations(weak, cVec);
+
+    recalculate(true);
+    iters++;
+  }
+
+  if (iters >= MAX_ITERS) {
+    cVec[0] = cOriginal;
+    m_gdmModel->setConcentrations(weak, cVec);
+    recalculate(true);
+
+    throw Exception{"Failed to correct concentration"};
+  }
 }
 
 bool ChemicalBuffer::empty() const
@@ -122,9 +198,9 @@ double ChemicalBuffer::pH() const
   return m_pH;
 }
 
-void ChemicalBuffer::recalculate()
+void ChemicalBuffer::recalculate(const bool force)
 {
-  if (!m_needsRecalculation)
+  if (!m_needsRecalculation && !force)
     return;
 
   CAESInterface iface{*m_gdmModel, *h_ionEffs};

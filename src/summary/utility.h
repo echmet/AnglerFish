@@ -1,5 +1,5 @@
-#ifndef UTILITY_H
-#define UTILITY_H
+#ifndef SUMMARY_UTILITY_H
+#define SUMMARY_UTILITY_H
 
 #include <string>
 
@@ -18,4 +18,4 @@ public:
 
 } // namespace summary
 
-#endif // UTILITY_H
+#endif // SUMMARY_UTILITY_H

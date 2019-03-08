@@ -179,6 +179,7 @@ set(AnglerFish_SRCS
     "src/gearbox/gearbox.cpp"
     "src/gearbox/curveutility.cpp"
     "src/gearbox/limitmobilityconstraintsmodel.cpp"
+    "src/gearbox/utility.cpp"
     "src/gdm/conversion/conversion.cpp"
     "src/gdm/core/basiccomposition.cpp"
     "src/gdm/core/composition.cpp"

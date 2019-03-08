@@ -12,6 +12,7 @@ class FloatingValueLineEdit : public QLineEdit, public gearbox::INumberFormatCha
 public:
   FloatingValueLineEdit(QWidget *parent = nullptr);
   bool isInputValid() const;
+  double numericValue() const;
   void onNumberFormatChanged(const QLocale *oldLocale) override;
 
 public slots:

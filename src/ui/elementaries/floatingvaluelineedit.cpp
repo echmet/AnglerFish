@@ -44,6 +44,12 @@ bool FloatingValueLineEdit::isInputValid(QString text) const
   return ok;
 }
 
+double FloatingValueLineEdit::numericValue() const
+{
+  bool ok;
+  return gearbox::DoubleToStringConvertor::back(this->text(), &ok);
+}
+
 void FloatingValueLineEdit::onEditingFinished()
 {
   bool ok;

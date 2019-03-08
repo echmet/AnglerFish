@@ -17,6 +17,8 @@ public:
 
 private:
   Ui::EnterExperimentalpHDialog *ui;
+
+  double m_pH;
 };
 
 #endif // ENTEREXPERIMENTALPHDIALOG_H

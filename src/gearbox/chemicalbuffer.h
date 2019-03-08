@@ -29,7 +29,7 @@ public:
   ~ChemicalBuffer();
 
   GDMProxy & composition();
-  void correctConcentration();
+  void correctConcentration(const double targetpH);
   bool empty() const;
   bool exclude() const;
   const std::vector<double> & experimentalMobilities() const;
@@ -45,7 +45,7 @@ public:
   ChemicalBuffer & operator=(ChemicalBuffer &&other) noexcept;
 
 private:
-  void recalculate();
+  void recalculate(const bool force = false);
 
   const IonicEffectsModel *h_ionEffs;
   gdm::GDM *m_gdmModel;
