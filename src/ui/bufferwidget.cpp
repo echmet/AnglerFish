@@ -2,6 +2,7 @@
 #include "ui_bufferwidget.h"
 
 #include "buffercompositionwidget.h"
+#include "enterexperimentalphdialog.h"
 #include "experimentalmobilitywidget.h"
 
 #include <gearbox/gearbox.h>
@@ -137,6 +138,11 @@ void BufferWidget::onCompositionChanged()
 
 void BufferWidget::onCorrectConcentration()
 {
+  EnterExperimentalpHDialog dlg{this};
+
+  if (dlg.exec() != QDialog::Accepted)
+    return;
+
   try {
     h_buffer.correctConcentration();
   } catch (const gearbox::ChemicalBuffer::Exception &ex) {

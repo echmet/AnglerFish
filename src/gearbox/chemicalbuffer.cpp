@@ -69,7 +69,7 @@ GDMProxy & ChemicalBuffer::composition()
 
 void ChemicalBuffer::correctConcentration()
 {
-  if (m_gdmModel->size() > 2)
+  if (m_gdmModel->size() != 2)
     throw Exception{trstr("Automatic correction works with binary buffers only")};
 }
 

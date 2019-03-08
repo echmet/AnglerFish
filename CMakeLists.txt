@@ -151,6 +151,7 @@ set(AnglerFish_SRCS
     "src/ui/afuserguidedialog.cpp"
     "src/ui/summarizedialog.cpp"
     "src/ui/mobilityconstraintsdialog.cpp"
+    "src/ui/enterexperimentalphdialog.cpp"
     "src/ui/internal_models/constituentchargesmodel.cpp"
     "src/ui/internal_models/constituentchargesmodelfixable.cpp"
     "src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp"

@@ -15,13 +15,7 @@ FloatingValueLineEdit::FloatingValueLineEdit(QWidget *parent) :
 
 void FloatingValueLineEdit::ensureSanity(QString text)
 {
-  bool ok;
-
-  QString _text = text.replace(QChar::Nbsp, QString(""), Qt::CaseInsensitive);
-
-  const double dv = gearbox::DoubleToStringConvertor::back(_text, &ok);
-  if (ok)
-    ok = gearbox::AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
+  const auto ok = isInputValid(text);
 
   if (ok)
       this->setPalette(QPalette());
@@ -30,6 +24,24 @@ void FloatingValueLineEdit::ensureSanity(QString text)
     palette.setColor(QPalette::Base, Qt::red);
     this->setPalette(palette);
   }
+}
+
+bool FloatingValueLineEdit::isInputValid() const
+{
+  return isInputValid(this->text());
+}
+
+bool FloatingValueLineEdit::isInputValid(QString text) const
+{
+  bool ok;
+
+  QString _text = text.replace(QChar::Nbsp, QString(""), Qt::CaseInsensitive);
+
+  const double dv = gearbox::DoubleToStringConvertor::back(_text, &ok);
+  if (ok)
+    ok = gearbox::AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
+
+  return ok;
 }
 
 void FloatingValueLineEdit::onEditingFinished()
