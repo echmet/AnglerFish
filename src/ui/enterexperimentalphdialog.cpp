@@ -2,7 +2,6 @@
 #include "ui_enterexperimentalphdialog.h"
 
 #include <QMessageBox>
-#include <QValidator>
 
 EnterExperimentalpHDialog::EnterExperimentalpHDialog(QWidget *parent) :
   QDialog(parent),
