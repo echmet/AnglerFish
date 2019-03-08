@@ -136,7 +136,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="qvlay_controls" stretch="0,0,0,0,0">
+    <layout class="QVBoxLayout" name="qvlay_controls" stretch="0,0,0,0,0,0">
      <item>
       <widget class="QPushButton" name="qpb_remove">
        <property name="text">
@@ -172,9 +172,16 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="qpb_correctConcentration">
+       <property name="text">
+        <string>&lt;CORR_C&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="qpb_exclude">
        <property name="text">
-        <string>EX</string>
+        <string>&lt;EXCLUDE&gt;</string>
        </property>
        <property name="checkable">
         <bool>true</bool>

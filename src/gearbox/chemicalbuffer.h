@@ -29,6 +29,7 @@ public:
   ~ChemicalBuffer();
 
   GDMProxy & composition();
+  void correctConcentration();
   bool empty() const;
   bool exclude() const;
   const std::vector<double> & experimentalMobilities() const;

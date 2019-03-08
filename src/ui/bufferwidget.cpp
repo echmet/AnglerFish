@@ -44,6 +44,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   ui->qpb_remove->setToolTip(tr("Remove buffer"));
   ui->qpb_clone->setToolTip(tr("Clone buffer"));
   ui->qpb_export->setToolTip(tr("Export buffer"));
+  ui->qpb_correctConcentration->setToolTip(tr("Correct concentration of weak electrolyte"));
   ui->qpb_exclude->setToolTip(tr("Exclude buffer"));
 
   /* Vertical alignment hack */
@@ -75,6 +76,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   connect(m_compositionWidget, &BufferCompositionWidget::compositionChanged, this, &BufferWidget::onCompositionChanged);
   connect(ui->qpb_clone, &QPushButton::clicked, this, [this]() { emit this->cloneMe(this); });
   connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
+  connect(ui->qpb_correctConcentration, &QPushButton::clicked, this, &BufferWidget::onCorrectConcentration);
   connect(ui->qpb_exclude, &QPushButton::clicked, this,
           [this]() {
             h_buffer.setExclude(ui->qpb_exclude->isChecked());
@@ -129,6 +131,16 @@ void BufferWidget::onCompositionChanged()
     emit bufferChanged(this);
   } catch (const gearbox::ChemicalBuffer::Exception &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Calculation error"), ex.what()};
+    mbox.exec();
+  }
+}
+
+void BufferWidget::onCorrectConcentration()
+{
+  try {
+    h_buffer.correctConcentration();
+  } catch (const gearbox::ChemicalBuffer::Exception &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Automatic concentration correction failed"), ex.what()};
     mbox.exec();
   }
 }

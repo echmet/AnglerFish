@@ -4,6 +4,7 @@
 #include <gdm/conversion/conversion.h>
 #include <gdm/core/gdm.h>
 #include <calculators/caesinterface.h>
+#include <trstr.h>
 
 namespace gearbox {
 
@@ -64,6 +65,12 @@ ChemicalBuffer::~ChemicalBuffer()
 GDMProxy & ChemicalBuffer::composition()
 {
   return *m_composition;
+}
+
+void ChemicalBuffer::correctConcentration()
+{
+  if (m_gdmModel->size() > 2)
+    throw Exception{trstr("Automatic correction works with binary buffers only")};
 }
 
 bool ChemicalBuffer::empty() const
