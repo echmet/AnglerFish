@@ -16,6 +16,7 @@
 #include <QVBoxLayout>
 #include <QWindow>
 #include <limits>
+#include <cassert>
 
 BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buffer, QWidget *parent) :
   QWidget{parent},
@@ -229,6 +230,7 @@ void BufferWidget::setupIcons()
   ui->qpb_remove->setIcon(style()->standardIcon(QStyle::SP_DialogDiscardButton));
   ui->qpb_clone->setIcon(style()->standardIcon(QStyle::SP_FileDialogStart)) ;
   ui->qpb_export->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+  ui->qpb_correctConcentration->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
   ui->qpb_exclude->setIcon(style()->standardIcon(QStyle::SP_MessageBoxCritical));
 #endif // Q_OS_
 }

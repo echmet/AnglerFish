@@ -6,6 +6,7 @@
 #include <calculators/caesinterface.h>
 #include <gearbox/utility.h>
 #include <trstr.h>
+#include <cassert>
 
 namespace gearbox {
 
@@ -89,13 +90,13 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
   assert(weak != m_gdmModel->cend());
 
   const double cOriginal{m_gdmModel->concentrations(weak).front()};
-  double cLeft{m_gdmModel->concentrations(strong).front()};
+  double cLeft{m_gdmModel->concentrations(strong).front() * 0.5};
   double cRight{50.0 * cLeft};
 
   assert(cLeft < cRight);
 
-  if (cLeft >= cOriginal)
-    throw Exception{trstr("Concentration of weak component must be greater than that of strong component")};
+  if (cLeft > cOriginal)
+    throw Exception{trstr("Concentration of weak component must be at least 50 % of the strong component")};
 
   double cNow = (cRight - cLeft) / 2.0 + cLeft;
   const bool weakIsAcid = utility::isAcid(weak);
