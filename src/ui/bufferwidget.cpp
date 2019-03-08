@@ -146,7 +146,7 @@ void BufferWidget::onCorrectConcentration()
 
   try {
     h_buffer.correctConcentration(dlg.pH());
-    emit onCompositionChanged();
+    onCompositionChanged();
   } catch (const gearbox::ChemicalBuffer::Exception &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Automatic concentration correction failed"), ex.what()};
     mbox.exec();

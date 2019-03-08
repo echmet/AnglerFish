@@ -107,7 +107,7 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
 
   size_t iters{0};
   std::vector<double> cVec{cNow};
-  auto adjustCNow = [&,this]() -> std::function<void(void)> {
+  auto adjustCNow = [&,this]() -> std::function<void()> {
     if (utility::isAcid(weak)) {
       return [&,this]() {
         if (this->m_pH > targetpH)
