@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(FLATPAK_BUILD "Application is being built as Flatpak package" OFF)
+
 if (WIN32)
     option(ECHMET_FORCE_WINXP "Define target Windows version to Windows XP")
 endif ()
@@ -57,6 +59,10 @@ else ()
 endif ()
 
 add_definitions("-DQWT_DLL")
+
+if (FLATPAK_BUILD)
+    add_definitions("-DAF_FLATPAK_BUILD")
+endif ()
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
