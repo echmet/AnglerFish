@@ -282,3 +282,12 @@ target_link_libraries(AnglerFish
 
 install(TARGETS AnglerFish
         RUNTIME DESTINATION bin)
+
+if (UNIX)
+    install(FILES "AnglerFish.desktop" DESTINATION "share/applications")
+    install(FILES "res/AFicon_16.png" DESTINATION "share/icons/hicolor/16/apps" RENAME "AnglerFish.png")
+    install(FILES "res/AFicon_24.png" DESTINATION "share/icons/hicolor/24/apps" RENAME "AnglerFish.png")
+    install(FILES "res/AFicon_32.png" DESTINATION "share/icons/hicolor/32/apps" RENAME "AnglerFish.png")
+    install(FILES "res/AFicon_48.png" DESTINATION "share/icons/hicolor/48/apps" RENAME "AnglerFish.png")
+    install(FILES "res/AFicon_64.png" DESTINATION "share/icons/hicolor/64/apps" RENAME "AnglerFish.png")
+endif ()
