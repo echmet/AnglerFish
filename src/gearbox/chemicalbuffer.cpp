@@ -93,14 +93,20 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
   double cLeft{PREC};
   double cRight{50.0 * m_gdmModel->concentrations(strong).front()};
 
+  if (cRight < 2.0 * PREC)
+    cRight = 2.0 * PREC;
+
   assert(cLeft < cRight);
 
   double cNow = (cRight - cLeft) / 2.0 + cLeft;
 
-  if ((utility::isAcid(weak) && utility::isAcid(strong)) || (utility::isBase(weak) && utility::isBase(strong)))
-    throw Exception{"Buffer must consist of weak acid and strong base or vice versa"};
-
   std::vector<double> cVec{cLeft};
+  auto restoreConc = [&]() {
+    cVec[0] = cOriginal;
+    m_gdmModel->setConcentrations(weak, cVec);
+    recalculate(true);
+  };
+
   const bool acidic = [&, this]() {
     cVec[0] = cLeft;
     this->m_gdmModel->setConcentrations(weak, cVec);
@@ -116,6 +122,12 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
 
     return pHRight < pHLeft;
   }();
+
+  if ((utility::isAcid(strong) && acidic) || (utility::isBase(strong) && !acidic)) {
+    restoreConc();
+
+    throw Exception{"Buffer must consist of weak acid and strong base or vice versa"};
+  }
 
   size_t iters{0};
   cVec[0] = cNow;
@@ -153,10 +165,7 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
   }
 
   if (iters >= MAX_ITERS) {
-    cVec[0] = cOriginal;
-    m_gdmModel->setConcentrations(weak, cVec);
-    recalculate(true);
-
+    restoreConc();
     throw Exception{"Failed to correct concentration"};
   }
 }
