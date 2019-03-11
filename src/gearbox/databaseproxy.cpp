@@ -10,11 +10,11 @@
 namespace gearbox {
 
 #ifdef Q_OS_LINUX
-#ifdef PMNG_FLATPAK_BUILD
-  const char *DatabaseProxy::DATABASE_PATH = "/app/share/PeakMasterNG/pmng_db.sql";
+#ifdef AF_FLATPAK_BUILD
+  const char *DatabaseProxy::DATABASE_PATH = "/app/share/AnglerFish/pmng_db.sql";
 #else
-  const char *DatabaseProxy::DATABASE_PATH = "/etc/ECHMET/PeakMasterNG/pmng_db.sql";
-#endif // PMNG_FLATPAK_BUILD
+  const char *DatabaseProxy::DATABASE_PATH = "/etc/ECHMET/AnglerFish/pmng_db.sql";
+#endif // AF_FLATPAK_BUILD
 #else
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
 #endif // Q_OS_LINUX
