@@ -273,3 +273,6 @@ target_link_libraries(AnglerFish
                       PRIVATE ${LINK_PTHREAD}
                       PRIVATE ${WIN32_DBGHELP}
                       )
+
+install(TARGETS AnglerFish
+        RUNTIME DESTINATION bin)
