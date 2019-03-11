@@ -242,7 +242,9 @@ void setResults(const InSystemWrap &system, const FitResultsPtr &results, gearbo
   };
 
   static const auto set = [](const auto &r, QVector<gearbox::FitResultsModel::Result> &data) {
-    data.push_back(gearbox::FitResultsModel::Result{r.charge, r.value, r.stdErr, relStdErr(r.value, r.stdErr)});
+    gearbox::FitResultsModel::Result res{r.charge, r.value, r.stdErr, relStdErr(r.value, r.stdErr)};
+
+    data.push_back(res);
   };
 
   static const auto walk = [](const auto v, gearbox::FitResultsModel &model) {
