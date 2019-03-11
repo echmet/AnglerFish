@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=AnglerFish
+Name=AnglerFish
+GenericName=pKa and ionic mobilities corrector
+X-KDE-StartupNotify=true
+Terminal=false
+Categories=Science;Education
+Icon=AnglerFish
