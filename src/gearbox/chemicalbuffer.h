@@ -1,6 +1,7 @@
 #ifndef CHEMICALBUFFER_H
 #define CHEMICALBUFFER_H
 
+#include <gdm/core/gdm.h>
 #include <stdexcept>
 #include <vector>
 
@@ -8,10 +9,6 @@ namespace gearbox {
   class GDMProxy;
   class IonicEffectsModel;
 } // namespace gearbox
-
-namespace gdm {
-  class GDM;
-} // namespace gdm
 
 namespace gearbox {
 
@@ -45,6 +42,8 @@ public:
   ChemicalBuffer & operator=(ChemicalBuffer &&other) noexcept;
 
 private:
+  void correctConcentrationInternal(const gdm::GDM::const_iterator weak, double cLeft, double cRight,
+                                    const double targetpH);
   void recalculate(const bool force = false);
 
   const IonicEffectsModel *h_ionEffs;

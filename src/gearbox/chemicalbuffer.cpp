@@ -2,7 +2,6 @@
 #include "gdmproxyimpl.h"
 
 #include <gdm/conversion/conversion.h>
-#include <gdm/core/gdm.h>
 #include <calculators/caesinterface.h>
 #include <gearbox/utility.h>
 #include <trstr.h>
@@ -11,6 +10,7 @@
 namespace gearbox {
 
 static const double MIN_CONCENTRATION{1.0e-11};
+static const double CCORR_PREC{1.0e-6};
 
 ChemicalBuffer::ChemicalBuffer(const gearbox::IonicEffectsModel *ionEffs) :
   h_ionEffs{ionEffs},
@@ -71,31 +71,45 @@ GDMProxy & ChemicalBuffer::composition()
 
 void ChemicalBuffer::correctConcentration(const double targetpH)
 {
+  if (m_gdmModel->size() == 1) {
+    const double cLeft{CCORR_PREC};
+    const double cRight{500.0};
+
+    correctConcentrationInternal(m_gdmModel->cbegin(), cLeft, cRight, targetpH);
+  } else if (m_gdmModel->size() == 2) {
+    auto strong = utility::findDrivingConstituent(m_gdmModel);
+    if (strong == m_gdmModel->cend())
+      throw Exception{trstr("Driving component not identified")};
+
+    /* Find weak component */
+    auto weak = m_gdmModel->cbegin();
+    for (;weak != m_gdmModel->cend(); weak++) {
+      if (weak != strong)
+        break;
+    }
+    assert(weak != m_gdmModel->cend());
+
+    if ((utility::isAcid(strong) && utility::isAcid(weak)) ||
+        (utility::isBase(strong) && utility::isBase(weak)))
+    throw Exception{trstr("Buffer must consist of weak acid and strong base or vice versa")};
+
+    double cLeft{CCORR_PREC};
+    double cRight{50.0 * m_gdmModel->concentrations(strong).front()};
+
+    correctConcentrationInternal(weak, cLeft, cRight, targetpH);
+  } else
+    throw Exception{trstr("Automatic correction works only with a single constituent or binary buffers")};
+}
+
+void ChemicalBuffer::correctConcentrationInternal(const gdm::GDM::const_iterator weak, double cLeft, double cRight,
+                                                  const double targetpH)
+{
   static const size_t MAX_ITERS{300};
-  static const double PREC{1.0e-6};
-
-  if (m_gdmModel->size() != 2)
-    throw Exception{trstr("Automatic correction works with binary buffers only")};
-
-  auto strong = utility::findDrivingConstituent(m_gdmModel);
-  if (strong == m_gdmModel->cend())
-    throw Exception{trstr("Driving component not identified")};
-
-  /* Find weak component */
-  auto weak = m_gdmModel->cbegin();
-  for (;weak != m_gdmModel->cend(); weak++) {
-    if (weak != strong)
-      break;
-  }
-  assert(weak != m_gdmModel->cend());
 
   const double cOriginal{m_gdmModel->concentrations(weak).front()};
-  double cLeft{PREC};
-  double cRight{50.0 * m_gdmModel->concentrations(strong).front()};
 
-  if (cRight < 2.0 * PREC)
-    cRight = 2.0 * PREC;
-
+  if (cRight < 2.0 * CCORR_PREC)
+    cRight = 2.0 * CCORR_PREC;
   assert(cLeft < cRight);
 
   double cNow = (cRight - cLeft) / 2.0 + cLeft;
@@ -123,12 +137,6 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
     return pHRight < pHLeft;
   }();
 
-  if ((utility::isAcid(strong) && acidic) || (utility::isBase(strong) && !acidic)) {
-    restoreConc();
-
-    throw Exception{"Buffer must consist of weak acid and strong base or vice versa"};
-  }
-
   size_t iters{0};
   cVec[0] = cNow;
   auto adjustCNow = [&,this]() -> std::function<void()> {
@@ -149,7 +157,7 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
   }();
 
   auto pHMatches = [&,this]() {
-    return targetpH + PREC > this->m_pH && targetpH - PREC < this->m_pH;
+    return targetpH + CCORR_PREC > this->m_pH && targetpH - CCORR_PREC < this->m_pH;
   };
 
   m_gdmModel->setConcentrations(weak, cVec);
@@ -166,9 +174,10 @@ void ChemicalBuffer::correctConcentration(const double targetpH)
 
   if (iters >= MAX_ITERS) {
     restoreConc();
-    throw Exception{"Failed to correct concentration"};
+    throw Exception{trstr("Failed to correct concentration")};
   }
 }
+
 
 bool ChemicalBuffer::empty() const
 {
