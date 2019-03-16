@@ -15,6 +15,7 @@ namespace Ui {
 
 class BufferWidget;
 class ChemicalBuffer;
+class QMenu;
 class QVBoxLayout;
 
 class BuffersInputWidget : public QWidget {
@@ -34,11 +35,14 @@ private:
 
   QFileDialog m_saveBufferDlg;
 
+  QMenu *m_loadBufferMenu;
+
 private slots:
   void onBufferChanged(const BufferWidget *w);
   void onCloneBuffer(const BufferWidget *w);
   void onExportBuffer(const BufferWidget *w);
-  void onLoadBuffer();
+  void onLoadBufferFromClipboard();
+  void onLoadBufferFromFile();
   void onScrollToBottom(const int min, const int max);
   void onSortBypH();
 

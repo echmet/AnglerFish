@@ -7,6 +7,7 @@
 #include <gearbox/chemicalbuffersmodel.h>
 #include <persistence/persistence.h>
 #include <QFileInfo>
+#include <QMenu>
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -36,13 +37,21 @@ BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) 
 
   m_scrollLayout->addStretch();
 
+  m_loadBufferMenu = new QMenu{this};
+  auto actionLoadBufferFromFile = new QAction{tr("From file")};
+  auto actionLoadBufferFromClipboard = new QAction{tr("From clipboard")};
+  m_loadBufferMenu->addAction(actionLoadBufferFromFile);
+  m_loadBufferMenu->addAction(actionLoadBufferFromClipboard);
+  ui->qpb_loadBuffer->setMenu(m_loadBufferMenu);
+
   setupIcons();
 
   m_saveBufferDlg.setAcceptMode(QFileDialog::AcceptSave);
 
   connect(ui->qpb_addBuffer, &QPushButton::clicked, this, [this]() { emit this->addBuffer(); });
-  connect(ui->qpb_loadBuffer, &QPushButton::clicked, this, &BuffersInputWidget::onLoadBuffer);
   connect(ui->qpb_sortBypH, &QPushButton::clicked, this, &BuffersInputWidget::onSortBypH);
+  connect(actionLoadBufferFromFile, &QAction::triggered, this, &BuffersInputWidget::onLoadBufferFromFile);
+  connect(actionLoadBufferFromClipboard, &QAction::triggered, this, &BuffersInputWidget::onLoadBufferFromClipboard);
 }
 
 BuffersInputWidget::~BuffersInputWidget()
@@ -118,7 +127,11 @@ void BuffersInputWidget::onExportBuffer(const BufferWidget *w)
   }
 }
 
-void BuffersInputWidget::onLoadBuffer()
+void BuffersInputWidget::onLoadBufferFromClipboard()
+{
+}
+
+void BuffersInputWidget::onLoadBufferFromFile()
 {
   static QString lastPath{};
 
