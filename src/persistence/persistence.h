@@ -4,7 +4,6 @@
 #include "types.h"
 
 #include <gdm/core/gdm.h>
-#include <QString>
 
 
 namespace gearbox {
@@ -19,7 +18,7 @@ namespace persistence {
 void loadEntireSetup(const QString &path, gearbox::Gearbox &gbox);
 void saveEntireSetup(const QString &path, const gearbox::ChemicalBuffersModel &buffers,
                      const gearbox::AnalyteEstimates &analyte);
-void loadPeakMasterBuffer(const QString &path, gearbox::Gearbox &gbox);
+void loadPeakMasterBuffer(const Target &target, gearbox::Gearbox &gbox);
 void savePeakMasterBuffer(const QString &path, const gearbox::ChemicalBuffer &buffer);
 
 } // namespace persistence

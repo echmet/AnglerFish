@@ -21,9 +21,9 @@ void saveEntireSetup(const QString &path, const gearbox::ChemicalBuffersModel &b
   EntireSetup::save(path, buffers, analyte);
 }
 
-void loadPeakMasterBuffer(const QString &path, gearbox::Gearbox &gbox)
+void loadPeakMasterBuffer(const Target &target, gearbox::Gearbox &gbox)
 {
-  auto model = PeakMasterCompatibility::load(path);
+  auto model = PeakMasterCompatibility::load(target);
 
   auto newModel = new gdm::GDM{std::move(model)};
 

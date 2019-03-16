@@ -1,6 +1,7 @@
 #ifndef PEAKMASTERCOMPATIBILITY_H
 #define PEAKMASTERCOMPATIBILITY_H
 
+#include "types.h"
 #include <gdm/core/gdm.h>
 
 class QJsonArray;
@@ -17,7 +18,7 @@ class PeakMasterCompatibility {
 public:
   PeakMasterCompatibility() = delete;
 
-  static gdm::GDM load(const QString &path);
+  static gdm::GDM load(const Target &target);
   static void save(QString path, const gdm::GDM *modelBGE, const gdm::GDM *modelSample);
 
 private:

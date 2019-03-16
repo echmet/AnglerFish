@@ -129,6 +129,13 @@ void BuffersInputWidget::onExportBuffer(const BufferWidget *w)
 
 void BuffersInputWidget::onLoadBufferFromClipboard()
 {
+  try {
+    persistence::loadPeakMasterBuffer({persistence::Target::TT_CLIPBOARD, ""}, h_gbox);
+  } catch (const persistence::Exception &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Cannot load buffer"),
+                     QString{"Failed to load buffer from clipboard:\n%1"}.arg(ex.what())};
+    mbox.exec();
+  }
 }
 
 void BuffersInputWidget::onLoadBufferFromFile()
@@ -146,7 +153,7 @@ void BuffersInputWidget::onLoadBufferFromFile()
     const auto &selectedFiles = dlg.selectedFiles();
     for (const auto &path : selectedFiles) {
       try {
-        persistence::loadPeakMasterBuffer(path, h_gbox);
+        persistence::loadPeakMasterBuffer({persistence::Target::TT_FILE, path}, h_gbox);
         lastPath = path;
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Cannot load buffer"),
