@@ -146,7 +146,6 @@ void BufferCompositionWidget::setWidgetSizes()
   int tbwh = fm.height() * 9;
 
   ui->qtbv_composition->setMinimumHeight(tbwh);
-  ui->qtbv_composition->setMaximumHeight(tbwh);
 }
 
 void BufferCompositionWidget::setupIcons()
