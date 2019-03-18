@@ -38,8 +38,8 @@ BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) 
   m_scrollLayout->addStretch();
 
   m_loadBufferMenu = new QMenu{this};
-  auto actionLoadBufferFromFile = new QAction{tr("From file")};
-  auto actionLoadBufferFromClipboard = new QAction{tr("From clipboard")};
+  auto actionLoadBufferFromFile = new QAction{tr("From file"), this};
+  auto actionLoadBufferFromClipboard = new QAction{tr("From clipboard"), this};
   m_loadBufferMenu->addAction(actionLoadBufferFromFile);
   m_loadBufferMenu->addAction(actionLoadBufferFromClipboard);
   ui->qpb_loadBuffer->setMenu(m_loadBufferMenu);
