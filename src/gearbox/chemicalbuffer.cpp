@@ -254,7 +254,7 @@ void ChemicalBuffer::recalculate(const bool force)
 
     m_pH = props.pH;
     m_ionicStrength = props.ionicStrength * 1000.0;
-    m_bufferCapacity = props.bufferCapacity * 1000.0;
+    m_bufferCapacity = props.bufferCapacity;
 
     m_needsRecalculation = false;
   } catch (const CAESInterface::Exception &ex) {
