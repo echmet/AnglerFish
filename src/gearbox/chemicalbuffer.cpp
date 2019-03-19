@@ -38,6 +38,7 @@ ChemicalBuffer::ChemicalBuffer(const ChemicalBuffer &other) :
   m_experimentalMobilities{other.experimentalMobilities()},
   m_pH{other.m_pH},
   m_ionicStrength{other.m_ionicStrength},
+  m_bufferCapacity{other.m_bufferCapacity},
   m_exclude{other.m_exclude},
   m_needsRecalculation{other.m_needsRecalculation}
 {
@@ -51,6 +52,7 @@ ChemicalBuffer::ChemicalBuffer(ChemicalBuffer &&other) noexcept :
   m_experimentalMobilities{std::move(other.m_experimentalMobilities)},
   m_pH{other.m_pH},
   m_ionicStrength{other.m_ionicStrength},
+  m_bufferCapacity{other.m_bufferCapacity},
   m_exclude{other.m_exclude},
   m_needsRecalculation{other.m_needsRecalculation}
 {
@@ -62,6 +64,18 @@ ChemicalBuffer::~ChemicalBuffer()
 {
   delete m_composition;
   delete m_gdmModel;
+}
+
+double ChemicalBuffer::bufferCapacity()
+{
+  recalculate();
+
+  return m_bufferCapacity;
+}
+
+double ChemicalBuffer::bufferCapacity() const
+{
+  return m_bufferCapacity;
 }
 
 GDMProxy & ChemicalBuffer::composition()
@@ -240,6 +254,7 @@ void ChemicalBuffer::recalculate(const bool force)
 
     m_pH = props.pH;
     m_ionicStrength = props.ionicStrength * 1000.0;
+    m_bufferCapacity = props.bufferCapacity * 1000.0;
 
     m_needsRecalculation = false;
   } catch (const CAESInterface::Exception &ex) {

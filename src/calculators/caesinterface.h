@@ -22,6 +22,7 @@ public:
   public:
     const double pH;
     const double ionicStrength;
+    const double bufferCapacity;
   };
 
   explicit CAESInterface(const gdm::GDM &model, const gearbox::IonicEffectsModel &ionEffs);

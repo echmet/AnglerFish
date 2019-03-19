@@ -30,7 +30,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>pH:</string>
+          <string>pH</string>
          </property>
         </widget>
        </item>
@@ -50,7 +50,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>IS (mM):</string>
+          <string>IS (mM)</string>
          </property>
         </widget>
        </item>
@@ -60,6 +60,16 @@
           <bool>true</bool>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="ql_bufferCapacity">
+         <property name="text">
+          <string>BC (mM)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="FloatingValueLineEdit" name="qle_bufferCapacity"/>
        </item>
       </layout>
      </item>
@@ -111,7 +121,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>161</width>
+          <width>114</width>
           <height>202</height>
          </rect>
         </property>

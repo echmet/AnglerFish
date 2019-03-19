@@ -26,6 +26,8 @@ public:
   ~ChemicalBuffer();
 
   GDMProxy & composition();
+  double bufferCapacity();
+  double bufferCapacity() const;
   void correctConcentration(const double targetpH);
   bool empty() const;
   bool exclude() const;
@@ -54,6 +56,7 @@ private:
 
   double m_pH;
   double m_ionicStrength;
+  double m_bufferCapacity;
 
   bool m_exclude;
 

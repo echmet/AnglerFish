@@ -6,6 +6,7 @@
 #include <gdm/core/gdm.h>
 #include <gdm/conversion/conversion.h>
 #include <echmetcaes.h>
+#include <echmetcaes_extended.h>
 #include <echmetionprops.h>
 #include <QObject>
 #include <memory>
@@ -88,7 +89,24 @@ CAESInterface::BufferProperties CAESInterface::bufferProperties()
   if (tRet != ECHMET::RetCode::OK)
     throw Exception{trstr("Failed to calculate distribution: ") + errstr(tRet)};
 
+  double bufCap = [&]() {
+    ECHMET::ECHMETReal bc{};
+
+    ECHMET::NonidealityCorrections corrs = ECHMET::defaultNonidealityCorrections();
+
+    if (h_ionEffs.debyeHuckel())
+      ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
+    if (h_ionEffs.onsagerFuoss())
+      ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
+    auto tRet = ECHMET::CAES::calculateBufferCapacity(bc, corrs, *chemSystem, *calcProps, acVec.get());
+
+    if (tRet != ECHMET::RetCode::OK)
+      throw Exception{"Failed to calculate buffer capacity"};
+
+    return bc;
+  }();
+
   const double is = h_ionEffs.debyeHuckel() ? calcProps->ionicStrength : 0.0;
   const double pH = ECHMET::IonProps::calculatepH_direct(calcProps->ionicConcentrations->at(0), is);
-  return {pH, calcProps->ionicStrength};
+  return {pH, calcProps->ionicStrength, bufCap};
 }

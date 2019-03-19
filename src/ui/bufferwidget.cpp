@@ -72,6 +72,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   if (!h_buffer.empty()) {
     ui->qle_pH->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.pH()));
     ui->qle_ionicStrength->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
+    ui->qle_bufferCapacity->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.bufferCapacity()));
   }
 
   connect(ui->qpb_addExpValue, &QPushButton::clicked, this, &BufferWidget::onAddExpValue);
@@ -130,6 +131,7 @@ void BufferWidget::onCompositionChanged()
   try {
     ui->qle_pH->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.pH()));
     ui->qle_ionicStrength->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
+    ui->qle_bufferCapacity->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.bufferCapacity()));
 
     emit bufferChanged(this);
   } catch (const gearbox::ChemicalBuffer::Exception &ex) {
@@ -214,6 +216,7 @@ void BufferWidget::setWidgetSizes()
   int nw = fm.width(" 99,9999 ");
   ui->qle_ionicStrength->setMinimumWidth(nw);
   ui->qle_pH->setMinimumWidth(nw);
+  ui->qle_bufferCapacity->setMinimumWidth(nw);
 }
 
 void BufferWidget::setupIcons()
