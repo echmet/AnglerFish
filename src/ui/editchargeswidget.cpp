@@ -182,6 +182,8 @@ void EditChargesWidget::updateChargeHigh()
 
   m_qpb_addHigh->setText(chargeHigh + 1);
   m_qpb_removeHigh->setText(chargeHigh);
+
+  emit chargesChanged();
 }
 
 void EditChargesWidget::updateChargeLow()
@@ -190,6 +192,8 @@ void EditChargesWidget::updateChargeLow()
 
   m_qpb_addLow->setText(chargeLow - 1);
   m_qpb_removeLow->setText(chargeLow);
+
+  emit chargesChanged();
 }
 
 void EditChargesWidget::updateChargeModifiers()

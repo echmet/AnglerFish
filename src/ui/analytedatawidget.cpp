@@ -90,6 +90,8 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
 
   connect(m_estimatedParamsWidget, &EditChargesWidgetEstimates::estimatesChanged, this, &AnalyteDataWidget::onUpdateEstimates);
 
+  onUpdateEstimates(); /* Set the initial empty estimates */
+
   QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &AnalyteDataWidget::onScreenChanged); }); /* This must be done from the event queue after the window is created */
 }
 

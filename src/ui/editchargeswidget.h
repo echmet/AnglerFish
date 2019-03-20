@@ -61,6 +61,7 @@ private slots:
 
 signals:
   void acceptRequested();
+  void chargesChanged();
 };
 
 #endif // EDITCHARGESWIDGET_H
