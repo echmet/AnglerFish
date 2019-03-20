@@ -47,6 +47,8 @@ void EditChargesWidgetEstimates::setCharges(const std::map<int, std::pair<double
   assert(model != nullptr);
 
   model->refreshData(pKas, mobilities, chargeLow, chargeHigh);
+
+  updateChargeModifiers();
 }
 
 void EditChargesWidgetEstimates::setupChargesModel(QTableView *tbv)

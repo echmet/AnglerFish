@@ -35,13 +35,13 @@ public:
 
 protected:
   virtual void setupChargesModel(QTableView *tbv) = 0;
+  void updateChargeModifiers();
 
   AbstractConstituentChargesModel *m_chargesModel;
 
 private:
   void updateChargeHigh();
   void updateChargeLow();
-  void updateChargeModifiers();
 
   void setupWidget();
 
