@@ -167,6 +167,8 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
         << QObject::tr("pH") << DELIM;
     if (exppH)
       stm << QObject::tr("pH experimental") << DELIM;
+    if (common.includeBufferCapacity)
+      stm << QObject::tr("Buffer capacity (mM)") << DELIM;
     stm << QObject::tr("Average effective mobility") << DELIM
         << QObject::tr("Effective mobility");
     stm << "\n";
@@ -183,6 +185,9 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
       stm << loc.toString(b.pH()) << DELIM;
       if (exppH)
         stm << DELIM;
+
+      if (common.includeBufferCapacity)
+        stm << b.bufferCapacity() << DELIM;
 
       double avgUEff = std::accumulate(b.experimentalMobilities().cbegin(), b.experimentalMobilities().cend(), 0.0);
       avgUEff /= b.experimentalMobilities().size();
