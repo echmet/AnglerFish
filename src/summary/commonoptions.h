@@ -13,6 +13,7 @@ public:
                 const bool _includeEstimates,
                 const bool _includeIonicEffects,
                 const bool _includeBufferCapacity,
+                const bool _includeIonicStrength,
                 std::string _title);
 
   const bool abbreviateBuffers;
@@ -21,6 +22,7 @@ public:
   const bool includeEstimates;
   const bool includeIonicEffects;
   const bool includeBufferCapacity;
+  const bool includeIonicStrength;
   const std::string title;
 };
 

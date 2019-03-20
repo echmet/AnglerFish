@@ -8,6 +8,7 @@ CommonOptions::CommonOptions(const bool _abbreviateBuffers,
                              const bool _includeEstimates,
                              const bool _includeIonicEffects,
                              const bool _includeBufferCapacity,
+                             const bool _includeIonicStrength,
                              std::string _title) :
   abbreviateBuffers{_abbreviateBuffers},
   includeBuffers{_includeBuffers},
@@ -15,6 +16,7 @@ CommonOptions::CommonOptions(const bool _abbreviateBuffers,
   includeEstimates{_includeEstimates},
   includeIonicEffects{_includeIonicEffects},
   includeBufferCapacity{_includeBufferCapacity},
+  includeIonicStrength{_includeIonicStrength},
   title{std::move(_title)}
 {
 }

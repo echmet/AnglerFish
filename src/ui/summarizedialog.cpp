@@ -31,12 +31,14 @@ SummarizeDialog::SummarizeDialog(const gearbox::Gearbox &gbox, const std::vector
   connect(ui->qcb_includeBuffers, &QCheckBox::clicked, this, [this]() {
     ui->qcb_abbreviateBuffers->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
     ui->qcb_includeBufferCapacity->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
+    ui->qcb_includeIonicStrength->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
   });
   connect(ui->qpb_options, &QPushButton::clicked, this, &SummarizeDialog::onOptionsClicked);
   connect(ui->qpb_browse, &QPushButton::clicked, this, &SummarizeDialog::onBrowseClicked);
 
   ui->qcb_abbreviateBuffers->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
   ui->qcb_includeBufferCapacity->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
+  ui->qcb_includeIonicStrength->setEnabled(ui->qcb_includeBuffers->checkState() == Qt::Checked);
 
   onSummarizerChanged(ui->qcbox_summarizers->currentIndex());
 }
@@ -59,6 +61,7 @@ summary::CommonOptions SummarizeDialog::makeCommonOptions()
     chk(ui->qcb_includeEstimates),
     chk(ui->qcb_includeIonicEffects),
     chk(ui->qcb_includeBufferCapacity),
+    chk(ui->qcb_includeIonicStrength),
     ui->qle_title->text().toStdString()
   };
 }

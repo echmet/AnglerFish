@@ -167,6 +167,8 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
         << QObject::tr("pH") << DELIM;
     if (exppH)
       stm << QObject::tr("pH experimental") << DELIM;
+    if (common.includeIonicStrength)
+      stm << QObject::tr("Ionic strength (mM)") << DELIM;
     if (common.includeBufferCapacity)
       stm << QObject::tr("Buffer capacity (mM)") << DELIM;
     stm << QObject::tr("Average effective mobility") << DELIM
@@ -186,6 +188,8 @@ void CSVSummarizer::summarize(const gearbox::Gearbox &gbox, const CommonOptions 
       if (exppH)
         stm << DELIM;
 
+      if (common.includeIonicStrength)
+        stm << b.ionicStrength() << DELIM;
       if (common.includeBufferCapacity)
         stm << b.bufferCapacity() << DELIM;
 
