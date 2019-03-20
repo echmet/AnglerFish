@@ -280,7 +280,9 @@ ChemicalBuffer & ChemicalBuffer::operator=(ChemicalBuffer &&other) noexcept
   m_experimentalMobilities = std::move(other.m_experimentalMobilities);
   m_pH = other.m_pH;
   m_ionicStrength = other.m_ionicStrength;
+  m_bufferCapacity = other.m_bufferCapacity;
   m_needsRecalculation = other.m_needsRecalculation;
+  m_exclude = other.m_exclude;
 
   other.m_gdmModel = nullptr;
   other.m_composition = nullptr;
