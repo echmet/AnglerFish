@@ -6,6 +6,18 @@
 #include <QVBoxLayout>
 #include <QMessageBox>
 
+inline
+QString pathToNative(const QString &path)
+{
+#ifdef Q_OS_WIN
+  QString native{path};
+  native.replace('/', '\\');
+  return native;
+#else
+  return path;
+#endif // Q_OS_WIN
+}
+
 ToggleTracepointsDialog::ToggleTracepointsDialog(const TracepointInfoVec &tracepointInformation, const TracingSetup &tracingSetup,
                                                  QWidget *parent) :
   QDialog(parent),
@@ -101,14 +113,9 @@ void ToggleTracepointsDialog::onSetOutputFile()
   if (dlg.exec() != QDialog::Accepted)
     return;
 
-  m_outputFilePath = dlg.selectedFiles()[0];
-  ui->qle_outputFile->setText([](QString s) {
-#ifdef Q_OS_WIN
-    return s.replace('/', '\\');
-#else
-    return s;
-#endif // Q_OS_WIN
-  }(m_outputFilePath));
+  m_outputFilePath = pathToNative(dlg.selectedFiles().constFirst());
+
+  ui->qle_outputFile->setText(m_outputFilePath);
 }
 
 ToggleTracepointsDialog::TracingSetup ToggleTracepointsDialog::result() const
@@ -153,7 +160,7 @@ void ToggleTracepointsDialog::setupTracepointList(const TracepointInfoVec &trace
   ui->qle_outputFile->setText(tracingSetup.outputFilePath);
   ui->qcb_enableTracing->setChecked(tracingSetup.tracingEnabled);
   ui->qle_outputFile->setEnabled(tracingSetup.tracingEnabled);
-  m_outputFilePath = tracingSetup.outputFilePath;
+  m_outputFilePath = pathToNative(tracingSetup.outputFilePath);
 
   m_tracepointsWidget->setEnabled(ui->qcb_enableTracing->checkState() == Qt::Checked);
 
@@ -161,7 +168,7 @@ void ToggleTracepointsDialog::setupTracepointList(const TracepointInfoVec &trace
   connect(ui->qcb_enableTracing, &QCheckBox::toggled, this, &ToggleTracepointsDialog::onEnableTracingToggled);
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
   connect(ui->qle_filter, &QLineEdit::textChanged, this, &ToggleTracepointsDialog::onFilterTextChanged);
-  connect(ui->qle_outputFile, &QLineEdit::editingFinished, [this]() { m_outputFilePath = ui->qle_outputFile->text();});
+  connect(ui->qle_outputFile, &QLineEdit::editingFinished, [this]() { m_outputFilePath = pathToNative(ui->qle_outputFile->text()); });
 
   onEnableTracingToggled(ui->qcb_enableTracing->checkState() ==Qt::Checked);
 
