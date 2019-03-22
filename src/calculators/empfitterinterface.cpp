@@ -389,7 +389,7 @@ bool EMPFitterInterface::writeTrace(const char *path)
   using WCharWrap = std::unique_ptr<wchar_t, decltype(&wcharDeleter)>;
 
   const auto wPath = [](const char *path) -> WCharWrap {
-    wchar_t *wPath{ nullptr };
+    wchar_t *wPath{nullptr};
 
     const auto len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, nullptr, 0);
     if (len < 1)
@@ -399,26 +399,29 @@ bool EMPFitterInterface::writeTrace(const char *path)
     if (wPath == nullptr)
       return {nullptr, wcharDeleter};
 
-       const auto ret = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wPath, len);
-       if (ret != len) {
-         delete[] wPath;
-         return {nullptr, wcharDeleter};
-       }
+    const auto ret = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wPath, len);
+    if (ret != len) {
+      delete[] wPath;
+      return {nullptr, wcharDeleter};
+    }
 
-       return {wPath, wcharDeleter};
-    }(path);
+    return {wPath, wcharDeleter};
+  }(path);
 
-   auto fh = CreateFileW(wPath.get(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-                         FILE_ATTRIBUTE_NORMAL, NULL);
-   if (fh == INVALID_HANDLE_VALUE)
-     return false;
+  if (wPath == nullptr)
+    return false;
 
-   DWORD written{0};
-   auto ret = WriteFile(fh, trace.data(), trace.length(), &written, NULL);
+  auto fh = CreateFileW(wPath.get(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+                        FILE_ATTRIBUTE_NORMAL, NULL);
+  if (fh == INVALID_HANDLE_VALUE)
+    return false;
 
-   CloseHandle(fh);
+  DWORD written{0};
+  auto ret = WriteFile(fh, trace.data(), trace.length(), &written, NULL);
 
-   return ret;
+  CloseHandle(fh);
+
+  return ret;
 #else
   std::ofstream ofs{path};
   if (!ofs.is_open())
