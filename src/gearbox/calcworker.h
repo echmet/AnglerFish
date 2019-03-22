@@ -14,7 +14,7 @@ public:
                       const bool unscaledStdErrs);
   ~CalcWorker();
   void process();
-  bool writeTrace(const std::string &path);
+  bool writeTrace(const char *path);
 
   bool failed;
   QString error;

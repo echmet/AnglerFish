@@ -105,7 +105,7 @@ public:
   void propagateRSquared();
 
   void setTracepoints(const std::vector<TracepointState> &states);
-  bool writeTrace(const std::string &path);
+  bool writeTrace(const char *path);
 
   static MobilityConstraints mobilityConstraints(const double mobility);
 

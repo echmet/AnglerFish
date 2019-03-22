@@ -32,7 +32,7 @@ void CalcWorker::process()
   emit finished();
 }
 
-bool CalcWorker::writeTrace(const std::string &path)
+bool CalcWorker::writeTrace(const char *path)
 {
   if (failed)
     return false;

@@ -257,7 +257,7 @@ void AFMainWindow::onCalculate()
     mbox.exec();
   } else {
     if (m_tracingSetup.tracingEnabled) {
-      if (!worker.writeTrace(m_tracingSetup.outputFilePath.toStdString())) {
+      if (!worker.writeTrace(m_tracingSetup.outputFilePath.toUtf8())) {
         QMessageBox mbox{QMessageBox::Warning, tr("Operation failed"), tr("Failed to write calculation trace")};
         mbox.exec();
       }

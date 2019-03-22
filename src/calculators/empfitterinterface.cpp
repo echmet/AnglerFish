@@ -16,6 +16,19 @@
 #include <limits>
 #include <tuple>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#endif // _WIN32
+
+#ifdef _WIN32
+inline
+void wcharDeleter(wchar_t *ptr)
+{
+  delete[] ptr;
+};
+#endif // _WIN32
+
 inline
 bool operator<(const QPointF &lhs, const QPointF &rhs)
 {
@@ -357,9 +370,12 @@ const char * EMPFitterInterface::versionString()
   return ECHMET::ElmigParamsFitter::versionString();
 }
 
-bool EMPFitterInterface::writeTrace(const std::string &path)
+bool EMPFitterInterface::writeTrace(const char *path)
 {
-  if (path.empty())
+  if (path == nullptr)
+    return true;
+
+  if (strlen(path) == 0)
     return true;
 
   auto traceRaw = ECHMET::ElmigParamsFitter::trace();
@@ -369,6 +385,41 @@ bool EMPFitterInterface::writeTrace(const std::string &path)
   std::string trace = traceRaw->c_str();
   traceRaw->destroy();
 
+#ifdef _WIN32
+  using WCharWrap = std::unique_ptr<wchar_t, decltype(&wcharDeleter)>;
+
+  const auto wPath = [](const char *path) -> WCharWrap {
+    wchar_t *wPath{ nullptr };
+
+    const auto len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, nullptr, 0);
+    if (len < 1)
+      return {nullptr, wcharDeleter};
+
+    wPath = new (std::nothrow) wchar_t[len];
+    if (wPath == nullptr)
+      return {nullptr, wcharDeleter};
+
+       const auto ret = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wPath, len);
+       if (ret != len) {
+         delete[] wPath;
+         return {nullptr, wcharDeleter};
+       }
+
+       return {wPath, wcharDeleter};
+    }(path);
+
+   auto fh = CreateFileW(wPath.get(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+                         FILE_ATTRIBUTE_NORMAL, NULL);
+   if (fh == INVALID_HANDLE_VALUE)
+     return false;
+
+   DWORD written{0};
+   auto ret = WriteFile(fh, trace.data(), trace.length(), &written, NULL);
+
+   CloseHandle(fh);
+
+   return ret;
+#else
   std::ofstream ofs{path};
   if (!ofs.is_open())
     return false;
@@ -376,6 +427,7 @@ bool EMPFitterInterface::writeTrace(const std::string &path)
   ofs << trace;
 
   return ofs.good();
+#endif // _WIN32
 }
 
 } // namespace calculators
