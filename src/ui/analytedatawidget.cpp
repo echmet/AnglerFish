@@ -18,31 +18,6 @@
 #include <QWindow>
 #include <cassert>
 
-
-inline
-int estimatedParamsWidth(const QFontMetrics &fm)
-{
-  static const QString cue{"Mobility pKa Fix mobility Fix pKa"};
-
-#ifdef Q_OS_WIN
-  return qRound(fm.width(cue) * 2.9);
-#else
-  return qRound(fm.width(cue) * 2.5);
-#endif // Q_OS_WIN
-}
-
-inline
-int fitResultsWidth(const QFontMetrics &fm)
-{
-  static const QString cue{"Mobility Abs. error Rel. error"};
-
-#ifdef Q_OS_WIN
-  return qRound(fm.width(cue) * 2.25);
-#else
-  return qRound(fm.width(cue) * 2.1);
-#endif // Q_OS_WIN
-}
-
 inline
 int fitResultsHeight(const QFontMetrics &fm)
 {
@@ -86,7 +61,7 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
             QApplication::clipboard()->setText(str.c_str());
           });
 
-  setWidgetSizes();
+  //setWidgetSizes();
 
   connect(m_estimatedParamsWidget, &EditChargesWidgetEstimates::estimatesChanged, this, &AnalyteDataWidget::onUpdateEstimates);
 
@@ -240,21 +215,6 @@ void AnalyteDataWidget::setEstimatesFromCurrent()
 void AnalyteDataWidget::setWidgetSizes()
 {
   ui->qhspac_sep->changeSize(2 * fontMetrics().width('x'), 1);
-
-  {
-    const int w = estimatedParamsWidth(fontMetrics());
-    m_estimatedParamsWidget->setMinimumWidth(w);
-    m_estimatedParamsWidget->setMaximumWidth(w);
-  }
-
-  {
-    const int w = fitResultsWidth(fontMetrics());
-    ui->qtbv_fittedMobilities->setMinimumWidth(w);
-    ui->qtbv_fittedMobilities->setMaximumWidth(w);
-    ui->qtbv_fittedpKas->setMinimumWidth(w);
-    ui->qtbv_fittedpKas->setMaximumWidth(w);
-  }
-
   ui->ql_resultsCaption->setMinimumWidth(ui->qtbv_fittedpKas->minimumWidth());
   ui->ql_resultsCaption->setMaximumWidth(ui->qtbv_fittedpKas->maximumWidth());
 

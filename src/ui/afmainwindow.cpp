@@ -85,8 +85,13 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   qsp_controlsChart->addWidget(m_buffersAnalyte);
   qsp_controlsChart->addWidget(m_fitPlotWidget);
 
-  m_buffersAnalyte->layout()->addWidget(m_bufInpWidget);
-  m_buffersAnalyte->layout()->addWidget(m_analDataWidget);
+  {
+    auto lay = qobject_cast<QBoxLayout *>(m_buffersAnalyte->layout());
+    assert(lay != nullptr);
+
+    lay->addWidget(m_bufInpWidget, 2);
+    lay->addWidget(m_analDataWidget, 3);
+  }
 
   m_qpb_new = new QPushButton{tr("New setup"), this};
   m_qpb_newBuffers = new QPushButton{tr("New buffers"), this};
@@ -184,8 +189,6 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   connect(recalcShortcut, &QShortcut::activated, this, &AFMainWindow::onCalculate);
   connect(recalcShortcutTwo, &QShortcut::activated, this, &AFMainWindow::onCalculate);
-
-
 
   m_clock.setInterval(2000);
   m_clock.start();
