@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <QDateTime>
 #include <QShortcut>
+#include <cassert>
 
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
 
