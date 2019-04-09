@@ -265,6 +265,8 @@ void AFMainWindow::onCalculate()
     QMessageBox mbox{QMessageBox::Warning, tr("Calculation failed"), worker.error};
     mbox.exec();
   } else {
+    h_gbox.mobilityCurveModel().invalidateProvisional();
+
     if (m_tracingSetup.tracingEnabled) {
       if (!worker.writeTrace(m_tracingSetup.outputFilePath.toUtf8())) {
         QMessageBox mbox{QMessageBox::Warning, tr("Operation failed"), tr("Failed to write calculation trace")};
