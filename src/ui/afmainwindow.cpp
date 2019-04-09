@@ -98,8 +98,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_newBuffers = new QPushButton{tr("New buffers"), this};
   m_qpb_load = new QPushButton{tr("Load setup"), this};
   m_qpb_save = new QPushButton{tr("Save setup"), this};
-  m_qpb_provisional = new QPushButton{tr("Provisional"), this};
-  m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
+  m_qpb_provisional = new QPushButton{tr("Estimated curve"), this};
+  m_qpb_calculate = new QPushButton{tr("Fit!"), this};
   m_qpb_summarize = new QPushButton{tr("Summarize"), this};
   m_qpb_toggleAnalytePanel = new QPushButton{HIDE_ANALYTE_PANEL, this};
   m_qpb_toggleAnalytePanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
