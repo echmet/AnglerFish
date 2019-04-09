@@ -101,6 +101,7 @@ public:
   explicit EMPFitterInterface(gearbox::Gearbox &gbox, const bool unscaledStdErrs);
   EMPFitterInterface(const EMPFitterInterface &other) = delete;
   ~EMPFitterInterface() = default;
+  void calculateProvisional();
   void fit();
   void propagateRSquared();
 

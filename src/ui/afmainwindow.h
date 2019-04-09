@@ -59,6 +59,7 @@ private:
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
+  QPushButton *m_qpb_provisional;
   QPushButton *m_qpb_summarize;
   QPushButton *m_qpb_toggleAnalytePanel;
 
@@ -78,12 +79,14 @@ private slots:
   void onCheckForUpdate();
   void onCurveExperimentalChanged();
   void onCurveFittedChanged();
+  void onCurveProvisionalChanged();
   void onLoad();
   void onNew();
   void onNewBuffers();
   void onOpenDatabase();
   void onSave();
   void onSetDebuggingOutput();
+  void onShowProvisional();
   void onSummarize();
   void onToggleAnalytePanel();
 };

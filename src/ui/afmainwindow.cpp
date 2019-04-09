@@ -98,6 +98,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_newBuffers = new QPushButton{tr("New buffers"), this};
   m_qpb_load = new QPushButton{tr("Load setup"), this};
   m_qpb_save = new QPushButton{tr("Save setup"), this};
+  m_qpb_provisional = new QPushButton{tr("Provisional"), this};
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
   m_qpb_summarize = new QPushButton{tr("Summarize"), this};
   m_qpb_toggleAnalytePanel = new QPushButton{HIDE_ANALYTE_PANEL, this};
@@ -107,6 +108,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui->qtb_mainToolBar->addWidget(m_qpb_newBuffers);
   ui->qtb_mainToolBar->addWidget(m_qpb_load);
   ui->qtb_mainToolBar->addWidget(m_qpb_save);
+  ui->qtb_mainToolBar->addWidget(m_qpb_provisional);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
   ui->qtb_mainToolBar->addWidget(m_qpb_summarize);
   ui->qtb_mainToolBar->addWidget(m_qpb_toggleAnalytePanel);
@@ -121,6 +123,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(m_qpb_new, &QPushButton::clicked, this, &AFMainWindow::onNew);
   connect(m_qpb_newBuffers, &QPushButton::clicked, this, &AFMainWindow::onNewBuffers);
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
+  connect(m_qpb_provisional, &QPushButton::clicked, this, &AFMainWindow::onShowProvisional);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
   connect(m_qpb_summarize, &QPushButton::clicked, this, &AFMainWindow::onSummarize);
   connect(m_qpb_toggleAnalytePanel, &QPushButton::clicked, this, &AFMainWindow::onToggleAnalytePanel);
@@ -165,6 +168,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           this, &AFMainWindow::onCurveExperimentalChanged);
   connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::fittedChanged,
           this, &AFMainWindow::onCurveFittedChanged);
+  connect(&h_gbox.mobilityCurveModel(), &gearbox::MobilityCurveModel::provisionalChanged,
+          this, &AFMainWindow::onCurveProvisionalChanged);
 
   connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, this,
           [this]() { h_gbox.invalidateResults(); });
@@ -290,6 +295,13 @@ void AFMainWindow::onCurveFittedChanged()
   m_fitPlotWidget->setResidualsData(std::move(residuals));
 }
 
+void AFMainWindow::onCurveProvisionalChanged()
+{
+  const auto prov = gearbox::MobilityCurveModel::compact(h_gbox.mobilityCurveModel().provisional());
+
+  m_fitPlotWidget->setProvisionalData(prov);
+}
+
 void AFMainWindow::onLoad()
 {
   static QString lastPath{};
@@ -403,6 +415,16 @@ void AFMainWindow::onSetDebuggingOutput()
     return;
 
   m_tracingSetup = m_tptsDlg->result();
+}
+
+void AFMainWindow::onShowProvisional()
+{
+  WidgetCommiter wcomm{};
+
+  const bool unscaledStdErrs = ui->actionUse_unscaled_std_errors->isChecked();
+
+  calculators::EMPFitterInterface empIface{h_gbox, unscaledStdErrs};
+  empIface.calculateProvisional();
 }
 
 void AFMainWindow::onSummarize()

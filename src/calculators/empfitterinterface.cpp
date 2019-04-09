@@ -75,7 +75,6 @@ using InSystemWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::InSystem,
                                      decltype(&inSystemReleaser)>;
 using FixerWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::ParametersFixer,
                                   decltype(&fixerReleaser)>;
-
 using TPIVWrap = std::unique_ptr<ECHMET::ElmigParamsFitter::TracepointInfoVec,
                                  decltype(&tpiVecReleaser)>;
 
@@ -288,6 +287,31 @@ EMPFitterInterface::EMPFitterInterface(gearbox::Gearbox &gbox, const bool unscal
   m_rSquared{-1.0},
   m_unscaledStdErrs{unscaledStdErrs}
 {
+}
+
+void EMPFitterInterface::calculateProvisional()
+{
+  ECHMET::ElmigParamsFitter::ExpectedCurvePointVec *expected{};
+
+  auto system = prepare(h_gbox);
+  auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr, 0.0}, resultsReleaser};
+
+  auto fitRet = ECHMET::ElmigParamsFitter::provisionalCurve(*system, expected);
+  if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
+    const auto err = QString{"Cannot get provisional curve: "} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
+    throw EMPFitterInterface:: Exception{err.toStdString()};
+  }
+
+  QVector<QPointF> expectedQV{};
+  for (size_t idx = 0; idx < expected->size(); idx++) {
+    const auto &pt = expected->at(idx);
+
+    expectedQV.push_back({pt.pH, pt.expected});
+  }
+
+  expected->destroy();
+
+  h_gbox.mobilityCurveModel().setProvisional(std::move(expectedQV));
 }
 
 void EMPFitterInterface::fit()

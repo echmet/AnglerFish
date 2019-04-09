@@ -21,6 +21,7 @@ public:
   ~FitPlotWidget();
   void setExperimentalData(const QVector<QPointF> &experimental, const QVector<QPointF> &excluded);
   void setFittedData(const QVector<QPointF> &data);
+  void setProvisionalData(const QVector<QPointF> &data);
   void setResidualsData(const QVector<QPointF> &data);
 
 private:
@@ -33,6 +34,7 @@ private:
   QwtPlotCurve *m_curveExperimental;
   QwtPlotCurve *m_curveExcluded;
   QwtPlotCurve *m_curveFitted;
+  QwtPlotCurve *m_curveProvisional;
   QwtPlotCurve *m_curveResiduals;
   QwtPlotPicker *m_plotPicker;
   DoubleClickableQwtPlotZoomer *m_plotZoomer;

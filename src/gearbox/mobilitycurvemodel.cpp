@@ -47,6 +47,11 @@ const QVector<QPointF> & MobilityCurveModel::fitted() const
   return m_fitted;
 }
 
+const QVector<QPointF> & MobilityCurveModel::provisional() const
+{
+  return m_provisional;
+}
+
 const QVector<QPointF> & MobilityCurveModel::residuals() const
 {
   return m_residuals;
@@ -56,11 +61,18 @@ void MobilityCurveModel::invalidateAll()
 {
   setExperimental({}, {});
   setFitted({}, {});
+  setProvisional({});
+}
+
+void MobilityCurveModel::invalidateProvisional()
+{
+  setProvisional({});
 }
 
 void MobilityCurveModel::invalidateResults()
 {
   setFitted({}, {});
+  setProvisional({});
 }
 
 void MobilityCurveModel::setExperimental(QVector<QPointF> included, QVector<QPointF> excluded)
@@ -77,6 +89,13 @@ void MobilityCurveModel::setFitted(QVector<QPointF> fitted, QVector<QPointF> res
   m_residuals = std::move(residuals);
 
   emit fittedChanged();
+}
+
+void MobilityCurveModel::setProvisional(QVector<QPointF> provisional)
+{
+  m_provisional = std::move(provisional);
+
+  emit provisionalChanged();
 }
 
 } // namespace gearbox
