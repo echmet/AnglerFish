@@ -65,16 +65,33 @@ FitPlotWidget::~FitPlotWidget()
 
 void FitPlotWidget::refreshPlot()
 {
+  static const double minSize{1e-13};
+  const auto setMinSize = [](QRectF r) {
+    if (r.width() <= 0.0)
+      r.adjust(-minSize, 0.0, minSize, 0.0);
+
+    if (r.height() <= 0.0)
+      r.adjust(0.0, -minSize, 0.0, minSize);
+
+    return r;
+  };
+
   auto brect = m_curveExperimental->boundingRect();
 
-  if (m_curveExcluded->data()->size() > 0)
-    brect = brect.united(m_curveExcluded->boundingRect());
+  if (m_curveExcluded->data()->size() > 0) {
+    auto nbr = setMinSize(m_curveExcluded->boundingRect());
+    brect = brect.united(nbr);
+  }
 
-  if (m_curveFitted->data()->size() > 0)
-    brect = brect.united(m_curveFitted->boundingRect());
+  if (m_curveFitted->data()->size() > 0) {
+    auto nbr = setMinSize(m_curveFitted->boundingRect());
+    brect = brect.united(nbr);
+  }
 
-  if (m_curveProvisional->data()->size() > 0)
-    brect = brect.united(m_curveProvisional->boundingRect());
+  if (m_curveProvisional->data()->size() > 0) {
+    auto nbr = setMinSize(m_curveProvisional->boundingRect());
+    brect = brect.united(nbr);
+  }
 
   m_plot->replot();
   m_plotZoomer->zoom(brect);
