@@ -9,6 +9,7 @@
 class QPalette;
 
 namespace gearbox {
+class Gearbox;
 class LimitMobilityConstraintsModel;
 } // namespace gearbox
 
@@ -34,6 +35,7 @@ public:
   };
 
   explicit MobilityConstraintsModel(const gearbox::LimitMobilityConstraintsModel &backend,
+                                    gearbox::Gearbox &gbox,
                                     const QPalette &palette,
                                     QObject *parent = nullptr);
 
@@ -47,7 +49,7 @@ public:
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
   void updateConstraints(const int chargeLow, const int chargeHigh,
-                         const QVector<EstimatedMobility> &estimates);
+                         QVector<EstimatedMobility> estimates);
 private:
   enum Item {
     IT_MOBILITY,
@@ -56,6 +58,7 @@ private:
   };
 
   QVariant displayValidity(const int row, const int col) const;
+  bool hasPrev(const int charge, const int row) const;
 
   QVector<MobInfo> m_data;
 
@@ -63,6 +66,7 @@ private:
   QBrush m_invalBrush;
 
   const gearbox::LimitMobilityConstraintsModel &h_backend;
+  gearbox::Gearbox &h_gbox;
   const QPalette &h_palette;
 
 };

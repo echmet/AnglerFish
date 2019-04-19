@@ -3,6 +3,8 @@
 
 namespace gearbox {
 
+class Gearbox;
+
 class LimitMobilityConstraintsModel {
 public:
   class Constraints {
@@ -13,7 +15,7 @@ public:
 
   LimitMobilityConstraintsModel();
 
-  Constraints constraintsForMobility(const double mobility) const;
+  Constraints constraintsForCharge(const int charge, Gearbox &gbox) const;
   bool enabled() const;
   void setEnabled(const bool enabled);
 

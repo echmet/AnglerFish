@@ -136,9 +136,9 @@ void fixParameters(FixerWrap &fixer, gearbox::Gearbox &gbox)
 }
 
 inline
-void makeAnalyte(InSystemWrap &inSystem, gearbox::Gearbox &gbox)
+InConstituentPtr makeAnalyte(const gearbox::Gearbox &gbox)
 {
-  auto &params = gbox.analyteEstimates();
+  const auto &params = gbox.analyteEstimates();
 
   InConstituentPtr analyte{new ECHMET::SysComp::InConstituent, inConstituentReleaser};
   analyte->name = nullptr;
@@ -167,11 +167,18 @@ void makeAnalyte(InSystemWrap &inSystem, gearbox::Gearbox &gbox)
   for (const auto &p : params.pKas)
     analyte->pKas->push_back(p.value);
 
-  auto aptr = analyte.release();
+  return analyte;
+}
 
-  inSystem->analyte = *aptr;
+inline
+void setupAnalyte(InSystemWrap &inSystem, gearbox::Gearbox &gbox)
+{
+  auto analyte = makeAnalyte(gbox);
+  auto aRaw = analyte.release();
 
-  delete aptr;
+  inSystem->analyte = *aRaw;
+
+  delete aRaw;
 }
 
 inline
@@ -199,7 +206,7 @@ InSystemWrap prepare(gearbox::Gearbox &gbox)
   InSystemWrap inSystem{new ECHMET::ElmigParamsFitter::InSystem{}, inSystemReleaser};
   inSystem->buffers = nullptr;
 
-  makeAnalyte(inSystem, gbox);
+  setupAnalyte(inSystem, gbox);
 
   auto inBufVec = InBufferVecWrap{ECHMET::ElmigParamsFitter::createInBufferVec(), ECHMET::ElmigParamsFitter::releaseInBufferVec};
   if (inBufVec == nullptr) {
@@ -340,10 +347,22 @@ void EMPFitterInterface::fit()
   setResults(system, results, h_gbox, m_rSquared);
 }
 
-EMPFitterInterface::MobilityConstraints EMPFitterInterface::mobilityConstraints(const double mobility)
+EMPFitterInterface::MobilityConstraints EMPFitterInterface::mobilityConstraintsForCharge(const int charge)
 {
-  const auto low = ECHMET::ElmigParamsFitter::mobilityLowerBound() * mobility;
-  const auto high = ECHMET::ElmigParamsFitter::mobilityUpperBound() * mobility;
+  double low{};
+  double high{};
+
+  auto analytePtr = makeAnalyte(h_gbox);
+
+  auto tRet = ECHMET::ElmigParamsFitter::mobilityBound(low, charge, ECHMET::ElmigParamsFitter::MobilityBoundType::MB_LOWER,
+                                                       *analytePtr);
+  assert(tRet == ECHMET::ElmigParamsFitter::RetCode::OK);
+
+  tRet = ECHMET::ElmigParamsFitter::mobilityBound(high, charge, ECHMET::ElmigParamsFitter::MobilityBoundType::MB_UPPER,
+                                                 *analytePtr);
+  assert(tRet == ECHMET::ElmigParamsFitter::RetCode::OK);
+
+
 
   return { low, high };
 }

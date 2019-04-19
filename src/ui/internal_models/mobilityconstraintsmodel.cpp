@@ -21,15 +21,30 @@ MobilityConstraintsModel::MobInfo::MobInfo(const int chg, const double mob, cons
 }
 
 MobilityConstraintsModel::MobilityConstraintsModel(const gearbox::LimitMobilityConstraintsModel &backend,
+                                                   gearbox::Gearbox &gbox,
                                                    const QPalette &palette,
                                                    QObject *parent) :
   QAbstractTableModel{parent},
+  m_defBrush{palette.foreground()},
+  m_invalBrush{palette.foreground()},
   h_backend{backend},
+  h_gbox{gbox},
   h_palette{palette}
 {
-  m_defBrush = palette.foreground();
-  m_invalBrush = palette.foreground();
   m_invalBrush.setColor(Qt::red);
+}
+
+bool MobilityConstraintsModel::hasPrev(const int charge, const int row) const
+{
+  if (charge > 1) {
+    if (row > 0)
+      return m_data.at(row - 1).charge > 0;
+    return false;
+  } else {
+    if (row < m_data.size() - 1)
+      return m_data.at(row + 1).charge < 0;
+    return false;
+  }
 }
 
 QVariant MobilityConstraintsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -93,13 +108,13 @@ QVariant MobilityConstraintsModel::data(const QModelIndex &index, int role) cons
 
   const auto &item = m_data.at(row);
   const auto charge = item.charge;
-  auto getLow = [&item, charge]() -> QVariant {
-    if (charge == 0)
+  auto getLow = [&item, charge, row, this]() -> QVariant {
+    if (!hasPrev(charge, row))
       return "-";
     return item.lowerBound;
   };
-  auto getUp = [&item, charge]() -> QVariant {
-    if (charge == 0)
+  auto getUp = [&item, charge, row, this]() -> QVariant {
+    if (!hasPrev(charge, row))
       return "-";
     return item.upperBound;
   };
@@ -126,49 +141,34 @@ QVariant MobilityConstraintsModel::displayValidity(const int row, const int col)
   if (charge >= -1 && charge <= 1)
     return m_defBrush;
 
-  const bool hasPrev = [&]() {
-    if (charge > 1)
-      return row > 0;
-    return row < m_data.size() - 1;
-  }();
-
-  if (!hasPrev)
+  if (!hasPrev(charge, row))
     return m_defBrush;
 
-  const auto &prevItem = [&]() {
-    if (charge > 1)
-      return m_data[row - 1];
-    return m_data[row + 1];
-  }();
-
-  const bool isWithinConstrs = item.mobility > prevItem.lowerBound && item.mobility < prevItem.upperBound;
+  const bool isWithinConstrs = item.mobility > item.lowerBound && item.mobility < item.upperBound;
 
   return isWithinConstrs ? m_defBrush : m_invalBrush;
 }
 
 void MobilityConstraintsModel::updateConstraints(const int chargeLow, const int chargeHigh,
-                                                 const QVector<EstimatedMobility> &estimates)
+                                                 QVector<EstimatedMobility> estimates)
 {
+  std::sort(estimates.begin(), estimates.end(), [](const EstimatedMobility &lhs, const EstimatedMobility &rhs) { return lhs.charge < rhs.charge; });
+
   beginResetModel();
 
   int size = chargeHigh - chargeLow;
   assert(size >= 0);
 
   m_data.clear();
-  if (size == 0) {
-    endResetModel();
-    return;
-  }
-
   m_data.reserve(size);
 
-  for (const auto &item : estimates) {
-    const auto cstrs = h_backend.constraintsForMobility(item.mobility);
+  for (auto &item : estimates) {
+    if (item.charge == 0)
+      continue;
 
-    m_data.push_back({ item.charge, item.mobility, cstrs.low, cstrs.high });
+    const auto ret = h_backend.constraintsForCharge(item.charge, h_gbox);
+    m_data.push_back({ item.charge, item.mobility, ret.low, ret.high });
   }
-
-  std::sort(m_data.begin(), m_data.end(), [](const MobInfo &lhs, const MobInfo &rhs) { return lhs.charge < rhs.charge; });
 
   endResetModel();
 }

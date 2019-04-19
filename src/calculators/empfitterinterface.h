@@ -108,7 +108,7 @@ public:
   void setTracepoints(const std::vector<TracepointState> &states);
   bool writeTrace(const char *path);
 
-  static MobilityConstraints mobilityConstraints(const double mobility);
+  MobilityConstraints mobilityConstraintsForCharge(const int charge);
 
   static std::vector<TracepointInfo> tracepointInformation();
   static const char * versionString();

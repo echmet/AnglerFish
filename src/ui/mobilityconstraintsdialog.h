@@ -18,7 +18,7 @@ class MobilityConstraintsDialog : public QDialog {
   Q_OBJECT
 public:
   explicit MobilityConstraintsDialog(gearbox::LimitMobilityConstraintsModel &model,
-                                     const gearbox::Gearbox &gbox,
+                                     gearbox::Gearbox &gbox,
                                      QWidget *parent = nullptr);
   ~MobilityConstraintsDialog();
 
@@ -27,7 +27,7 @@ private:
 
   MobilityConstraintsModel *m_uiModel;
   gearbox::LimitMobilityConstraintsModel &h_model;
-  const gearbox::Gearbox &h_gbox;
+  gearbox::Gearbox &h_gbox;
 
 public slots:
   void onEstimatesChanged();

@@ -6,7 +6,7 @@
 #include <gearbox/limitmobilityconstraintsmodel.h>
 
 MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConstraintsModel &model,
-                                                     const gearbox::Gearbox &gbox,
+                                                     gearbox::Gearbox &gbox,
                                                      QWidget *parent) :
   QDialog{parent},
   ui{new Ui::MobilityConstraintsDialog},
@@ -15,7 +15,7 @@ MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConst
 {
   ui->setupUi(this);
 
-  m_uiModel = new MobilityConstraintsModel{model, this->palette(), this};
+  m_uiModel = new MobilityConstraintsModel{model, h_gbox, this->palette(), this};
   ui->qtvb_currentConstraints->setModel(m_uiModel);
 
   ui->qcb_useMobilityConstraints->setChecked(h_model.enabled());
