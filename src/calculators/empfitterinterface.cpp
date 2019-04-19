@@ -11,6 +11,7 @@
 #include <gearbox/mobilitycurvemodel.h>
 #include <echmetelmigparamsfitter.h>
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <fstream>
 #include <limits>
