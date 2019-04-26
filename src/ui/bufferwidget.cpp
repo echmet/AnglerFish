@@ -10,6 +10,7 @@
 #include <gearbox/chemicalbuffer.h>
 #include <gearbox/ioniceffectsmodel.h>
 #include <util_lowlevel.h>
+#include <QMenu>
 #include <QMessageBox>
 #include <QScreen>
 #include <QTimer>
@@ -50,6 +51,13 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   ui->qpb_correctConcentration->setToolTip(tr("Correct concentration of weak electrolyte"));
   ui->qpb_exclude->setToolTip(tr("Exclude buffer"));
 
+
+  m_exportBufferMenu = new QMenu{this};
+  m_exportBufferMenu->addAction("To file", this, [this]() { emit exportMe(this, false); });
+  m_exportBufferMenu->addAction("To clipboard", this, [this]() { emit exportMe(this, true); });
+  ui->qpb_export->setMenu(m_exportBufferMenu);
+  ui->qpb_export->setStyleSheet("QPushButton::menu-indicator{image:none;}");
+
   /* Vertical alignment hack */
   {
     ui->qcap_expValues->setDisabled(true);
@@ -79,7 +87,6 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
   connect(ui->qpb_remove, &QPushButton::clicked, this, [this]() { emit this->removeMe(this); });
   connect(m_compositionWidget, &BufferCompositionWidget::compositionChanged, this, &BufferWidget::onCompositionChanged);
   connect(ui->qpb_clone, &QPushButton::clicked, this, [this]() { emit this->cloneMe(this); });
-  connect(ui->qpb_export, &QPushButton::clicked, this, [this]() { emit this->exportMe(this); });
   connect(ui->qpb_correctConcentration, &QPushButton::clicked, this, &BufferWidget::onCorrectConcentration);
   connect(ui->qpb_exclude, &QPushButton::clicked, this,
           [this]() {
@@ -93,6 +100,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
     this->setWidgetSizes();
     connect(this->window()->windowHandle()->screen(), &QScreen::logicalDotsPerInchChanged, this, &BufferWidget::setWidgetSizes);
   });
+  QTimer::singleShot(0, this, &BufferWidget::connectOnScreenChanged); /* This must be done from the event queue after the window is created */
 }
 
 BufferWidget::~BufferWidget()
@@ -103,6 +111,11 @@ BufferWidget::~BufferWidget()
 const gearbox::ChemicalBuffer & BufferWidget::buffer() const noexcept
 {
   return h_buffer;
+}
+
+void BufferWidget::connectOnScreenChanged()
+{
+  connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &BufferWidget::setWidgetSizes);
 }
 
 void BufferWidget::onAddExpValue()
@@ -217,6 +230,9 @@ void BufferWidget::setWidgetSizes()
   ui->qle_ionicStrength->setMinimumWidth(nw);
   ui->qle_pH->setMinimumWidth(nw);
   ui->qle_bufferCapacity->setMinimumWidth(nw);
+
+  const auto &hint = ui->qpb_remove->sizeHint();
+  ui->qpb_export->setMaximumSize(hint);
 }
 
 void BufferWidget::setupIcons()

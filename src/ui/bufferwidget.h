@@ -15,6 +15,7 @@ namespace Ui {
 
 class BufferCompositionWidget;
 class ExperimentalMobilityWidget;
+class QMenu;
 class QVBoxLayout;
 
 class BufferWidget : public QWidget {
@@ -35,12 +36,14 @@ private:
   BufferCompositionWidget *m_compositionWidget;
   QWidget *m_expValuesScrollWidget;
   QVBoxLayout *m_expValuesScrollLayout;
+  QMenu *m_exportBufferMenu;
 
   QVector<ExperimentalMobilityWidget *> m_expValueWidgets;
 
   gearbox::ChemicalBuffer &h_buffer;
 
 private slots:
+  void connectOnScreenChanged();
   void onAddExpValue();
   void onCompositionChanged();
   void onCorrectConcentration();
@@ -52,7 +55,7 @@ private slots:
 signals:
   void cloneMe(const BufferWidget *me);
   void bufferChanged(const BufferWidget *me);
-  void exportMe(const BufferWidget *me);
+  void exportMe(const BufferWidget *me, const bool toClipboard);
   void removeMe(BufferWidget *me);
 };
 

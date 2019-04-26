@@ -30,9 +30,10 @@ void loadPeakMasterBuffer(const Target &target, gearbox::Gearbox &gbox)
   gbox.chemicalBuffersModel().add(gearbox::ChemicalBuffer{&gbox.ionicEffectsModel(), newModel});
 }
 
-void savePeakMasterBuffer(const QString &path, const gearbox::ChemicalBuffer &buffer)
+void savePeakMasterBuffer(const Target &target,
+                          const gearbox::ChemicalBuffer &buffer)
 {
-  PeakMasterCompatibility::save(path, buffer.model(), buffer.model());
+  PeakMasterCompatibility::save(target, buffer.model(), buffer.model());
 }
 
 } // namespace persistence

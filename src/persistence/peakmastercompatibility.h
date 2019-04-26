@@ -19,7 +19,7 @@ public:
   PeakMasterCompatibility() = delete;
 
   static gdm::GDM load(const Target &target);
-  static void save(QString path, const gdm::GDM *modelBGE, const gdm::GDM *modelSample);
+  static void save(const Target &target, const gdm::GDM *modelBGE, const gdm::GDM *modelSample);
 
 private:
   static QJsonObject serializeSystem();

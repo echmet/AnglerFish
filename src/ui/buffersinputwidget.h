@@ -40,7 +40,7 @@ private:
 private slots:
   void onBufferChanged(const BufferWidget *w);
   void onCloneBuffer(const BufferWidget *w);
-  void onExportBuffer(const BufferWidget *w);
+  void onExportBuffer(const BufferWidget *w, const bool toClipboard);
   void onLoadBufferFromClipboard();
   void onLoadBufferFromFile();
   void onScrollToBottom(const int min, const int max);

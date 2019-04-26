@@ -19,7 +19,7 @@ void loadEntireSetup(const QString &path, gearbox::Gearbox &gbox);
 void saveEntireSetup(const QString &path, const gearbox::ChemicalBuffersModel &buffers,
                      const gearbox::AnalyteEstimates &analyte);
 void loadPeakMasterBuffer(const Target &target, gearbox::Gearbox &gbox);
-void savePeakMasterBuffer(const QString &path, const gearbox::ChemicalBuffer &buffer);
+void savePeakMasterBuffer(const Target &target, const gearbox::ChemicalBuffer &buffer);
 
 } // namespace persistence
 

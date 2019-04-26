@@ -112,18 +112,28 @@ void BuffersInputWidget::onEndBuffersReset()
   onSortBypH();
 }
 
-void BuffersInputWidget::onExportBuffer(const BufferWidget *w)
+void BuffersInputWidget::onExportBuffer(const BufferWidget *w, const bool toClipboard)
 {
-  if (m_saveBufferDlg.exec() == QDialog::Accepted) {
+  QString path{};
+
+  if (!toClipboard) {
+    if (m_saveBufferDlg.exec() != QDialog::Accepted)
+      return;
+
     if (m_saveBufferDlg.selectedFiles().empty())
       return;
 
-    try {
-      persistence::savePeakMasterBuffer(m_saveBufferDlg.selectedFiles().constFirst(), w->buffer());
-    } catch (const persistence::Exception &ex) {
-      QMessageBox mbox{QMessageBox::Warning, tr("Cannot save buffer"), ex.what()};
-      mbox.exec();
-    }
+    path = m_saveBufferDlg.selectedFiles().constFirst();
+  }
+
+  try {
+    const auto ttype  = toClipboard ? persistence::Target::TT_CLIPBOARD : persistence::Target::TT_FILE;
+    persistence::Target tgt{ttype, path};
+
+    persistence::savePeakMasterBuffer(tgt, w->buffer());
+  } catch (const persistence::Exception &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Cannot save buffer"), ex.what()};
+    mbox.exec();
   }
 }
 

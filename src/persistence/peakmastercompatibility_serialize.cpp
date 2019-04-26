@@ -3,7 +3,9 @@
 #include "datakeys.h"
 #include "serializecommon.h"
 
+#include <QClipboard>
 #include <QFile>
+#include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -27,16 +29,8 @@ QJsonObject PeakMasterCompatibility::serializeSystem()
   return sys;
 }
 
-void PeakMasterCompatibility::save(QString path, const gdm::GDM *modelBGE, const gdm::GDM *modelSample)
+void PeakMasterCompatibility::save(const Target &target, const gdm::GDM *modelBGE, const gdm::GDM *modelSample)
 {
-  if (!path.endsWith(".json", Qt::CaseInsensitive))
-    path.append(".json");
-
-  QFile fh{path};
-
-  if (!fh.open(QIODevice::WriteOnly | QIODevice::Text))
-    throw Exception{"Cannot open output file"};
-
   QJsonObject compositionBGE = SerializeCommon:: serializeComposition(*modelBGE);
   QJsonObject compositionSample = SerializeCommon::serializeComposition(*modelSample);
   QJsonObject concentrationsBGE = SerializeCommon::serializeConcentrations(*modelBGE);
@@ -52,7 +46,23 @@ void PeakMasterCompatibility::save(QString path, const gdm::GDM *modelBGE, const
 
   auto str = doc.toJson();
 
-  fh.write(str);
+  if (target.type == Target::TT_FILE) {
+    auto path = target.path;
+
+    if (!path.endsWith(".json", Qt::CaseInsensitive))
+      path.append(".json");
+
+    QFile fh{path};
+
+    if (!fh.open(QIODevice::WriteOnly | QIODevice::Text))
+      throw Exception{"Cannot open output file"};
+
+    fh.write(str);
+  } else {
+    auto clipboard = QGuiApplication::clipboard();
+
+    clipboard->setText(str);
+  }
 }
 
 } // namespace persistence
