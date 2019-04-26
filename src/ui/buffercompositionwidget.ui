@@ -41,14 +41,14 @@
      <item>
       <widget class="QPushButton" name="qpb_add">
        <property name="text">
-        <string>Add BGE</string>
+        <string>Add const.</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="qpb_remove">
        <property name="text">
-        <string>Remove BGE</string>
+        <string>Remove const.</string>
        </property>
       </widget>
      </item>
