@@ -35,6 +35,7 @@
 #include <cassert>
 
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
+static QString HIDE_INPUT_PANEL{QObject::tr("Hide input panel")};
 
 class WidgetCommiter {
 public:
@@ -105,7 +106,10 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_calculate = new QPushButton{tr("Fit!"), this};
   m_qpb_summarize = new QPushButton{tr("Summarize"), this};
   m_qpb_toggleAnalytePanel = new QPushButton{HIDE_ANALYTE_PANEL, this};
+  m_qpb_toggleInputPanel = new QPushButton{HIDE_INPUT_PANEL, this};
+
   m_qpb_toggleAnalytePanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+  m_qpb_toggleInputPanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   m_qpb_provisional->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
   ui->qtb_mainToolBar->addWidget(m_qpb_new);
@@ -116,6 +120,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
   ui->qtb_mainToolBar->addWidget(m_qpb_summarize);
   ui->qtb_mainToolBar->addWidget(m_qpb_toggleAnalytePanel);
+  ui->qtb_mainToolBar->addWidget(m_qpb_toggleInputPanel);
 
   m_saveDlg.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -131,6 +136,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
   connect(m_qpb_summarize, &QPushButton::clicked, this, &AFMainWindow::onSummarize);
   connect(m_qpb_toggleAnalytePanel, &QPushButton::clicked, this, &AFMainWindow::onToggleAnalytePanel);
+  connect(m_qpb_toggleInputPanel, &QPushButton::clicked, this, &AFMainWindow::onToggleInputPanel);
 
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &AFMainWindow::onCheckForUpdate);
 
@@ -450,6 +456,19 @@ void AFMainWindow::onToggleAnalytePanel()
     m_qpb_toggleAnalytePanel->setText(HIDE_ANALYTE_PANEL);
 
   m_analDataWidget->setVisible(!isVisible);
+}
+
+void AFMainWindow::onToggleInputPanel()
+{
+  const bool isVisible = m_buffersAnalyte->isVisible();
+
+  if (isVisible)
+    m_qpb_toggleInputPanel->setText(tr("Show input panel"));
+  else
+    m_qpb_toggleInputPanel->setText(HIDE_INPUT_PANEL);
+
+  m_buffersAnalyte->setVisible(!isVisible);
+  m_qpb_toggleAnalytePanel->setDisabled(isVisible);
 }
 
 void AFMainWindow::setupIcons()

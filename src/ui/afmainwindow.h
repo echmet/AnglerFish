@@ -63,6 +63,7 @@ private:
   QPushButton *m_qpb_provisional;
   QPushButton *m_qpb_summarize;
   QPushButton *m_qpb_toggleAnalytePanel;
+  QPushButton *m_qpb_toggleInputPanel;
 
   CheckForUpdateDialog *m_checkForUpdateDlg;
 
@@ -92,6 +93,7 @@ private slots:
   void onShowProvisional();
   void onSummarize();
   void onToggleAnalytePanel();
+  void onToggleInputPanel();
 };
 
 #endif // AFMAINWINDOW_H
