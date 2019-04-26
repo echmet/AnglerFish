@@ -75,6 +75,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_buffersAnalyte->setLayout(new QHBoxLayout{});
   m_fitPlotWidget = new FitPlotWidget{};
   m_fitPlotWidget->setMinimumHeight(150);
+  m_buffersAnalyte->setMinimumHeight(150);
 
   m_bufInpWidget = new BuffersInputWidget{h_gbox};
   m_analDataWidget = new AnalyteDataWidget{h_gbox};
