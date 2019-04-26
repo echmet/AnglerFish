@@ -42,6 +42,7 @@ private:
   void updatePlotExperimental();
   void updatePlotFitted();
   void setupIcons();
+  void warnIfPossiblyUnreliable();
 
   Ui::AFMainWindow *ui;
   gearbox::Gearbox &h_gbox;
@@ -69,6 +70,8 @@ private:
 
   ToggleTracepointsDialog *m_tptsDlg;
   ToggleTracepointsDialog::TracingSetup m_tracingSetup;
+
+  bool m_displayPossiblyUnreliableWarning;
 
   QTimer m_clock;
 

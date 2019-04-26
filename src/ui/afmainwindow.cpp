@@ -11,9 +11,11 @@
 #include "afuserguidedialog.h"
 #include "summarizedialog.h"
 #include "mobilityconstraintsdialog.h"
+#include "warnpossiblyunreliabledialog.h"
 
 #include <globals.h>
 #include <softwareupdater.h>
+#include <gearbox/analyteestimates.h>
 #include <gearbox/gearbox.h>
 #include <gearbox/chemicalbuffersmodel.h>
 #include <gearbox/mobilitycurvemodel.h>
@@ -58,7 +60,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   QMainWindow{parent},
   ui{new Ui::AFMainWindow},
   h_gbox{gbox},
-  m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)}
+  m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)},
+  m_displayPossiblyUnreliableWarning{true}
 {
   ui->setupUi(this);
 
@@ -242,6 +245,8 @@ void AFMainWindow::onBuffersChanged()
 void AFMainWindow::onCalculate()
 {
   WidgetCommiter wcomm{};
+
+  warnIfPossiblyUnreliable();
 
   const bool unscaledStdErrs = ui->actionUse_unscaled_std_errors->isChecked();
 
@@ -509,4 +514,21 @@ void AFMainWindow::updatePlotExperimental()
   }
 
   h_gbox.mobilityCurveModel().setExperimental(std::move(included), std::move(excluded));
+}
+
+void AFMainWindow::warnIfPossiblyUnreliable()
+{
+  static const int MAX_OK_CHARGE{2};
+
+  const auto &estimates = h_gbox.analyteEstimates();
+
+  if (estimates.chargeLow < -MAX_OK_CHARGE || estimates.chargeHigh > MAX_OK_CHARGE) {
+    if (m_displayPossiblyUnreliableWarning) {
+      WarnPossiblyUnreliableDialog dlg{MAX_OK_CHARGE, this};
+
+      dlg.exec();
+
+      m_displayPossiblyUnreliableWarning = !dlg.dontShowAgain();
+    }
+  }
 }
