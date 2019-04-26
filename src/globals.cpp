@@ -16,7 +16,9 @@ const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
                                                             Globals::DeveloperID{"Jana \xC5\xA0teflov\xC3\xA1", "svobod.j@natur.cuni.cz", false},
                                                             Globals::DeveloperID{"Vlastimil Hru\xC5\xA1ka", "hruska2@natur.cuni.cz", false},
                                                             Globals::DeveloperID{"Milan Boubl\xC3\xADk", "milan.boublik@natur.cuni.cz", false},
-                                                            Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", true},
+                                                            Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{"Martin Ansorge", "martin.ansorge@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{"Marijana Pocrni\xC4\x87", "mpocrnic@chem.pmf.hr", false}
                                                           };
 
 QIcon Globals::icon()
