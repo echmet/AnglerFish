@@ -1,6 +1,8 @@
 #ifndef INUMBERFORMATCHANGEABLE_H
 #define INUMBERFORMATCHANGEABLE_H
 
+#include <globals.h>
+
 #include <QtPlugin>
 
 class QLocale;
@@ -15,6 +17,6 @@ public:
 
 } // namespace gearbox
 
-Q_DECLARE_INTERFACE(gearbox::INumberFormatChangeable, "cz.cuni.natur.echmet.AnglerFish.INumberFormatChangeable/1.0")
+Q_DECLARE_INTERFACE(gearbox::INumberFormatChangeable, "cz.cuni.natur.echmet." SOFTWARE_NAME_INTERNAL_S ".INumberFormatChangeable/1.0")
 
 #endif // INUMBERFORMATCHANGEABLE_H

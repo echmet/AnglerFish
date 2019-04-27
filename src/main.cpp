@@ -2,9 +2,10 @@
 #include "afcrashhandler.h"
 #include "softwareupdater.h"
 
-#include  <ui/afmainwindow.h>
+#include <ui/afmainwindow.h>
 #include <gearbox/doubletostringconvertor.h>
 #include <gearbox/gearbox.h>
+#include <persistence/swsettings.h>
 #include <QApplication>
 
 void registerMetatypes();
@@ -26,6 +27,8 @@ int main(int argc, char **argv)
   gearbox::DoubleToStringConvertor::initialize();
   gearbox::Gearbox gbox{};
 
+  persistence::SWSettings::initialize();
+
   AFCrashHandler::checkForCrash();
 
   AFMainWindow mWin{gbox};
@@ -36,6 +39,8 @@ int main(int argc, char **argv)
   mWin.show();
 
   int ret = a.exec();
+
+  persistence::SWSettings::destroy();
 
   AFCrashHandler::uninstallCrashHandler();
 

@@ -214,6 +214,7 @@ set(AnglerFish_SRCS
     "src/persistence/entiresetup_serialize.cpp"
     "src/persistence/entiresetup_deserialize.cpp"
     "src/persistence/types.cpp"
+    "src/persistence/swsettings.cpp"
     "src/summary/abstractsummarizer.cpp"
     "src/summary/commonoptions.cpp"
     "src/summary/summarizerfactory.cpp"

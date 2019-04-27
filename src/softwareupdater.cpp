@@ -1,6 +1,7 @@
 #include "softwareupdater.h"
 #include "globals.h"
 #include "ui/autoupdatecheckdialog.h"
+#include <persistence/swsettings.h>
 
 #include <QVariant>
 #include <QThread>
@@ -15,7 +16,7 @@ void SoftwareUpdateWorker::process()
   EUPDResult res;
 
   EUPDInSoftware inSw;
-  strncpy(inSw.name, "AnglerFish", sizeof(EUPDInSoftware::name));
+  strncpy(inSw.name, SOFTWARE_NAME_INTERNAL_S, sizeof(EUPDInSoftware::name));
   inSw.version.major = Globals::VERSION_MAJ;
   inSw.version.minor = Globals::VERSION_MIN;
   strncpy(inSw.version.revision, Globals::VERSION_REV.toLatin1(), sizeof(EUPDVersion::revision));
@@ -80,12 +81,9 @@ void SoftwareUpdateWorker::process()
 }
 
 SoftwareUpdater::SoftwareUpdater(QObject *parent) : QObject(parent),
-  m_checkAutomatically(true),
   m_checkInProgress(false)
 {
   m_autoDlg = new AutoUpdateCheckDialog();
-
-  connect(m_autoDlg, &AutoUpdateCheckDialog::setAutoUpdate, this, &SoftwareUpdater::onSetAutoUpdate);
 }
 
 SoftwareUpdater::~SoftwareUpdater()
@@ -93,14 +91,9 @@ SoftwareUpdater::~SoftwareUpdater()
   delete m_autoDlg;
 }
 
-bool SoftwareUpdater::automaticCheckEnabled() const
-{
-  return m_checkAutomatically;
-}
-
 void SoftwareUpdater::checkAutomatically()
 {
-  if (!m_checkAutomatically)
+  if (persistence::SWSettings::get<int>(persistence::SWSettings::KEY_AUTOUPDATE_ENABLED) < 1)
     return;
 
   checkForUpdate(true);
@@ -133,22 +126,6 @@ void SoftwareUpdater::checkForUpdate(const bool automatic)
   thr->start();
 }
 
-void SoftwareUpdater::loadUserSettings(const QVariant &settings)
-{
-  if (!settings.isValid())
-    return;
-  if (!settings.canConvert<QMap<QString, QVariant>>())
-    return;
-
-  QMap<QString, QVariant> settingsMap = settings.value<QMap<QString, QVariant>>();
-
-  if (settingsMap.contains(CHECK_AUTOMATICALLY_SETTINGS_TAG)) {
-    QVariant autoCheck = settingsMap[CHECK_AUTOMATICALLY_SETTINGS_TAG];
-
-    m_checkAutomatically = autoCheck.toBool();
-  }
-}
-
 void SoftwareUpdater::automaticCheckComplete(const SoftwareUpdateResult &result)
 {
   if (!result.updateAvailable)
@@ -172,20 +149,4 @@ void SoftwareUpdater::onUpdateCheckComplete(const bool automatic, const Software
     automaticCheckComplete(result);
   else
     emit checkComplete(result);
-}
-
-void SoftwareUpdater::onSetAutoUpdate(const bool enabled)
-{
-  m_checkAutomatically = enabled;
-
-  emit autoUpdateChanged(m_checkAutomatically);
-}
-
-QVariant SoftwareUpdater::saveUserSettings() const
-{
-  QMap<QString, QVariant> map;
-
-  map.insert(CHECK_AUTOMATICALLY_SETTINGS_TAG, m_checkAutomatically);
-
-  return map;
 }

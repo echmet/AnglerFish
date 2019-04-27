@@ -15,7 +15,6 @@ class CheckForUpdateDialog : public QDialog
 public:
   explicit CheckForUpdateDialog(QWidget *parent = nullptr);
   ~CheckForUpdateDialog();
-  void setCheckOnStartup(const bool checked);
 
 protected:
   void closeEvent(QCloseEvent *ev);
@@ -26,11 +25,9 @@ private:
 signals:
   void checkForUpdate();
   void closed();
-  void setAutoUpdate(const bool enabled);
 
 public slots:
   void onCheckComplete(const SoftwareUpdateResult &result);
-  void onAutoUpdateChanged(const bool enabled);
 
 private slots:
   void onCheckNowClicked();

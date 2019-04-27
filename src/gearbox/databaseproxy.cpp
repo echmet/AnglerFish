@@ -1,6 +1,7 @@
 #include "databaseproxy.h"
 
 #include <database/db_constituentsdatabase.h>
+#include <globals.h>
 
 #include <algorithm>
 #include <cassert>
@@ -11,9 +12,9 @@ namespace gearbox {
 
 #ifdef Q_OS_LINUX
 #ifdef AF_FLATPAK_BUILD
-  const char *DatabaseProxy::DATABASE_PATH = "/app/share/AnglerFish/pmng_db.sql";
+  const char *DatabaseProxy::DATABASE_PATH = "/app/share/" SOFTWARE_NAME_INTERNAL_S "/pmng_db.sql";
 #else
-  const char *DatabaseProxy::DATABASE_PATH = "/etc/ECHMET/AnglerFish/pmng_db.sql";
+  const char *DatabaseProxy::DATABASE_PATH = "/etc/ECHMET/" SOFTWARE_NAME_INTERNAL_S "/pmng_db.sql";
 #endif // AF_FLATPAK_BUILD
 #else
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
@@ -84,7 +85,7 @@ DatabaseProxy::DatabaseProxy()
   QString usableDbPath;
 
 #ifdef Q_OS_LINUX
-  static const QString locPath(".local/share/ECHMET/PeakMasterNG/");
+  static const QString locPath(".local/share/ECHMET/" SOFTWARE_NAME_INTERNAL_S "/");
   QDir homeDir = QDir::home();
   const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";
   if (QFileInfo::exists(editableDbPath))
