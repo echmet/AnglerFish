@@ -385,10 +385,15 @@ void AFMainWindow::onNewBuffers()
 
 void AFMainWindow::onOpenDatabase()
 {
+  static QString lastPath{};
+
   QFileDialog dlg{this, tr("Load database file")};
 
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
   dlg.setNameFilter("SQLite3 database (*.sql)");
+
+  if (!lastPath.isEmpty())
+    dlg.setDirectory(lastPath);
 
   if (dlg.exec() == QDialog::Accepted) {
     auto &dbProxy = h_gbox.databaseProxy();
@@ -404,9 +409,13 @@ void AFMainWindow::onOpenDatabase()
       QMessageBox mbox{QMessageBox::Question, tr("Question"), tr("Do you want to set this database as default database?"),
                        QMessageBox::Yes | QMessageBox::No};
 
+      QFileInfo finfo{path};
+
+      lastPath = finfo.absoluteDir().path();
+
       const int answer = mbox.exec();
       if (answer == QMessageBox::Yes) {
-        const auto absPath = QFileInfo{path}.absoluteFilePath();
+        const auto absPath = finfo.absoluteFilePath();
 
         persistence::SWSettings::set(persistence::SWSettings::KEY_USER_DB_PATH, absPath);
       }
