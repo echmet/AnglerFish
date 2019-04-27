@@ -24,10 +24,11 @@ int main(int argc, char **argv)
 
   AFCrashHandler::installCrashHandler();
 
+  persistence::SWSettings::initialize();
+
   gearbox::DoubleToStringConvertor::initialize();
   gearbox::Gearbox gbox{};
 
-  persistence::SWSettings::initialize();
 
   AFCrashHandler::checkForCrash();
 

@@ -22,6 +22,7 @@
 #include <gearbox/calcworker.h>
 #include <gearbox/databaseproxy.h>
 #include <persistence/persistence.h>
+#include <persistence/swsettings.h>
 #include <summary/summarizerfactory.h>
 #include <QCloseEvent>
 #include <QFileInfo>
@@ -209,6 +210,15 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   m_clock.setInterval(2000);
   m_clock.start();
+
+  QTimer::singleShot(0, this, [this]() {
+    if (!this->h_gbox.databaseProxy().isAvailable()) {
+      QMessageBox mbox{QMessageBox::Warning, tr("Database error"),
+                       QString{tr("%1 failed to load database of constituents. You may want to try to load a database file manually.")}.arg(Globals::SOFTWARE_NAME)
+                      };
+      mbox.exec();
+    }
+  });
 }
 
 AFMainWindow::~AFMainWindow()
@@ -383,11 +393,22 @@ void AFMainWindow::onOpenDatabase()
   if (dlg.exec() == QDialog::Accepted) {
     auto &dbProxy = h_gbox.databaseProxy();
 
-    const auto &sel = dlg.selectedFiles();
-    if (!sel.empty()) {
-      if (!dbProxy.openDatabase(sel.at(0))) {
-        QMessageBox errBox{QMessageBox::Warning, tr("Database error"), tr("Cannot open selected database file")};
-        errBox.exec();
+    if (dlg.selectedFiles().empty())
+      return;
+
+    const QString path = dlg.selectedFiles().constFirst();
+    if (!dbProxy.openDatabase(path)) {
+      QMessageBox errBox{QMessageBox::Warning, tr("Database error"), tr("Cannot open selected database file")};
+      errBox.exec();
+    } else {
+      QMessageBox mbox{QMessageBox::Question, tr("Question"), tr("Do you want to set this database as default database?"),
+                       QMessageBox::Yes | QMessageBox::No};
+
+      const int answer = mbox.exec();
+      if (answer == QMessageBox::Yes) {
+        const auto absPath = QFileInfo{path}.absoluteFilePath();
+
+        persistence::SWSettings::set(persistence::SWSettings::KEY_USER_DB_PATH, absPath);
       }
     }
   }

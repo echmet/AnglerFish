@@ -2,6 +2,7 @@
 
 #include <database/db_constituentsdatabase.h>
 #include <globals.h>
+#include <persistence/swsettings.h>
 
 #include <algorithm>
 #include <cassert>
@@ -84,32 +85,41 @@ DatabaseProxy::DatabaseProxy()
 {
   QString usableDbPath;
 
+  const auto userPath = persistence::SWSettings::get<QString>(persistence::SWSettings::KEY_USER_DB_PATH);
+
 #ifdef Q_OS_LINUX
-  static const QString locPath(".local/share/ECHMET/" SOFTWARE_NAME_INTERNAL_S "/");
-  QDir homeDir = QDir::home();
-  const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";
-  if (QFileInfo::exists(editableDbPath))
-    usableDbPath = editableDbPath;
-  else {
-    if (!QFileInfo::exists(DATABASE_PATH)) {
-      m_db = nullptr;
-      return;
-    }
+  if (userPath.isEmpty()) {
+    static const QString locPath(".local/share/ECHMET/" SOFTWARE_NAME_INTERNAL_S "/");
 
-    if (!homeDir.mkpath(locPath)) {
-      m_db = nullptr;
-      return;
-    }
+    QDir homeDir = QDir::home();
+    const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";
+    if (QFileInfo::exists(editableDbPath))
+      usableDbPath = editableDbPath;
+    else {
+      if (!QFileInfo::exists(DATABASE_PATH)) {
+        m_db = nullptr;
+        return;
+      }
 
-    if (!QFile::copy(DATABASE_PATH, editableDbPath)) {
-      m_db = nullptr;
-      return;
-    }
+      if (!homeDir.mkpath(locPath)) {
+        m_db = nullptr;
+        return;
+      }
 
-    usableDbPath = editableDbPath;
-  }
+      if (!QFile::copy(DATABASE_PATH, editableDbPath)) {
+        m_db = nullptr;
+        return;
+      }
+
+      usableDbPath = editableDbPath;
+    }
+  } else
+    usableDbPath = userPath;
 #else
-  usableDbPath = DATABASE_PATH;
+  if (userPath.isEmpty())
+    usableDbPath = DATABASE_PATH;
+  else
+    usableDbPath = userPath;
 #endif // Q_OS_LINUX
 
   try {
