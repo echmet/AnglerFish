@@ -141,15 +141,23 @@ void BufferWidget::onCompositionChanged()
 {
   h_buffer.invalidate();
 
-  try {
-    ui->qle_pH->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.pH()));
-    ui->qle_ionicStrength->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
-    ui->qle_bufferCapacity->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.bufferCapacity()));
+  if (h_buffer.empty()) {
+    ui->qle_pH->setText("");
+    ui->qle_ionicStrength->setText("");
+    ui->qle_bufferCapacity->setText("");
 
     emit bufferChanged(this);
-  } catch (const gearbox::ChemicalBuffer::Exception &ex) {
-    QMessageBox mbox{QMessageBox::Critical, tr("Calculation error"), ex.what()};
-    mbox.exec();
+  } else {
+    try {
+      ui->qle_pH->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.pH()));
+      ui->qle_ionicStrength->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.ionicStrength()));
+      ui->qle_bufferCapacity->setText(gearbox::DoubleToStringConvertor::convert(h_buffer.bufferCapacity()));
+
+      emit bufferChanged(this);
+    } catch (const gearbox::ChemicalBuffer::Exception &ex) {
+      QMessageBox mbox{QMessageBox::Critical, tr("Calculation error"), ex.what()};
+      mbox.exec();
+    }
   }
 }
 
