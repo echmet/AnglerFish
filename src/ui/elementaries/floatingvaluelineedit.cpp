@@ -4,7 +4,8 @@
 #include <QLocale>
 
 FloatingValueLineEdit::FloatingValueLineEdit(QWidget *parent) :
-  QLineEdit(parent)
+  QLineEdit{parent},
+  m_allowEmpty{false}
 {
   this->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
@@ -13,7 +14,7 @@ FloatingValueLineEdit::FloatingValueLineEdit(QWidget *parent) :
   gearbox::DoubleToStringConvertor::notifyOnFormatChanged(this);
 }
 
-void FloatingValueLineEdit::ensureSanity(QString text)
+void FloatingValueLineEdit::ensureSanity(const QString &text)
 {
   const auto ok = isInputValid(text);
 
@@ -26,6 +27,11 @@ void FloatingValueLineEdit::ensureSanity(QString text)
   }
 }
 
+bool FloatingValueLineEdit::isEmptyAllowed() const
+{
+  return m_allowEmpty;
+}
+
 bool FloatingValueLineEdit::isInputValid() const
 {
   return isInputValid(this->text());
@@ -34,6 +40,9 @@ bool FloatingValueLineEdit::isInputValid() const
 bool FloatingValueLineEdit::isInputValid(QString text) const
 {
   bool ok;
+
+  if (m_allowEmpty && text.isEmpty())
+    return true;
 
   QString _text = text.replace(QChar::Nbsp, QString(""), Qt::CaseInsensitive);
 
@@ -75,6 +84,12 @@ void FloatingValueLineEdit::onNumberFormatChanged(const QLocale *oldLocale)
 void FloatingValueLineEdit::revalidate()
 {
   ensureSanity(text());
+}
+
+void FloatingValueLineEdit::setAllowEmpty(const bool allow)
+{
+  m_allowEmpty = allow;
+  revalidate();
 }
 
 void FloatingValueLineEdit::setNumberText(const double dv)

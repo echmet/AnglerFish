@@ -70,6 +70,10 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
     ui->qcap_expValues->setPalette(p);
   }
 
+  ui->qle_bufferCapacity->setAllowEmpty(true);
+  ui->qle_pH->setAllowEmpty(true);
+  ui->qle_ionicStrength->setAllowEmpty(true);
+
   setupIcons();
 
   if (!h_buffer.experimentalMobilities().empty())
