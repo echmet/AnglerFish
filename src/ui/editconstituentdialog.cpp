@@ -28,6 +28,10 @@ EditConstituentDialog::EditConstituentDialog(gearbox::DatabaseProxy &dbProxy, co
   static_cast<QVBoxLayout *>(layout())->insertWidget(3, m_editChargesWidget);
 
   ui->qgbox_viscosity->setVisible(viscosityCorrectionEnabled);
+
+  /* Hide constituent type checkbox as it serves no purpose here */
+  ui->ql_type->setVisible(false);
+  ui->qcbox_type->setVisible(false);
 }
 
 EditConstituentDialog::EditConstituentDialog(gearbox::DatabaseProxy &dbProxy,

@@ -33,6 +33,8 @@
 #include <QVBoxLayout>
 #include <QDateTime>
 #include <QShortcut>
+#include <QWindow>
+#include <QScreen>
 #include <cassert>
 
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
@@ -75,8 +77,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_buffersAnalyte = new QWidget{};
   m_buffersAnalyte->setLayout(new QHBoxLayout{});
   m_fitPlotWidget = new FitPlotWidget{};
-  m_fitPlotWidget->setMinimumHeight(150);
-  m_buffersAnalyte->setMinimumHeight(150);
+
 
   m_bufInpWidget = new BuffersInputWidget{h_gbox};
   m_analDataWidget = new AnalyteDataWidget{h_gbox};
@@ -205,12 +206,15 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   auto recalcShortcut = new QShortcut{QKeySequence::Refresh, this};
   auto recalcShortcutTwo = new QShortcut{QKeySequence{Qt::CTRL + Qt::Key_Return}, this};
 
+  setWidgetSizes();
+
   connect(recalcShortcut, &QShortcut::activated, this, &AFMainWindow::onCalculate);
   connect(recalcShortcutTwo, &QShortcut::activated, this, &AFMainWindow::onCalculate);
 
   m_clock.setInterval(2000);
   m_clock.start();
 
+  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &AFMainWindow::onScreenChanged); }); /* This must be done from the event queue after the window is created */
   QTimer::singleShot(0, this, [this]() {
     if (!this->h_gbox.databaseProxy().isAvailable()) {
       QMessageBox mbox{QMessageBox::Warning, tr("Database error"),
@@ -446,6 +450,11 @@ void AFMainWindow::onSave()
   }
 }
 
+void AFMainWindow::onScreenChanged(QScreen *)
+{
+  setWidgetSizes();
+}
+
 void AFMainWindow::onSetDebuggingOutput()
 {
   static QSize dlgSize{};
@@ -500,6 +509,15 @@ void AFMainWindow::onToggleInputPanel()
 
   m_buffersAnalyte->setVisible(!isVisible);
   m_qpb_toggleAnalytePanel->setDisabled(isVisible);
+}
+
+void AFMainWindow::setWidgetSizes()
+{
+  const float dpi = this->logicalDpiX();
+  const int mh = qRound(150.0f * dpi / 96.0f);
+
+  m_fitPlotWidget->setMinimumHeight(mh);
+  m_buffersAnalyte->setMinimumHeight(mh);
 }
 
 void AFMainWindow::setupIcons()

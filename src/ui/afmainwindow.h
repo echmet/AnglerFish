@@ -16,6 +16,7 @@ class SummarizeDialog;
 class QPushButton;
 class FitPlotWidget;
 class Gearbox;
+class QScreen;
 class QSplitter;
 
 namespace gearbox {
@@ -41,6 +42,7 @@ private:
   void invalidateResults();
   void updatePlotExperimental();
   void updatePlotFitted();
+  void setWidgetSizes();
   void setupIcons();
   void warnIfPossiblyUnreliable();
 
@@ -89,6 +91,7 @@ private slots:
   void onNewBuffers();
   void onOpenDatabase();
   void onSave();
+  void onScreenChanged(QScreen *scr);
   void onSetDebuggingOutput();
   void onShowProvisional();
   void onSummarize();
