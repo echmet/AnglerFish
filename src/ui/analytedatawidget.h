@@ -29,8 +29,6 @@ public:
   void setEstimatesFromCurrent();
 
 private:
-  void setWidgetSizes();
-
   Ui::AnalyteDataWidget *ui;
 
   EditChargesWidgetEstimates *m_estimatedParamsWidget;
@@ -42,7 +40,6 @@ private:
 
 private slots:
   void onResultsToClipboard();
-  void onScreenChanged();
   void onUpdateEstimates();
 
 signals:

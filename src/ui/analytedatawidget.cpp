@@ -18,12 +18,6 @@
 #include <QWindow>
 #include <cassert>
 
-inline
-int fitResultsHeight(const QFontMetrics &fm)
-{
-  return qRound(fm.height() * 5.0);
-}
-
 AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
                                      QWidget *parent) :
   QWidget{parent},
@@ -61,13 +55,9 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
             QApplication::clipboard()->setText(str.c_str());
           });
 
-  //setWidgetSizes();
-
   connect(m_estimatedParamsWidget, &EditChargesWidgetEstimates::estimatesChanged, this, &AnalyteDataWidget::onUpdateEstimates);
 
   onUpdateEstimates(); /* Set the initial empty estimates */
-
-  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &AnalyteDataWidget::onScreenChanged); }); /* This must be done from the event queue after the window is created */
 }
 
 AnalyteDataWidget::~AnalyteDataWidget()
@@ -157,11 +147,6 @@ void AnalyteDataWidget::onResultsToClipboard()
     clip->setText(buf);
 }
 
-void AnalyteDataWidget::onScreenChanged()
-{
-  setWidgetSizes();
-}
-
 void AnalyteDataWidget::onUpdateEstimates()
 {
   const auto &mobs = estimatedMobilities();
@@ -210,24 +195,4 @@ void AnalyteDataWidget::setEstimatesFromCurrent()
   m_estimatedParamsWidget->setCharges(std::move(pKas), std::move(mobilities), analyte.chargeLow, analyte.chargeHigh);
 
   emit estimatesChanged();
-}
-
-void AnalyteDataWidget::setWidgetSizes()
-{
-  ui->qhspac_sep->changeSize(2 * fontMetrics().width('x'), 1);
-  ui->ql_resultsCaption->setMinimumWidth(ui->qtbv_fittedpKas->minimumWidth());
-  ui->ql_resultsCaption->setMaximumWidth(ui->qtbv_fittedpKas->maximumWidth());
-
-  ui->qtbv_fittedMobilities->setMinimumHeight(fitResultsHeight(fontMetrics()));
-  ui->qtbv_fittedpKas->setMinimumHeight(fitResultsHeight(fontMetrics()));
-
-  {
-    const int tw = m_estimatedParamsWidget->minimumWidth() +
-                   ui->qtbv_fittedpKas->minimumWidth() +
-                   ui->qhspac_sep->sizeHint().width() +
-                   2 * fontMetrics().width('x');
-
-    setMinimumWidth(tw);
-    setMaximumWidth(tw);
-  }
 }
