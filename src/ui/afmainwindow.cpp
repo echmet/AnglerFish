@@ -223,6 +223,36 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
       mbox.exec();
     }
   });
+  QTimer::singleShot(0, this, [this]() {
+    auto scr = this->window()->windowHandle()->screen();
+
+    if (scr != nullptr) {
+      const float dpi = float(scr->logicalDotsPerInch());
+      const int scrHeight = scr->size().height();
+
+      const int heightHint = qRound(dpi / 96.0f * 700.0f);
+      auto geometry = this->geometry();
+
+      if (geometry.height() < heightHint) {
+        if (scrHeight > heightHint) {
+          int x = geometry.x();
+
+          if (x + heightHint > scrHeight) {
+            int overshot = x + heightHint - scrHeight;
+            x -= overshot;
+            if (overshot < 0)
+              return; /* This should not happen, but let's check for it anyway */
+
+            geometry.setX(x);
+            geometry.setHeight(heightHint);
+          } else
+            geometry.setHeight(heightHint);
+
+          this->setGeometry(geometry);
+      }
+    }
+  }
+  });
 }
 
 AFMainWindow::~AFMainWindow()
