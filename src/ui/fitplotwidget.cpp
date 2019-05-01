@@ -50,6 +50,7 @@ FitPlotWidget::FitPlotWidget(QWidget *parent) :
   m_curveFitted = new QwtPlotCurve{};
   m_curveProvisional = new QwtPlotCurve{};
   m_curveResiduals = new QwtPlotCurve{};
+  m_curveResidualsZeroLine = new QwtPlotCurve{};
   m_plotZoomer = new DoubleClickableQwtPlotZoomer(m_plot->canvas());
   m_plotPicker = new QwtPlotPicker(QwtPlot::Axis::xBottom, QwtPlot::Axis::yLeft,
                                    QwtPicker::NoRubberBand, QwtPicker::AlwaysOff,
@@ -137,6 +138,18 @@ void FitPlotWidget::setResidualsData(const QVector<QPointF> &data)
 
   m_plot->setAxisScale(QwtPlot::yRight, rMin, rMax);
 
+  if (data.empty())
+    m_curveResidualsZeroLine->setSamples(QVector<QPointF>{});
+  else {
+    qreal l = brect.left();
+    qreal r = brect.right();
+    l -= l * 0.05;
+    r += r * 0.05;
+
+    QVector<QPointF> zeroCurve = { { l, 0.0 }, { r, 0.0 } };
+    m_curveResidualsZeroLine->setSamples(zeroCurve);
+  }
+
   refreshPlot();
 }
 
@@ -156,12 +169,13 @@ void FitPlotWidget::setupPlot()
 
   m_curveResiduals->attach(m_plot);
   m_curveResiduals->setYAxis(QwtPlot::yRight);
+  m_curveResidualsZeroLine->attach(m_plot);
+  m_curveResidualsZeroLine->setYAxis(QwtPlot::yRight);
 
   m_curveExperimental->attach(m_plot);
   m_curveExcluded->attach(m_plot);
   m_curveFitted->attach(m_plot);
   m_curveProvisional->attach(m_plot);
-
 
   m_plotZoomer->setTrackerMode(QwtPicker::AlwaysOn);
   m_plotZoomer->setMousePattern(QwtEventPattern::MouseSelect3, Qt::LeftButton, Qt::ShiftModifier);
@@ -182,4 +196,6 @@ void FitPlotWidget::setupPlot()
 
   m_curveResiduals->setStyle(QwtPlotCurve::NoCurve);
   m_curveResiduals->setSymbol(makeSymbol(QwtSymbol::Triangle, Qt::yellow, fontMetrics()));
+
+  m_curveResidualsZeroLine->setPen(QColor{16, 16, 16}, 1.0, Qt::DotLine);
 }

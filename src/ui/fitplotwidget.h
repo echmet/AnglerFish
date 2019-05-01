@@ -36,6 +36,7 @@ private:
   QwtPlotCurve *m_curveFitted;
   QwtPlotCurve *m_curveProvisional;
   QwtPlotCurve *m_curveResiduals;
+  QwtPlotCurve *m_curveResidualsZeroLine;
   QwtPlotPicker *m_plotPicker;
   DoubleClickableQwtPlotZoomer *m_plotZoomer;
 
