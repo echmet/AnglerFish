@@ -59,7 +59,7 @@ BuffersInputWidget::~BuffersInputWidget()
   delete ui;
 }
 
-void BuffersInputWidget::onBufferAdded(gearbox::ChemicalBuffer &buffer)
+void BuffersInputWidget::handleAddedBuffer(gearbox::ChemicalBuffer &buffer)
 {
   auto w = new BufferWidget{h_gbox, buffer};
   auto idx = m_scrollLayout->count() - 1;
@@ -73,6 +73,11 @@ void BuffersInputWidget::onBufferAdded(gearbox::ChemicalBuffer &buffer)
   connect(w, &BufferWidget::cloneMe, this, &BuffersInputWidget::onCloneBuffer);
   connect(w, &BufferWidget::bufferChanged, this, &BuffersInputWidget::onBufferChanged);
   connect(w, &BufferWidget::exportMe, this, &BuffersInputWidget::onExportBuffer);
+}
+
+void BuffersInputWidget::onBufferAdded(gearbox::ChemicalBuffer &buffer)
+{
+  handleAddedBuffer(buffer);
 
   emit buffersChanged();
 }
@@ -107,9 +112,11 @@ void BuffersInputWidget::onCloneBuffer(const BufferWidget *w)
 void BuffersInputWidget::onEndBuffersReset()
 {
   for (auto &buf : h_gbox.chemicalBuffersModel())
-    onBufferAdded(buf);
+    handleAddedBuffer(buf);
 
   onSortBypH();
+
+  emit buffersChanged();
 }
 
 void BuffersInputWidget::onExportBuffer(const BufferWidget *w, const bool toClipboard)

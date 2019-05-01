@@ -25,6 +25,7 @@ public:
   ~BuffersInputWidget();
 
 private:
+  void handleAddedBuffer(gearbox::ChemicalBuffer &buffer);
   void setupIcons();
 
   Ui::BuffersInputWidget *ui;
