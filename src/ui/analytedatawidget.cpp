@@ -193,6 +193,4 @@ void AnalyteDataWidget::setEstimatesFromCurrent()
     mobilities[0] = {0.0, false};
 
   m_estimatedParamsWidget->setCharges(std::move(pKas), std::move(mobilities), analyte.chargeLow, analyte.chargeHigh);
-
-  emit estimatesChanged();
 }

@@ -40,8 +40,8 @@ protected:
   AbstractConstituentChargesModel *m_chargesModel;
 
 private:
-  void updateChargeHigh();
-  void updateChargeLow();
+  void updateChargeHigh(const bool notify = true);
+  void updateChargeLow(const bool notify = true);
 
   void setupWidget();
 

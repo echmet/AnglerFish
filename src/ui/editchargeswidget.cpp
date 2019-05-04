@@ -176,28 +176,32 @@ void EditChargesWidget::setCharges(const std::map<int, double> &pKas, const std:
   updateChargeModifiers();
 }
 
-void EditChargesWidget::updateChargeHigh()
+void EditChargesWidget::updateChargeHigh(const bool notify)
 {
   const int chargeHigh = m_chargesModel->headerData(m_chargesModel->rowCount() - 1, Qt::Orientation::Vertical).toInt();
 
   m_qpb_addHigh->setText(chargeHigh + 1);
   m_qpb_removeHigh->setText(chargeHigh);
 
-  emit chargesChanged();
+  if (notify)
+    emit chargesChanged();
 }
 
-void EditChargesWidget::updateChargeLow()
+void EditChargesWidget::updateChargeLow(const bool notify)
 {
   const int chargeLow = m_chargesModel->headerData(0, Qt::Orientation::Vertical).toInt();
 
   m_qpb_addLow->setText(chargeLow - 1);
   m_qpb_removeLow->setText(chargeLow);
 
-  emit chargesChanged();
+  if (notify)
+    emit chargesChanged();
 }
 
 void EditChargesWidget::updateChargeModifiers()
 {
-  updateChargeHigh();
-  updateChargeLow();
+  updateChargeHigh(false);
+  updateChargeLow(false);
+
+  emit chargesChanged();
 }
