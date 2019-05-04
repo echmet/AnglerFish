@@ -98,6 +98,7 @@ BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buff
             this->onCompositionChanged();
           }
   );
+  ui->qpb_exclude->setChecked(h_buffer.exclude());
 
   connect(&h_gbox.ionicEffectsModel(), &gearbox::IonicEffectsModel::changed, this, &BufferWidget::onIonicEffectsChanged);
   QTimer::singleShot(0, this, [this]() {
