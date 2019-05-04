@@ -56,6 +56,7 @@ QJsonArray EntireSetup::serializeBuffers(const gearbox::ChemicalBuffersModel &bu
     serBuf[BUF_COMPOSITION] = composition;
     serBuf[BUF_CONCENTRATIONS] = concentrations;
     serBuf[BUF_EXP_MOBILITIES] = expMobilities;
+    serBuf[BUF_EXCLUDED] = buf.exclude();
 
     serArr.append(serBuf);
   }

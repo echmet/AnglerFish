@@ -81,6 +81,15 @@ std::vector<gearbox::ChemicalBuffer> EntireSetup::deserializeBuffers(const QJson
     DeserializeCommon::checkIfContains(BUF_EXP_MOBILITIES, obj, QJsonValue::Array);
     auto expMobsSer = obj[BUF_EXP_MOBILITIES].toArray();
 
+    bool excluded = [&obj]() {
+      try {
+        DeserializeCommon::checkIfContains(BUF_EXCLUDED, obj, QJsonValue::Bool);
+        return obj[BUF_EXCLUDED].toBool();
+      } catch (const Exception &) {
+        return false;
+      }
+    }();
+
     std::vector<double> expMobs{};
     for (const auto d : expMobsSer) {
       if (!d.isDouble())
@@ -91,6 +100,7 @@ std::vector<gearbox::ChemicalBuffer> EntireSetup::deserializeBuffers(const QJson
 
     gearbox::ChemicalBuffer buf{&ionEffs, gdmModel.release()};
     buf.setExperimentalMobilities(std::move(expMobs));
+    buf.setExclude(excluded);
 
     buffers.emplace_back(std::move(buf));
   }

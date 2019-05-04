@@ -33,6 +33,7 @@ private:
   static const QString BUF_COMPOSITION;
   static const QString BUF_CONCENTRATIONS;
   static const QString BUF_EXP_MOBILITIES;
+  static const QString BUF_EXCLUDED;
 
   static const QString ANAL_CHARGE_LOW;
   static const QString ANAL_CHARGE_HIGH;
