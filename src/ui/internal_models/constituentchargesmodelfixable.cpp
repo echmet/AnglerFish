@@ -107,7 +107,7 @@ bool ConstituentChargesModelFixable::setData(const QModelIndex &index, const QVa
 {
   const int row = index.row();
 
-  if (role != Qt::EditRole)
+  if (!(role == Qt::EditRole || role == Qt::CheckStateRole))
     return false;
 
   if (data(index, role) != value) {
