@@ -39,14 +39,14 @@ QVariant ConstituentChargesModelFixable::headerData(int section, Qt::Orientation
 
 bool ConstituentChargesModelFixable::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
-  Q_UNUSED(section); Q_UNUSED(orientation); Q_UNUSED(value); Q_UNUSED(role);
+  Q_UNUSED(section) Q_UNUSED(orientation) Q_UNUSED(value) Q_UNUSED(role)
 
   return false;
 }
 
 int ConstituentChargesModelFixable::rowCount(const QModelIndex &parent) const
 {
-  Q_UNUSED(parent);
+  Q_UNUSED(parent)
 
   assert(!m_charges.empty());
   return static_cast<int>(m_charges.size());
@@ -54,7 +54,7 @@ int ConstituentChargesModelFixable::rowCount(const QModelIndex &parent) const
 
 int ConstituentChargesModelFixable::columnCount(const QModelIndex &parent) const
 {
-  Q_UNUSED(parent);
+  Q_UNUSED(parent)
 
   return 4;
 }
@@ -214,7 +214,7 @@ bool ConstituentChargesModelFixable::insertRows(int row, int count, const QModel
 
 bool ConstituentChargesModelFixable::insertColumns(int column, int count, const QModelIndex &parent)
 {
-  Q_UNUSED(column); Q_UNUSED(count); Q_UNUSED(parent);
+  Q_UNUSED(column) Q_UNUSED(count) Q_UNUSED(parent)
 
   return false;
 }
@@ -309,7 +309,7 @@ void ConstituentChargesModelFixable::refreshData(const std::map<int, std::pair<d
 
 bool ConstituentChargesModelFixable::removeColumns(int column, int count, const QModelIndex &parent)
 {
-  Q_UNUSED(column); Q_UNUSED(count); Q_UNUSED(parent);
+  Q_UNUSED(column) Q_UNUSED(count) Q_UNUSED(parent)
 
   return false;
 }
