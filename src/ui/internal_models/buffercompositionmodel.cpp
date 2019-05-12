@@ -3,6 +3,8 @@
 #include <util_lowlevel.h>
 #include <gearbox/gdmproxy.h>
 
+#include <cassert>
+
 BufferCompositionModel::BufferCompositionModel(gearbox::GDMProxy &proxy, QObject *parent) :
   QAbstractTableModel{parent},
   h_proxy{proxy}
@@ -116,6 +118,9 @@ bool BufferCompositionModel::setData(const QModelIndex &index, const QVariant &v
   if (!index.isValid())
     return false;
 
+  if (role != Qt::EditRole)
+    return false;
+
   const int row = index.row();
   if (row < 0 || row >= m_names.size())
     return false;
@@ -125,9 +130,14 @@ bool BufferCompositionModel::setData(const QModelIndex &index, const QVariant &v
   if (!ok)
     return false;
 
-  const auto &name = m_names.at(row);
+  const auto name = m_names.at(row).toStdString();
+  const auto &oldConcs = h_proxy.concentrations(name);
 
-  h_proxy.setConcentrations(name.toStdString(), {v});
+  assert(oldConcs.size() == 1);
+  if (oldConcs[0] == v)
+    return false;
+
+  h_proxy.setConcentrations(name, {v});
   emit dataChanged(index, index, { role });
   return true;
 }
