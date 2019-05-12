@@ -84,9 +84,9 @@ QVariant BufferCompositionModel::headerData(int section, Qt::Orientation orienta
 
   switch (section) {
   case 0:
-    return "Name";
+    return tr("Name");
   case 1:
-    return "Concentration (mM)";
+    return tr("Concentration (mM)");
   }
 
   return {};
