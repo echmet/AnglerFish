@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+
 ConstituentChargesModelFixable::ConstituentChargesModelFixable(QObject *parent)
   : AbstractConstituentChargesModel{parent}
 {
@@ -106,12 +107,15 @@ bool ConstituentChargesModelFixable::setData(const QModelIndex &index, const QVa
 {
   const int row = index.row();
 
+  if (role != Qt::EditRole)
+    return false;
+
   if (data(index, role) != value) {
     const int col = index.column();
     if (m_charges.size() <= row || col > 3)
       return false;
 
-    /* Properties pf zero charge are immutable */
+    /* Properties of zero charge are immutable */
     if (std::get<0>(m_charges.at(row)) == 0)
       return false;
 
@@ -125,15 +129,10 @@ bool ConstituentChargesModelFixable::setData(const QModelIndex &index, const QVa
 
       switch (col) {
       case 0:
-        std::get<1>(data) = realVal;
-        break;
+        return updateIfNeeded<1, qreal>(data, realVal, index, role);
       case 1:
-        std::get<2>(data) = realVal;
-        break;
+        return updateIfNeeded<2, qreal>(data, realVal, index, role);
       }
-
-      emit dataChanged(index, index, { role });
-      return true;
     } else {
       bool ok;
       const int checked = value.toInt(&ok);
@@ -143,15 +142,10 @@ bool ConstituentChargesModelFixable::setData(const QModelIndex &index, const QVa
 
       switch (col) {
       case 2:
-        std::get<3>(data) = checked;
-        break;
+        return updateIfNeeded<3, int>(data, checked, index, role);
       case 3:
-        std::get<4>(data) = checked;
-        break;
+        return updateIfNeeded<4, int>(data, checked, index, role);
       }
-
-      emit dataChanged(index, index, { role });
-      return true;
     }
   }
   return false;

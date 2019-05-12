@@ -58,6 +58,18 @@ public:
 private:
   bool isBaseCharge(const QModelIndex &index) const;
 
+  template <int Idx, typename T>
+  bool updateIfNeeded(ChargeBlock &data, const T &value, const QModelIndex &index, const int role)
+  {
+    const auto oldValue = std::get<Idx>(data);
+    if (oldValue == value)
+      return false;
+
+    std::get<Idx>(data) = value;
+    emit dataChanged(index, index, { role });
+    return true;
+  }
+
   QVector<ChargeBlock> m_charges;
 };
 
