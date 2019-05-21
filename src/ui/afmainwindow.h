@@ -61,6 +61,7 @@ private:
   QPushButton *m_qpb_newBuffers;
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
+  QPushButton *m_qpb_saveAs;
   QPushButton *m_qpb_calculate;
   QPushButton *m_qpb_provisional;
   QPushButton *m_qpb_summarize;
@@ -91,6 +92,7 @@ private slots:
   void onNewBuffers();
   void onOpenDatabase();
   void onSave();
+  void onSaveAs();
   void onScreenChanged(QScreen *scr);
   void onSetDebuggingOutput();
   void onShowProvisional();

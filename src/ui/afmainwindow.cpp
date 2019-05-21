@@ -105,6 +105,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_newBuffers = new QPushButton{tr("New buffers"), this};
   m_qpb_load = new QPushButton{tr("Load setup"), this};
   m_qpb_save = new QPushButton{tr("Save setup"), this};
+  m_qpb_saveAs = new QPushButton{tr("Save setup as"), this};
   m_qpb_provisional = new QPushButton{tr("Estimated curve"), this};
   m_qpb_calculate = new QPushButton{tr("Fit!"), this};
   m_qpb_summarize = new QPushButton{tr("Summarize"), this};
@@ -119,6 +120,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui->qtb_mainToolBar->addWidget(m_qpb_newBuffers);
   ui->qtb_mainToolBar->addWidget(m_qpb_load);
   ui->qtb_mainToolBar->addWidget(m_qpb_save);
+  ui->qtb_mainToolBar->addWidget(m_qpb_saveAs);
   ui->qtb_mainToolBar->addWidget(m_qpb_provisional);
   ui->qtb_mainToolBar->addWidget(m_qpb_calculate);
   ui->qtb_mainToolBar->addWidget(m_qpb_summarize);
@@ -135,6 +137,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(m_qpb_new, &QPushButton::clicked, this, &AFMainWindow::onNew);
   connect(m_qpb_newBuffers, &QPushButton::clicked, this, &AFMainWindow::onNewBuffers);
   connect(m_qpb_save, &QPushButton::clicked, this, &AFMainWindow::onSave);
+  connect(m_qpb_saveAs, &QPushButton::clicked, this, &AFMainWindow::onSaveAs);
   connect(m_qpb_provisional, &QPushButton::clicked, this, &AFMainWindow::onShowProvisional);
   connect(m_qpb_calculate, &QPushButton::clicked, this, &AFMainWindow::onCalculate);
   connect(m_qpb_summarize, &QPushButton::clicked, this, &AFMainWindow::onSummarize);
@@ -480,6 +483,11 @@ void AFMainWindow::onSave()
   }
 }
 
+void AFMainWindow::onSaveAs()
+{
+
+}
+
 void AFMainWindow::onScreenChanged(QScreen *)
 {
   setWidgetSizes();
@@ -558,6 +566,7 @@ void AFMainWindow::setupIcons()
   ui->actionNew_buffers->setIcon(QIcon::fromTheme("document-new"));
   ui->actionLoad->setIcon(QIcon::fromTheme("document-open"));
   ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
+  ui->actionSaveAs->setIcon(QIcon::fromTheme("document-save-as"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
   ui->actionCheck_for_update->setIcon(QIcon::fromTheme("system-software-update"));
@@ -568,6 +577,7 @@ void AFMainWindow::setupIcons()
   m_qpb_newBuffers->setIcon(QIcon::fromTheme("document-new"));
   m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
+  m_qpb_saveAs->setIcon(QIcon::fromTheme("document-save-as"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
   m_qpb_summarize->setIcon(QIcon::fromTheme("document-properties"));
 #else
@@ -576,6 +586,7 @@ void AFMainWindow::setupIcons()
   ui->actionNew_buffers->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+  ui->actionSaveAs->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
   ui->actionCheck_for_update->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
@@ -586,6 +597,7 @@ void AFMainWindow::setupIcons()
   m_qpb_newBuffers->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+  m_qpb_saveAs->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   m_qpb_calculate->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
   m_qpb_summarize->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 #endif // Q_OS_
