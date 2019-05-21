@@ -178,6 +178,9 @@ bool MobilityConstraintsModel::setData(const QModelIndex &index, const QVariant 
 
   const auto &estimates = h_gbox.analyteEstimates();
   auto mobilities = estimates.mobilities;
+  if (mobilities.at(row).value == uEst)
+    return false;
+
   mobilities[row] = gearbox::AnalyteEstimates::Parameter{uEst, mobilities.at(row).fixed};
 
   h_gbox.setAnalyteEstimates(estimates.chargeLow, estimates.chargeHigh,
