@@ -275,9 +275,11 @@ AFMainWindow::~AFMainWindow()
 
 void AFMainWindow::closeEvent(QCloseEvent *evt)
 {
-  QMessageBox mbox{QMessageBox::Question, tr("Confirm action"),
-                   QString{tr("Do you really want to exit %1?\nAll unsaved data will be lost")}.arg(Globals::SOFTWARE_NAME),
-                   QMessageBox::Yes | QMessageBox::No};
+  QMessageBox mbox{};
+  makeYesNoMessagebox(mbox,
+                      QString{tr("Do you really want to exit %1?")}.arg(Globals::SOFTWARE_NAME),
+                              tr("All unsaved data will be lost."));
+
   if (mbox.exec() != QMessageBox::Yes)
     evt->ignore();
 }
