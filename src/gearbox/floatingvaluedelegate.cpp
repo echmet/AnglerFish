@@ -6,6 +6,15 @@
 
 namespace gearbox {
 
+inline
+int precision(const QModelIndex &index)
+{
+  const auto pv = index.model()->data(index, Qt::UserRole + 1);
+  if (!pv.canConvert<int>())
+    return 9;
+  return pv.toInt();
+}
+
 FloatingValueDelegate::FloatingValueDelegate(QObject *parent) : QItemDelegate(parent)
 {
 }
@@ -18,6 +27,7 @@ QWidget *FloatingValueDelegate::createEditor(QWidget *parent, const QStyleOption
 
   const auto &current = index.model()->data(index);
 
+  auto s = DoubleToStringConvertor::convert(current.toDouble(), 'f', precision(index));
   lineEdit->setText(DoubleToStringConvertor::convert(current.toDouble()));
   lineEdit->selectAll();
 
@@ -50,9 +60,7 @@ void FloatingValueDelegate::setEditorData(QWidget *editor, const QModelIndex &in
   if (lineEdit == nullptr)
     return;
 
-  const int prec = index.model()->data(index, Qt::UserRole + 1).toInt();
-
-  lineEdit->setText(DoubleToStringConvertor::convert(value, 'f', prec));
+  lineEdit->setText(DoubleToStringConvertor::convert(value, 'f', precision(index)));
 }
 
 void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
