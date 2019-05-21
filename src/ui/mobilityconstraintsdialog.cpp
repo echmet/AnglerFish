@@ -4,6 +4,7 @@
 
 #include <gearbox/gearbox.h>
 #include <gearbox/limitmobilityconstraintsmodel.h>
+#include <gearbox/floatingvaluedelegate.h>
 
 MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConstraintsModel &model,
                                                      gearbox::Gearbox &gbox,
@@ -15,8 +16,11 @@ MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConst
 {
   ui->setupUi(this);
 
+  m_fltDelegate = new gearbox::FloatingValueDelegate{this};
+
   m_uiModel = new MobilityConstraintsModel{model, h_gbox, this->palette(), this};
   ui->qtvb_currentConstraints->setModel(m_uiModel);
+  ui->qtvb_currentConstraints->setItemDelegateForColumn(0, m_fltDelegate);
 
   ui->qcb_useMobilityConstraints->setChecked(h_model.enabled());
 
@@ -35,17 +39,4 @@ MobilityConstraintsDialog::MobilityConstraintsDialog(gearbox::LimitMobilityConst
 MobilityConstraintsDialog::~MobilityConstraintsDialog()
 {
   delete ui;
-}
-
-void MobilityConstraintsDialog::onEstimatesChanged()
-{
-  const auto estimates = h_gbox.analyteEstimates();
-
-  int charge = estimates.chargeLow;
-
-  QVector<MobilityConstraintsModel::EstimatedMobility> estMobs{};
-  for (const auto &mob : estimates.mobilities)
-    estMobs.push_front(MobilityConstraintsModel::EstimatedMobility{charge++, mob.value});
-
-  m_uiModel->updateConstraints(estimates.chargeLow, estimates.chargeHigh, estMobs);
 }

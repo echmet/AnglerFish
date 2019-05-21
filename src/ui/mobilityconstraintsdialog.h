@@ -8,8 +8,9 @@ class MobilityConstraintsDialog;
 }
 
 namespace gearbox {
-class Gearbox;
-class LimitMobilityConstraintsModel;
+  class Gearbox;
+  class FloatingValueDelegate;
+  class LimitMobilityConstraintsModel;
 } // namespace gearbox
 
 class MobilityConstraintsModel;
@@ -28,9 +29,7 @@ private:
   MobilityConstraintsModel *m_uiModel;
   gearbox::LimitMobilityConstraintsModel &h_model;
   gearbox::Gearbox &h_gbox;
-
-public slots:
-  void onEstimatesChanged();
+  gearbox::FloatingValueDelegate *m_fltDelegate;
 };
 
 #endif // MOBILITYCONSTRAINTSDIALOG_H

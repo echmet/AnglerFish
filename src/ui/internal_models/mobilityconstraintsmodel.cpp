@@ -2,6 +2,7 @@
 
 #include <QPalette>
 #include <gearbox/limitmobilityconstraintsmodel.h>
+#include <gearbox/gearbox.h>
 #include <cassert>
 
 MobilityConstraintsModel::MobInfo::MobInfo() noexcept :
@@ -32,6 +33,11 @@ MobilityConstraintsModel::MobilityConstraintsModel(const gearbox::LimitMobilityC
   h_palette{palette}
 {
   m_invalBrush.setColor(Qt::red);
+
+  updateModel(h_gbox.analyteEstimates().chargeLow, h_gbox.analyteEstimates().chargeHigh,
+              h_gbox.analyteEstimates().mobilities);
+
+  connect(&h_gbox, &gearbox::Gearbox::analyteEstimatesChanged, this, &MobilityConstraintsModel::onEstimatesUpdated);
 }
 
 bool MobilityConstraintsModel::hasPrev(const int charge, const int row) const
@@ -131,6 +137,59 @@ QVariant MobilityConstraintsModel::data(const QModelIndex &index, int role) cons
   return {};
 }
 
+Qt::ItemFlags MobilityConstraintsModel::flags(const QModelIndex &index) const
+{
+  static const auto def = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  if (!index.isValid())
+    return Qt::NoItemFlags;
+
+  if (index.row() >= m_data.size())
+    return Qt::NoItemFlags;
+
+  if (index.column() > 0)
+    return def;
+
+  const auto &item = m_data.at(index.row());
+  if (item.charge != 0)
+    return def | Qt::ItemIsEditable;
+
+  return def;
+}
+
+bool MobilityConstraintsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+  if (!index.isValid())
+    return false;
+
+  const auto col = index.column();
+  const auto row = index.row();
+
+  if (col < 0 || col >= columnCount() || row < 0 || row >= rowCount())
+    return false;
+  if (role != Qt::EditRole)
+    return false;
+  if (col > 0)
+    return false;
+
+  if (!value.canConvert<double>())
+    return false;
+
+  const double uEst = value.toDouble(nullptr);
+
+  const auto &estimates = h_gbox.analyteEstimates();
+  auto mobilities = estimates.mobilities;
+  mobilities[row] = gearbox::AnalyteEstimates::Parameter{uEst, mobilities.at(row).fixed};
+
+  h_gbox.setAnalyteEstimates(estimates.chargeLow, estimates.chargeHigh,
+                             mobilities, estimates.pKas);
+
+  updateModel(estimates.chargeLow, estimates.chargeHigh, mobilities);
+
+  emit dataChanged(index, index);
+
+  return true;
+}
+
 QVariant MobilityConstraintsModel::displayValidity(const int row, const int col) const
 {
   if (col > 0)
@@ -149,11 +208,15 @@ QVariant MobilityConstraintsModel::displayValidity(const int row, const int col)
   return isWithinConstrs ? m_defBrush : m_invalBrush;
 }
 
-void MobilityConstraintsModel::updateConstraints(const int chargeLow, const int chargeHigh,
-                                                 QVector<EstimatedMobility> estimates)
+void MobilityConstraintsModel::onEstimatesUpdated()
 {
-  std::sort(estimates.begin(), estimates.end(), [](const EstimatedMobility &lhs, const EstimatedMobility &rhs) { return lhs.charge < rhs.charge; });
+  updateModel(h_gbox.analyteEstimates().chargeLow, h_gbox.analyteEstimates().chargeHigh,
+              h_gbox.analyteEstimates().mobilities);
+}
 
+void MobilityConstraintsModel::updateModel(const int chargeLow, const int chargeHigh,
+                                           const gearbox::AnalyteEstimates::ParameterVec &mobilities)
+{
   beginResetModel();
 
   int size = chargeHigh - chargeLow;
@@ -162,12 +225,16 @@ void MobilityConstraintsModel::updateConstraints(const int chargeLow, const int 
   m_data.clear();
   m_data.reserve(size);
 
-  for (auto &item : estimates) {
-    if (item.charge == 0)
-      continue;
+  int charge = chargeLow;
+  for (const auto &item : mobilities) {
+    if (charge == 0)
+      m_data.push_back({ 0, 0, 0, 0});
+    else {
+      const auto ret = h_backend.constraintsForCharge(charge, h_gbox);
+      m_data.push_back({ charge, item.value, ret.low, ret.high });
+    }
 
-    const auto ret = h_backend.constraintsForCharge(item.charge, h_gbox);
-    m_data.push_back({ item.charge, item.mobility, ret.low, ret.high });
+    charge++;
   }
 
   endResetModel();

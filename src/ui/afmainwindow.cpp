@@ -173,7 +173,6 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           [this] { if (m_mobConstrsDlg->exec() == QDialog::Accepted)
                      invalidateResults();
           });
-  connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, m_mobConstrsDlg, &MobilityConstraintsDialog::onEstimatesChanged);
 
   connect(ui->actionLoad_another_database, &QAction::triggered, this, &AFMainWindow::onOpenDatabase);
   connect(ui->actionUse_unscaled_std_errors, &QAction::toggled, this, [this]() { invalidateResults(); });

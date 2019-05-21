@@ -4,6 +4,8 @@
 #include "analyteestimates.h"
 #include "scalarfitresultsmapping.h"
 
+#include <QObject>
+
 namespace gearbox {
 
 class GearboxPrivate;
@@ -16,7 +18,8 @@ class IonicEffectsModel;
 class LimitMobilityConstraintsModel;
 class MobilityCurveModel;
 
-class Gearbox {
+class Gearbox : public QObject {
+  Q_OBJECT
 public:
   explicit Gearbox();
   Gearbox(const Gearbox &other) = delete;
@@ -39,6 +42,9 @@ public:
   void clearAnalyteEstimates();
   void invalidateAll();
   void invalidateResults();
+
+signals:
+  void analyteEstimatesChanged();
 
 private:
   GearboxPrivate *m_gboxPriv;

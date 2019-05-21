@@ -5,7 +5,7 @@
 
 namespace gearbox {
 
-Gearbox::Gearbox() :
+Gearbox::Gearbox() : QObject{nullptr},
   m_gboxPriv{new GearboxPrivate{}}
 {
 }
@@ -93,11 +93,15 @@ void Gearbox::setAnalyteEstimates(const int chargeLow, const int chargeHigh,
                                                    chargeHigh,
                                                    std::move(mobilities),
                                                    std::move(pKas)};
+
+  emit analyteEstimatesChanged();
 }
 
 void Gearbox::setAnalyteEstimates(AnalyteEstimates estimates)
 {
   m_gboxPriv->m_analyteEstimates = std::move(estimates);
+
+  emit analyteEstimatesChanged();
 }
 
 } // namespace gearbox

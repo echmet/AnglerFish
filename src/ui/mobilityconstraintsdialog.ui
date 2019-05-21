@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableView" name="qtvb_currentConstraints"/>
+    <widget class="CopiableItemsTableView" name="qtvb_currentConstraints"/>
    </item>
    <item>
     <widget class="QLabel" name="label">
@@ -60,12 +60,19 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CopiableItemsTableView</class>
+   <extends>QTableView</extends>
+   <header>src/ui/copiableitemstableview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

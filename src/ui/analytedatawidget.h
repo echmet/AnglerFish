@@ -39,6 +39,7 @@ private:
   gearbox::Gearbox &h_gbox;
 
 private slots:
+  void onEstimatesChanged();
   void onResultsToClipboard();
   void onUpdateEstimates();
 

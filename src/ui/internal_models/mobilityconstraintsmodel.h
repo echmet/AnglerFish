@@ -5,6 +5,7 @@
 
 #include <QBrush>
 #include <QVector>
+#include <gearbox/analyteestimates.h>
 
 class QPalette;
 
@@ -47,9 +48,11 @@ public:
   int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+  Qt::ItemFlags flags(const QModelIndex &index) const override;
+  bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
-  void updateConstraints(const int chargeLow, const int chargeHigh,
-                         QVector<EstimatedMobility> estimates);
+  void updateModel(const int chargeLow, const int chargeHigh,
+                   const gearbox::AnalyteEstimates::ParameterVec &mobilities);
 private:
   enum Item {
     IT_MOBILITY,
@@ -68,6 +71,10 @@ private:
   const gearbox::LimitMobilityConstraintsModel &h_backend;
   gearbox::Gearbox &h_gbox;
   const QPalette &h_palette;
+
+private slots:
+  void onEstimatesUpdated();
+
 
 };
 

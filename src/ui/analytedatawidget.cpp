@@ -56,6 +56,7 @@ AnalyteDataWidget::AnalyteDataWidget(gearbox::Gearbox &gbox,
           });
 
   connect(m_estimatedParamsWidget, &EditChargesWidgetEstimates::estimatesChanged, this, &AnalyteDataWidget::onUpdateEstimates);
+  connect(&h_gbox, &gearbox::Gearbox::analyteEstimatesChanged, this, &AnalyteDataWidget::onEstimatesChanged);
 
   onUpdateEstimates(); /* Set the initial empty estimates */
 }
@@ -103,6 +104,11 @@ std::vector<std::pair<double, bool>> AnalyteDataWidget::estimatedpKas() const
     v.emplace_back(pKas[idx], fixedPkas[idx]);
 
   return v;
+}
+
+void AnalyteDataWidget::onEstimatesChanged()
+{
+  setEstimatesFromCurrent();
 }
 
 void AnalyteDataWidget::onResultsToClipboard()
@@ -160,8 +166,10 @@ void AnalyteDataWidget::onUpdateEstimates()
   for (const auto &p :pKas)
     apKas.emplace_back(p.first, p.second);
 
+  disconnect(&h_gbox, &gearbox::Gearbox::analyteEstimatesChanged, this, &AnalyteDataWidget::onEstimatesChanged);
   h_gbox.setAnalyteEstimates(chargeLow(), chargeHigh(),
                              std::move(aMobs), std::move(apKas));
+  connect(&h_gbox, &gearbox::Gearbox::analyteEstimatesChanged, this, &AnalyteDataWidget::onEstimatesChanged);
 
   emit estimatesChanged();
 }
