@@ -15,7 +15,7 @@ int precision(const QModelIndex &index)
   return pv.toInt();
 }
 
-FloatingValueDelegate::FloatingValueDelegate(QObject *parent) : QItemDelegate(parent)
+FloatingValueDelegate::FloatingValueDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
 }
 
@@ -27,7 +27,7 @@ QWidget *FloatingValueDelegate::createEditor(QWidget *parent, const QStyleOption
 
   const auto &current = index.model()->data(index);
 
-  auto s = DoubleToStringConvertor::convert(current.toDouble(), 'f', precision(index));
+  auto s = DoubleToStringConvertor::convert(current.toDouble(), 'g', precision(index));
   lineEdit->setText(DoubleToStringConvertor::convert(current.toDouble()));
   lineEdit->selectAll();
 
@@ -37,9 +37,27 @@ QWidget *FloatingValueDelegate::createEditor(QWidget *parent, const QStyleOption
   return lineEdit;
 }
 
+QString FloatingValueDelegate::displayText(const QVariant &value, const QLocale &locale) const
+{
+  /* We have to set the actual displayText from initStyleOption() */
+  Q_UNUSED(value) Q_UNUSED(locale)
+
+  return {};
+}
 void FloatingValueDelegate::forceCommit()
 {
   emit editorCommit();
+}
+
+void FloatingValueDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+  QStyledItemDelegate::initStyleOption(option, index);
+
+  auto value = index.data(Qt::DisplayRole);
+  if (value.isValid()) {
+    option->features |= QStyleOptionViewItem::HasDisplay;
+    option->text = DoubleToStringConvertor::convert(value.toDouble(), 'g', precision(index));
+  }
 }
 
 void FloatingValueDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
@@ -60,7 +78,7 @@ void FloatingValueDelegate::setEditorData(QWidget *editor, const QModelIndex &in
   if (lineEdit == nullptr)
     return;
 
-  lineEdit->setText(DoubleToStringConvertor::convert(value, 'f', precision(index)));
+  lineEdit->setText(DoubleToStringConvertor::convert(value, 'g', precision(index)));
 }
 
 void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
