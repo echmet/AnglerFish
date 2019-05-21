@@ -40,6 +40,16 @@
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
 static QString HIDE_INPUT_PANEL{QObject::tr("Hide input panel")};
 
+static
+void makeYesNoMessagebox(QMessageBox &mbox, const QString &title, const QString &text)
+{
+  mbox.setIcon(QMessageBox::Question);
+  mbox.setText(title);
+  mbox.setInformativeText(text);
+  mbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  mbox.setDefaultButton(QMessageBox::No);
+}
+
 class WidgetCommiter {
 public:
   WidgetCommiter()
@@ -131,7 +141,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
 
   setupIcons();
 
-  setWindowTitle(Globals::VERSION_STRING());
+  setAFWindowTitle();
 
   connect(m_qpb_load, &QPushButton::clicked, this, &AFMainWindow::onLoad);
   connect(m_qpb_new, &QPushButton::clicked, this, &AFMainWindow::onNew);
@@ -381,6 +391,8 @@ void AFMainWindow::onLoad()
         m_analDataWidget->setEstimatesFromCurrent();
 
         lastPath = dlg.selectedFiles().constFirst();
+        m_activeFilePath = lastPath;
+        setAFWindowTitle();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
         mbox.exec();
@@ -391,12 +403,11 @@ void AFMainWindow::onLoad()
 
 void AFMainWindow::onNew()
 {
-  QMessageBox mbox{QMessageBox::Question,
-                   tr("Confirm action"),
-                   tr("Create new setup\n\n"
-                      "Are you sure you want to discard the current "
-                      "setup and create a new one?"),
-                   QMessageBox::Yes | QMessageBox::No};
+  QMessageBox mbox{};
+  makeYesNoMessagebox(mbox,
+                      tr("Create new setup"),
+                      tr("Are you sure you want to discard the current "
+                         "setup and create a new one?"));
   if (mbox.exec() != QMessageBox::Yes)
     return;
 
@@ -404,6 +415,9 @@ void AFMainWindow::onNew()
   h_gbox.clearAnalyteEstimates();
   h_gbox.chemicalBuffersModel().clear();
   m_analDataWidget->setEstimatesFromCurrent();
+
+  m_activeFilePath.clear();
+  setAFWindowTitle();
 }
 
 void AFMainWindow::onNewBuffers()
@@ -462,10 +476,34 @@ void AFMainWindow::onOpenDatabase()
 
 void AFMainWindow::onSave()
 {
+  if (m_activeFilePath.isEmpty())
+    onSaveAs();
+  else {
+    QMessageBox mbox{};
+    makeYesNoMessagebox(mbox,
+                        tr("Confim action"),
+                        QString{tr("Overwrite existing file %1?")}.arg(QFileInfo{m_activeFilePath}.fileName()));
+
+    if (mbox.exec() != QMessageBox::Yes)
+      return;
+
+    try {
+      persistence::saveEntireSetup(m_activeFilePath,
+                                   h_gbox.chemicalBuffersModel(),
+                                   h_gbox.analyteEstimates());
+    } catch (const persistence::Exception &ex) {
+      QMessageBox mbox{QMessageBox::Warning, tr("Failed to save setup"), ex.what()};
+      mbox.exec();
+    }
+  }
+}
+
+void AFMainWindow::onSaveAs()
+{
   static QString lastPath{};
 
   if (!lastPath.isEmpty())
-    m_saveDlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
+      m_saveDlg.setDirectory(QFileInfo{lastPath}.absoluteDir());
 
   if (m_saveDlg.exec() == QDialog::Accepted) {
     if (!m_saveDlg.selectedFiles().empty()) {
@@ -475,17 +513,15 @@ void AFMainWindow::onSave()
                                      h_gbox.analyteEstimates());
 
         lastPath = m_saveDlg.selectedFiles().constFirst();
+        m_activeFilePath = lastPath;
+
+        setAFWindowTitle();
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to save setup"), ex.what()};
         mbox.exec();
       }
     }
   }
-}
-
-void AFMainWindow::onSaveAs()
-{
-
 }
 
 void AFMainWindow::onScreenChanged(QScreen *)
@@ -547,6 +583,19 @@ void AFMainWindow::onToggleInputPanel()
 
   m_buffersAnalyte->setVisible(!isVisible);
   m_qpb_toggleAnalytePanel->setDisabled(isVisible);
+}
+
+void AFMainWindow::setAFWindowTitle()
+{
+  QString title{Globals::VERSION_STRING()};
+
+  if (!m_activeFilePath.isEmpty()) {
+    auto fname = QFileInfo{m_activeFilePath}.fileName();
+
+    title += QString{" - %1"}.arg(fname);
+  }
+
+  setWindowTitle(title);
 }
 
 void AFMainWindow::setWidgetSizes()

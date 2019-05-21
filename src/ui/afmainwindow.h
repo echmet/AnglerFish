@@ -42,6 +42,7 @@ private:
   void invalidateResults();
   void updatePlotExperimental();
   void updatePlotFitted();
+  void setAFWindowTitle();
   void setWidgetSizes();
   void setupIcons();
   void warnIfPossiblyUnreliable();
@@ -75,6 +76,7 @@ private:
   ToggleTracepointsDialog *m_tptsDlg;
   ToggleTracepointsDialog::TracingSetup m_tracingSetup;
 
+  QString m_activeFilePath;
   bool m_displayPossiblyUnreliableWarning;
 
   QTimer m_clock;
