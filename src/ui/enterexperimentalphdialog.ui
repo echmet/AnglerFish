@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>252</width>
-    <height>122</height>
+    <height>136</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,19 @@
       <widget class="FloatingValueLineEdit" name="qle_pH"/>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="ql_ctuentInUse">
+     <property name="text">
+      <string>&lt;CONSTITUENT_IN_USE&gt;</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">

@@ -139,6 +139,18 @@ void BufferCompositionWidget::onRemoveConstituent()
   emit compositionChanged();
 }
 
+QString BufferCompositionWidget::selectedConsituentName() const
+{
+  const auto &idx = ui->qtbv_composition->selectionModel()->currentIndex();
+
+  if (!idx.isValid())
+    return {};
+
+  const auto nameIdx = m_model->index(idx.row(), 0);
+
+  return m_model->data(nameIdx, Qt::DisplayRole).toString();
+}
+
 void BufferCompositionWidget::setWidgetSizes()
 {
   const auto &fm = fontMetrics();

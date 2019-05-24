@@ -28,7 +28,7 @@ public:
   GDMProxy & composition();
   double bufferCapacity();
   double bufferCapacity() const;
-  void correctConcentration(const double targetpH);
+  void correctConcentration(const double targetpH, const std::string &name);
   bool empty() const;
   bool exclude() const;
   const std::vector<double> & experimentalMobilities() const;

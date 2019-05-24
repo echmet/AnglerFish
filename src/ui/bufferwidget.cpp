@@ -168,13 +168,20 @@ void BufferWidget::onCompositionChanged()
 
 void BufferWidget::onCorrectConcentration()
 {
-  EnterExperimentalpHDialog dlg{this};
+  const auto &name = m_compositionWidget->selectedConsituentName();
+  if (name.isEmpty()) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Invalid input"), tr("No constituent selected")};
+    mbox.exec();
+    return;
+  }
 
+  EnterExperimentalpHDialog dlg{name, this};
   if (dlg.exec() != QDialog::Accepted)
     return;
 
+
   try {
-    h_buffer.correctConcentration(dlg.pH());
+    h_buffer.correctConcentration(dlg.pH(), name.toStdString());
     onCompositionChanged();
   } catch (const gearbox::ChemicalBuffer::Exception &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Automatic concentration correction failed"), ex.what()};

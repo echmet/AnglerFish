@@ -23,6 +23,7 @@ public:
                                    gearbox::DatabaseProxy &dbProxy,
                                    QWidget *parent = nullptr);
   ~BufferCompositionWidget();
+  QString selectedConsituentName() const;
 
 private:
   void editConstituent(const QString &name);

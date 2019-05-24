@@ -83,36 +83,32 @@ GDMProxy & ChemicalBuffer::composition()
   return *m_composition;
 }
 
-void ChemicalBuffer::correctConcentration(const double targetpH)
+void ChemicalBuffer::correctConcentration(const double targetpH, const std::string &name)
 {
-  if (m_gdmModel->size() == 1) {
-    const double cLeft{CCORR_PREC};
-    const double cRight{500.0};
+  if (m_gdmModel->empty())
+    throw Exception{trstr("No constituents")};
 
-    correctConcentrationInternal(m_gdmModel->cbegin(), cLeft, cRight, targetpH);
-  } else if (m_gdmModel->size() == 2) {
-    auto strong = utility::findDrivingConstituent(m_gdmModel);
-    if (strong == m_gdmModel->cend())
-      throw Exception{trstr("Driving component not identified")};
+  const auto ctuent = m_gdmModel->find(name);
+  if (ctuent == m_gdmModel->cend())
+    throw Exception{trstr("Constituent not found")};
 
-    /* Find weak component */
-    auto weak = m_gdmModel->cbegin();
-    for (;weak != m_gdmModel->cend(); weak++) {
-      if (weak != strong)
-        break;
+  const double cLeft{CCORR_PREC};
+  const double cRight  = [&]() {
+    if (m_gdmModel->size() == 1)
+      return 500.0;
+
+    double cMax{0.0};
+
+    for (auto it = m_gdmModel->cbegin(); it != m_gdmModel->cend(); ++it) {
+      double c = m_gdmModel->concentrations(it).at(0);
+      if (c > cMax)
+        cMax = c;
     }
-    assert(weak != m_gdmModel->cend());
 
-    if ((utility::isAcid(strong) && utility::isAcid(weak)) ||
-        (utility::isBase(strong) && utility::isBase(weak)))
-    throw Exception{trstr("Buffer must consist of weak acid and strong base or vice versa")};
+    return 50.0 * cMax;
+  }();
 
-    double cLeft{CCORR_PREC};
-    double cRight{50.0 * m_gdmModel->concentrations(strong).front()};
-
-    correctConcentrationInternal(weak, cLeft, cRight, targetpH);
-  } else
-    throw Exception{trstr("Automatic correction works only with a single constituent or binary buffers")};
+  correctConcentrationInternal(ctuent, cLeft, cRight, targetpH);
 }
 
 void ChemicalBuffer::correctConcentrationInternal(const gdm::GDM::const_iterator weak, double cLeft, double cRight,

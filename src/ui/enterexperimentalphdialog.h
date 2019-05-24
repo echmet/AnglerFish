@@ -10,7 +10,7 @@ class EnterExperimentalpHDialog;
 class EnterExperimentalpHDialog : public QDialog {
   Q_OBJECT
 public:
-  explicit EnterExperimentalpHDialog(QWidget *parent = nullptr);
+  explicit EnterExperimentalpHDialog(const QString &name, QWidget *parent = nullptr);
   ~EnterExperimentalpHDialog();
 
   double pH() const;
