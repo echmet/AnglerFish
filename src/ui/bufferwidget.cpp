@@ -4,12 +4,16 @@
 #include "buffercompositionwidget.h"
 #include "enterexperimentalphdialog.h"
 #include "experimentalmobilitywidget.h"
+#include "operationinprogressdialog.h"
 
 #include <gearbox/gearbox.h>
 #include <gearbox/doubletostringconvertor.h>
 #include <gearbox/chemicalbuffer.h>
 #include <gearbox/ioniceffectsmodel.h>
 #include <util_lowlevel.h>
+#include <QtConcurrent/QtConcurrentRun>
+#include <QException>
+#include <QFutureWatcher>
 #include <QMenu>
 #include <QMessageBox>
 #include <QScreen>
@@ -18,6 +22,52 @@
 #include <QWindow>
 #include <limits>
 #include <cassert>
+#include <future>
+
+class WorkerException : public QException {
+public:
+  WorkerException(QString message) :
+    QException{},
+    m_message{std::move(message)}
+  {}
+
+  WorkerException(const WorkerException &other) :
+    QException{},
+    m_message{other.m_message}
+  {}
+
+  WorkerException * clone() const override;
+  void raise() const override;
+  const char * what() const noexcept override;
+
+private:
+  QString m_message;
+};
+
+WorkerException * WorkerException::clone() const
+{
+  return new WorkerException{*this};
+}
+
+void WorkerException::raise() const
+{
+  throw *this;
+}
+
+const char * WorkerException::what() const noexcept
+{
+  return m_message.toUtf8().data();
+}
+
+inline
+void correctConcentrationWorker(gearbox::ChemicalBuffer *buffer, const double pH, const std::string &name)
+{
+  try {
+    buffer->correctConcentration(pH, name);
+  } catch (const gearbox::ChemicalBuffer::Exception &ex) {
+    throw WorkerException{ex.what()};
+  }
+}
 
 BufferWidget::BufferWidget(gearbox::Gearbox &gbox, gearbox::ChemicalBuffer &buffer, QWidget *parent) :
   QWidget{parent},
@@ -179,11 +229,18 @@ void BufferWidget::onCorrectConcentration()
   if (dlg.exec() != QDialog::Accepted)
     return;
 
+  OperationInProgressDialog inProgDlg{"Correcting concentration", this};
+  QFutureWatcher<void> watcher{};
+  connect(&watcher, &QFutureWatcher<void>::finished, &inProgDlg, &OperationInProgressDialog::onOperationCompleted);
 
   try {
-    h_buffer.correctConcentration(dlg.pH(), name.toStdString());
+    auto fut = QtConcurrent::run(correctConcentrationWorker,
+                                 &h_buffer, dlg.pH(), name.toStdString());
+    watcher.setFuture(fut);
+    inProgDlg.exec();
+    fut.waitForFinished();
     onCompositionChanged();
-  } catch (const gearbox::ChemicalBuffer::Exception &ex) {
+  } catch (const WorkerException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Automatic concentration correction failed"), ex.what()};
     mbox.exec();
   }
