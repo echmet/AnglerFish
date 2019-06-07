@@ -31,6 +31,35 @@ void wcharDeleter(wchar_t *ptr)
 #endif // _WIN32
 
 inline
+std::string EMPFErrorToString(ECHMET::ElmigParamsFitter::RetCode tRet)
+{
+  using RetCode = ECHMET::ElmigParamsFitter::RetCode;
+
+  switch (tRet) {
+  case RetCode::OK:
+    return trstr("OK");
+  case RetCode::E_INVALID_ARGUMENT:
+    return trstr("Invalid argument");
+  case RetCode::E_NOT_ENOUGH_MEASUREMENTS:
+    return trstr("Measurements in more buffers are needed");
+  case RetCode::E_INVALID_BUFFER:
+    return trstr("Invalid buffer composition");
+  case RetCode::E_NO_MEMORY:
+    return trstr("Insufficient memory");
+  case RetCode::E_REGRESSOR_INITIALIZATION:
+    return trstr("Failed to initialize regressor");
+  case RetCode::E_REGRESSOR_NO_SOLUTION:
+    return trstr("Regressor found no solution");
+  case RetCode::E_REGRESSOR_INTERNAL_ERROR:
+    return trstr("Internal regressor error");
+  case RetCode::E_REGRESSOR_PARAMETERS_NOT_SANE:
+    return trstr("Initial estimates are not sane");
+  }
+
+  return trstr("Unknown error");
+}
+
+inline
 bool operator<(const QPointF &lhs, const QPointF &rhs)
 {
   return lhs.x() < rhs.x();
@@ -341,7 +370,7 @@ void EMPFitterInterface::fit()
   auto results = FitResultsPtr{new ECHMET::ElmigParamsFitter::FitResults{nullptr, nullptr, 0.0}, resultsReleaser};
   auto fitRet = ECHMET::ElmigParamsFitter::process(*system, fixer.get(), options, *results);
   if (fitRet != ECHMET::ElmigParamsFitter::RetCode::OK) {
-    const auto err = QString{QObject::tr("Fit failed: ")} + QString{ECHMET::ElmigParamsFitter::EMPFerrorToString(fitRet)};
+    const auto err = QString{QObject::tr("Fit failed: ")} + QString::fromStdString(EMPFErrorToString(fitRet));
     throw Exception{err.toStdString()};
   }
 
