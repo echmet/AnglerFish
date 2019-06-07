@@ -23,9 +23,9 @@ int cxsgn(const T &v)
 }
 
 inline
-QwtSymbol * makeSymbol(const QwtSymbol::Style s, const QColor &clr, const QFontMetrics &fm)
+QwtSymbol * makeSymbol(const QwtSymbol::Style s, const QColor &clr, const QFont &font)
 {
-  static const int SIZE{fm.height()};
+  const int SIZE{QFontMetrics{font}.height()};
 
   auto symbol = new QwtSymbol{s};
   symbol->setSize(SIZE);
@@ -167,14 +167,18 @@ void FitPlotWidget::setupPlot()
 
   m_plot->setCanvasBackground(Qt::white);
 
+  auto symfont = font();
+  auto symFontSmall = symfont;
+  symFontSmall.setPointSize(qRound(symfont.pointSize() * 2.0 / 3.0));
+
   m_curveResiduals->attach(m_plot);
   m_curveResiduals->setYAxis(QwtPlot::yRight);
   m_curveResidualsZeroLine->attach(m_plot);
   m_curveResidualsZeroLine->setYAxis(QwtPlot::yRight);
 
+  m_curveFitted->attach(m_plot);
   m_curveExperimental->attach(m_plot);
   m_curveExcluded->attach(m_plot);
-  m_curveFitted->attach(m_plot);
   m_curveProvisional->attach(m_plot);
 
   m_plotZoomer->setTrackerMode(QwtPicker::AlwaysOn);
@@ -183,19 +187,19 @@ void FitPlotWidget::setupPlot()
   m_plotPicker->setMousePattern(QwtEventPattern::MouseSelect1, Qt::RightButton);
 
   m_curveExperimental->setStyle(QwtPlotCurve::NoCurve);
-  m_curveExperimental->setSymbol(makeSymbol(QwtSymbol::Cross, Qt::black, fontMetrics()));
+  m_curveExperimental->setSymbol(makeSymbol(QwtSymbol::Cross, Qt::black, symfont));
 
   m_curveExcluded->setStyle(QwtPlotCurve::NoCurve);
-  m_curveExcluded->setSymbol(makeSymbol(QwtSymbol::Cross, Qt::red, fontMetrics()));
+  m_curveExcluded->setSymbol(makeSymbol(QwtSymbol::Cross, Qt::red, symfont));
 
   m_curveFitted->setStyle(QwtPlotCurve::NoCurve);
-  m_curveFitted->setSymbol(makeSymbol(QwtSymbol::XCross, Qt::blue, fontMetrics()));
+  m_curveFitted->setSymbol(makeSymbol(QwtSymbol::Rect, Qt::blue, symFontSmall));
 
   m_curveProvisional->setStyle(QwtPlotCurve::NoCurve);
-  m_curveProvisional->setSymbol(makeSymbol(QwtSymbol::XCross, QColor{255, 5, 147}, fontMetrics()));
+  m_curveProvisional->setSymbol(makeSymbol(QwtSymbol::Diamond, QColor{255, 5, 147}, symFontSmall));
 
   m_curveResiduals->setStyle(QwtPlotCurve::NoCurve);
-  m_curveResiduals->setSymbol(makeSymbol(QwtSymbol::Triangle, Qt::yellow, fontMetrics()));
+  m_curveResiduals->setSymbol(makeSymbol(QwtSymbol::Hexagon, QColor{255, 255, 127}, symfont));
 
   m_curveResidualsZeroLine->setPen(QColor{16, 16, 16}, 1.0, Qt::DotLine);
 }
