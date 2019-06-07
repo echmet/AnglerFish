@@ -55,7 +55,7 @@ QVariant FitResultsModel::headerData(int section, Qt::Orientation orientation, i
     case ID_ABS_ERR:
       return tr("Abs. error");
     case ID_REL_ERR:
-      return tr("Rel. error");
+      return tr("Rel. error (%)");
     }
   } else {
     if (section >= 0 && section < rowCount())
