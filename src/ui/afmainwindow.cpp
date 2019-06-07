@@ -38,7 +38,7 @@
 #include <cassert>
 
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
-static QString HIDE_INPUT_PANEL{QObject::tr("Hide input panel")};
+static QString HIDE_INPUT_PANEL{QObject::tr("Maximize graph")};
 
 static
 void makeYesNoMessagebox(QMessageBox &mbox, const QString &title, const QString &text)
@@ -578,7 +578,7 @@ void AFMainWindow::onToggleInputPanel()
   const bool isVisible = m_buffersAnalyte->isVisible();
 
   if (isVisible)
-    m_qpb_toggleInputPanel->setText(tr("Show input panel"));
+    m_qpb_toggleInputPanel->setText(tr("Restore graph"));
   else
     m_qpb_toggleInputPanel->setText(HIDE_INPUT_PANEL);
 
