@@ -75,6 +75,11 @@ FitPlotWidget::~FitPlotWidget()
   delete ui;
 }
 
+bool FitPlotWidget::isLegendShown() const
+{
+  return m_plot->legend() != nullptr;
+}
+
 void FitPlotWidget::makeLegend()
 {
   auto legend = new QwtLegend{};

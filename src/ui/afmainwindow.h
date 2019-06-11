@@ -68,6 +68,7 @@ private:
   QPushButton *m_qpb_summarize;
   QPushButton *m_qpb_toggleAnalytePanel;
   QPushButton *m_qpb_toggleInputPanel;
+  QPushButton *m_qpb_toggleGraphLegend;
 
   CheckForUpdateDialog *m_checkForUpdateDlg;
 
@@ -102,6 +103,7 @@ private slots:
   void onShowProvisional();
   void onSummarize();
   void onToggleAnalytePanel();
+  void onToggleGraphLegend();
   void onToggleInputPanel();
 };
 

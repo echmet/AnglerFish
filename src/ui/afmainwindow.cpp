@@ -39,6 +39,8 @@
 
 static QString HIDE_ANALYTE_PANEL{QObject::tr("Hide analyte panel")};
 static QString HIDE_INPUT_PANEL{QObject::tr("Maximize graph")};
+static QString HIDE_GRAPH_LEGEND{QObject::tr("Hide graph legend")};
+static QString SHOW_GRAPH_LEGEND{QObject::tr("Show graph legend")};
 
 static
 void makeYesNoMessagebox(QMessageBox &mbox, const QString &title, const QString &text)
@@ -122,6 +124,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_summarize = new QPushButton{tr("Summarize"), this};
   m_qpb_toggleAnalytePanel = new QPushButton{HIDE_ANALYTE_PANEL, this};
   m_qpb_toggleInputPanel = new QPushButton{HIDE_INPUT_PANEL, this};
+  m_qpb_toggleGraphLegend = new QPushButton{m_fitPlotWidget->isLegendShown() ? HIDE_GRAPH_LEGEND : SHOW_GRAPH_LEGEND,
+                                            this};
 
   m_qpb_toggleAnalytePanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   m_qpb_toggleInputPanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -137,6 +141,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui->qtb_mainToolBar->addWidget(m_qpb_summarize);
   ui->qtb_mainToolBar->addWidget(m_qpb_toggleAnalytePanel);
   ui->qtb_mainToolBar->addWidget(m_qpb_toggleInputPanel);
+  ui->qtb_mainToolBar->addWidget(m_qpb_toggleGraphLegend);
 
   m_saveDlg.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -154,6 +159,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   connect(m_qpb_summarize, &QPushButton::clicked, this, &AFMainWindow::onSummarize);
   connect(m_qpb_toggleAnalytePanel, &QPushButton::clicked, this, &AFMainWindow::onToggleAnalytePanel);
   connect(m_qpb_toggleInputPanel, &QPushButton::clicked, this, &AFMainWindow::onToggleInputPanel);
+  connect(m_qpb_toggleGraphLegend, &QPushButton::clicked, this, &AFMainWindow::onToggleGraphLegend);
 
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &AFMainWindow::onCheckForUpdate);
 
@@ -581,6 +587,18 @@ void AFMainWindow::onToggleAnalytePanel()
     m_qpb_toggleAnalytePanel->setText(HIDE_ANALYTE_PANEL);
 
   m_analDataWidget->setVisible(!isVisible);
+}
+
+void AFMainWindow::onToggleGraphLegend()
+{
+  auto shown = m_fitPlotWidget->isLegendShown();
+
+  m_fitPlotWidget->showLegend(!shown);
+
+  if (shown)
+    m_qpb_toggleGraphLegend->setText(SHOW_GRAPH_LEGEND);
+  else
+    m_qpb_toggleGraphLegend->setText(HIDE_GRAPH_LEGEND);
 }
 
 void AFMainWindow::onToggleInputPanel()

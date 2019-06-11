@@ -20,6 +20,7 @@ class FitPlotWidget : public QWidget
 public:
   explicit FitPlotWidget(QWidget *parent = nullptr);
   ~FitPlotWidget();
+  bool isLegendShown() const;
   void setExperimentalData(const QVector<QPointF> &experimental, const QVector<QPointF> &excluded);
   void setFittedData(const QVector<QPointF> &data);
   void setProvisionalData(const QVector<QPointF> &data);
