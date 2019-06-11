@@ -11,6 +11,7 @@
 #include <qwt_plot_picker.h>
 #include <qwt_picker_machine.h>
 #include <qwt_symbol.h>
+#include <qwt_legend.h>
 
 const QString FitPlotWidget::s_uEffUnit{"(m<sup>2</sup>/V/s)"};
 const QString FitPlotWidget::s_uEffCoeff{"10<sup>-9</sup>"};
@@ -33,6 +34,14 @@ QwtSymbol * makeSymbol(const QwtSymbol::Style s, const QColor &clr, const QFont 
 
   return symbol;
 }
+
+inline
+void setLegendAttributes(QwtPlotCurve *curve)
+{
+  curve->setLegendAttribute(QwtPlotCurve::LegendShowLine, false);
+  curve->setLegendAttribute(QwtPlotCurve::LegendShowSymbol, true);
+}
+
 
 FitPlotWidget::FitPlotWidget(QWidget *parent) :
   QWidget(parent),
@@ -57,11 +66,23 @@ FitPlotWidget::FitPlotWidget(QWidget *parent) :
                                    m_plot->canvas());
 
   setupPlot();
+
+  makeLegend();
 }
 
 FitPlotWidget::~FitPlotWidget()
 {
   delete ui;
+}
+
+void FitPlotWidget::makeLegend()
+{
+  auto legend = new QwtLegend{};
+
+  legend->setMaxColumns(1);
+  legend->setDefaultItemMode(QwtLegendData::ReadOnly);
+
+  m_plot->insertLegend(legend);
 }
 
 void FitPlotWidget::refreshPlot()
@@ -202,4 +223,25 @@ void FitPlotWidget::setupPlot()
   m_curveResiduals->setSymbol(makeSymbol(QwtSymbol::Hexagon, QColor{255, 255, 127}, symfont));
 
   m_curveResidualsZeroLine->setPen(QColor{16, 16, 16}, 1.0, Qt::DotLine);
+
+  m_curveFitted->setTitle(QStringLiteral("Fitted"));
+  m_curveExperimental->setTitle(QStringLiteral("Experimental"));
+  m_curveExcluded->setTitle(QStringLiteral("Excluded"));
+  m_curveResiduals->setTitle(QStringLiteral("Residuals"));
+  m_curveProvisional->setTitle(QStringLiteral("Provisional"));
+
+  setLegendAttributes(m_curveFitted);
+  setLegendAttributes(m_curveExperimental);
+  setLegendAttributes(m_curveResiduals);
+  setLegendAttributes(m_curveProvisional);
+  setLegendAttributes(m_curveExcluded);
+  m_curveResidualsZeroLine->setItemAttribute(QwtPlotItem::Legend, false);
+}
+
+void FitPlotWidget::showLegend(const bool show)
+{
+  if (show)
+    makeLegend();
+  else
+    m_plot->insertLegend(nullptr);
 }

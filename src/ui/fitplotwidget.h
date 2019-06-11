@@ -7,6 +7,7 @@ class DoubleClickableQwtPlotZoomer;
 class QwtPlot;
 class QwtPlotCurve;
 class QwtPlotPicker;
+class QwtLegend;
 
 namespace Ui {
 class FitPlotWidget;
@@ -24,7 +25,11 @@ public:
   void setProvisionalData(const QVector<QPointF> &data);
   void setResidualsData(const QVector<QPointF> &data);
 
+public slots:
+  void showLegend(const bool show);
+
 private:
+  void makeLegend();
   void refreshPlot();
   void setupPlot();
 
