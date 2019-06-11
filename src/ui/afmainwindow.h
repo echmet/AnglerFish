@@ -79,6 +79,8 @@ private:
   QString m_activeFilePath;
   bool m_displayPossiblyUnreliableWarning;
 
+  bool m_hasUnsavedChanges;
+
   QTimer m_clock;
 
 private slots:

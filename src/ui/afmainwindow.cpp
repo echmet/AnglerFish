@@ -75,7 +75,8 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui{new Ui::AFMainWindow},
   h_gbox{gbox},
   m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)},
-  m_displayPossiblyUnreliableWarning{true}
+  m_displayPossiblyUnreliableWarning{true},
+  m_hasUnsavedChanges{false}
 {
   ui->setupUi(this);
 
@@ -275,9 +276,16 @@ AFMainWindow::~AFMainWindow()
 void AFMainWindow::closeEvent(QCloseEvent *evt)
 {
   QMessageBox mbox{};
-  makeYesNoMessagebox(mbox,
-                      QString{tr("Do you really want to exit %1?")}.arg(Globals::SOFTWARE_NAME),
-                              tr("All unsaved data will be lost."));
+
+  if (m_hasUnsavedChanges) {
+    makeYesNoMessagebox(mbox,
+                        QString{tr("Do you really want to exit %1?")}.arg(Globals::SOFTWARE_NAME),
+                        tr("All unsaved data will be lost."));
+  } else {
+    makeYesNoMessagebox(mbox,
+                        QString{tr("Do you really want to exit %1?")}.arg(Globals::SOFTWARE_NAME),
+                        "");
+  }
 
   if (mbox.exec() != QMessageBox::Yes)
     evt->ignore();
@@ -293,6 +301,8 @@ void AFMainWindow::invalidateResults()
 {
   h_gbox.invalidateAll();
   updatePlotExperimental();
+
+  m_hasUnsavedChanges = true;
 }
 
 void AFMainWindow::onAboutTriggered()
