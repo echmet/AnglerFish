@@ -233,7 +233,7 @@ void FitPlotWidget::setupPlot()
   m_curveExperimental->setTitle(QStringLiteral("Experimental"));
   m_curveExcluded->setTitle(QStringLiteral("Excluded"));
   m_curveResiduals->setTitle(QStringLiteral("Residuals"));
-  m_curveProvisional->setTitle(QStringLiteral("Provisional"));
+  m_curveProvisional->setTitle(QStringLiteral("Estimated"));
 
   setLegendAttributes(m_curveFitted);
   setLegendAttributes(m_curveExperimental);
