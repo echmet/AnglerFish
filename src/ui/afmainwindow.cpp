@@ -204,7 +204,9 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
           this, &AFMainWindow::onCurveProvisionalChanged);
 
   connect(m_analDataWidget, &AnalyteDataWidget::estimatesChanged, this,
-          [this]() { h_gbox.invalidateResults(); });
+          [this]() { h_gbox.invalidateResults();
+                     m_hasUnsavedChanges = true;
+                   });
 
   connect(&m_clock, &QTimer::timeout, this,
           [this]() {
@@ -410,6 +412,8 @@ void AFMainWindow::onLoad()
         lastPath = dlg.selectedFiles().constFirst();
         m_activeFilePath = lastPath;
         setAFWindowTitle();
+
+        m_hasUnsavedChanges = false;
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to load setup"), ex.what()};
         mbox.exec();
@@ -508,6 +512,7 @@ void AFMainWindow::onSave()
       persistence::saveEntireSetup(m_activeFilePath,
                                    h_gbox.chemicalBuffersModel(),
                                    h_gbox.analyteEstimates());
+      m_hasUnsavedChanges = false;
     } catch (const persistence::Exception &ex) {
       QMessageBox mbox{QMessageBox::Warning, tr("Failed to save setup"), ex.what()};
       mbox.exec();
@@ -533,6 +538,8 @@ void AFMainWindow::onSaveAs()
         m_activeFilePath = lastPath;
 
         setAFWindowTitle();
+
+        m_hasUnsavedChanges = false;
       } catch (const persistence::Exception &ex) {
         QMessageBox mbox{QMessageBox::Warning, tr("Failed to save setup"), ex.what()};
         mbox.exec();
