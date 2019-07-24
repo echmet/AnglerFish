@@ -15,7 +15,7 @@ const QString Globals::VERSION_REV{"f8"};
 const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
                                                             Globals::DeveloperID{"Bob Ga\xC5\xA1", "gas@natur.cuni.cz", true},
                                                             Globals::DeveloperID{"Jana \xC5\xA0teflov\xC3\xA1", "svobod.j@natur.cuni.cz", false},
-                                                            Globals::DeveloperID{"Vlastimil Hru\xC5\xA1ka", "hruska2@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{"Vlastimil Hru\xC5\xA1ka", "vlastimil_hruska@agilent.com", false},
                                                             Globals::DeveloperID{"Milan Boubl\xC3\xADk", "milan.boublik@natur.cuni.cz", false},
                                                             Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", false},
                                                             Globals::DeveloperID{"Martin Ansorge", "martin.ansorge@natur.cuni.cz", false},
