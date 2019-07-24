@@ -77,7 +77,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui{new Ui::AFMainWindow},
   h_gbox{gbox},
   m_saveDlg{this, tr("Save setup"), {}, QString{tr("%1 JSON file (*.json)")}.arg(Globals::SOFTWARE_NAME)},
-  m_displayPossiblyUnreliableWarning{true},
+  m_displayPossiblyUnreliableWarning{false},
   m_hasUnsavedChanges{false}
 {
   ui->setupUi(this);
