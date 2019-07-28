@@ -10,7 +10,7 @@ const QString Globals::SOFTWARE_NAME{"AnglerFish"};
 const QString Globals::SOFTWARE_NAME_INTERNAL{SOFTWARE_NAME_INTERNAL_S};
 const int Globals::VERSION_MAJ{0};
 const int Globals::VERSION_MIN{1};
-const QString Globals::VERSION_REV{"fa"};
+const QString Globals::VERSION_REV{"fb"};
 
 const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
                                                             Globals::DeveloperID{"Bob Ga\xC5\xA1", "gas@natur.cuni.cz", true},
