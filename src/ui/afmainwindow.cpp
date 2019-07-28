@@ -129,6 +129,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_qpb_toggleAnalytePanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   m_qpb_toggleInputPanel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   m_qpb_provisional->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+  m_qpb_toggleGraphLegend->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
   ui->qtb_mainToolBar->addWidget(m_qpb_new);
   ui->qtb_mainToolBar->addWidget(m_qpb_newBuffers);
