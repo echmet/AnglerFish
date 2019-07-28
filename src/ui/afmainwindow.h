@@ -41,7 +41,6 @@ protected:
 private:
   void invalidateResults();
   void updatePlotExperimental();
-  void updatePlotFitted();
   void setAFWindowTitle();
   void setWidgetSizes();
   void setupIcons();
