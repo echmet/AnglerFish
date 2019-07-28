@@ -155,7 +155,6 @@ set(AnglerFish_SRCS
     "src/ui/autoupdatecheckdialog.cpp"
     "src/ui/checkforupdatedialog.cpp"
     "src/ui/toggletracepointsdialog.cpp"
-    "src/ui/afuserguidedialog.cpp"
     "src/ui/summarizedialog.cpp"
     "src/ui/mobilityconstraintsdialog.cpp"
     "src/ui/enterexperimentalphdialog.cpp"

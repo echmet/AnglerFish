@@ -8,7 +8,6 @@
 #include "operationinprogressdialog.h"
 #include "checkforupdatedialog.h"
 #include "toggletracepointsdialog.h"
-#include "afuserguidedialog.h"
 #include "summarizedialog.h"
 #include "mobilityconstraintsdialog.h"
 #include "warnpossiblyunreliabledialog.h"
@@ -175,7 +174,6 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
     dlg.exec();
   });
   connect(ui->actionSet_debugging_output, &QAction::triggered, this, &AFMainWindow::onSetDebuggingOutput);
-  connect(ui->actionUser_guide, &QAction::triggered, this, [this] { AFUserGuideDialog dlg{this}; dlg.exec(); } );
   connect(ui->actionLimit_mobility_constraints, &QAction::triggered, this,
           [this] { if (m_mobConstrsDlg->exec() == QDialog::Accepted)
                      invalidateResults();
