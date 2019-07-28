@@ -15,7 +15,7 @@
 
 
 inline
-bool cmpBufferWidgets(BufferWidget *lhs, BufferWidget *rhs)
+bool cmpBufferWidgets(const BufferWidget *lhs, const BufferWidget *rhs)
 {
   return lhs->buffer().pH() < rhs->buffer().pH();
 }
