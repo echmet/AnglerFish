@@ -33,7 +33,7 @@ void ChemicalBuffersModel::add(ChemicalBuffer buffer)
 
 ChemicalBuffer & ChemicalBuffersModel::at(const size_t idx)
 {
-  assert(idx >= 0 && idx < m_buffers.size());
+  assert(idx < m_buffers.size());
 
   auto it = m_buffers.begin();
   std::advance(it, idx);
@@ -90,7 +90,7 @@ void ChemicalBuffersModel::remove(const ChemicalBuffer &buffer) noexcept
 
 void ChemicalBuffersModel::removeAt(const size_t idx) noexcept
 {
-  assert(idx >= 0 && idx < m_buffers.size());
+  assert(idx < m_buffers.size());
 
   auto it = m_buffers.cbegin();
   std::advance(it, idx);
