@@ -48,6 +48,8 @@ BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) 
 
   m_saveBufferDlg.setAcceptMode(QFileDialog::AcceptSave);
 
+  setWidgetSizes();
+
   connect(ui->qpb_addBuffer, &QPushButton::clicked, this, [this]() { emit this->addBuffer(); });
   connect(ui->qpb_sortBypH, &QPushButton::clicked, this, &BuffersInputWidget::onSortBypH);
   connect(actionLoadBufferFromFile, &QAction::triggered, this, &BuffersInputWidget::onLoadBufferFromFile);
@@ -228,6 +230,18 @@ void BuffersInputWidget::onSortBypH()
     int idx = m_scrollLayout->count() - 1;
     m_scrollLayout->insertWidget(idx, bw);
   }
+}
+
+void BuffersInputWidget::setWidgetSizes()
+{
+#ifdef Q_OS_WIN
+  const auto cbox = ui->qpb_loadBuffer;
+  const auto &fm = cbox->fontMetrics();
+  const auto w{cbox->width()};
+  const auto extend = fm.width(") ");
+
+  cbox->setMinimumWidth(w + 3*extend);
+#endif // Q_OS_WIN
 }
 
 void BuffersInputWidget::setupIcons()

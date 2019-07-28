@@ -26,6 +26,7 @@ public:
 
 private:
   void handleAddedBuffer(gearbox::ChemicalBuffer &buffer);
+  void setWidgetSizes();
   void setupIcons();
 
   Ui::BuffersInputWidget *ui;
