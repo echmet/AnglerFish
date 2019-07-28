@@ -45,6 +45,7 @@ private slots:
   void onExportBuffer(const BufferWidget *w, const bool toClipboard);
   void onLoadBufferFromClipboard();
   void onLoadBufferFromFile();
+  void onScreenChanged(QScreen *scr);
   void onScrollToBottom(const int min, const int max);
   void onSortBypH();
 

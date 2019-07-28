@@ -11,6 +11,9 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QVBoxLayout>
+#include <QScreen>
+#include <QTimer>
+#include <QWindow>
 #include <cassert>
 
 
@@ -54,6 +57,8 @@ BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) 
   connect(ui->qpb_sortBypH, &QPushButton::clicked, this, &BuffersInputWidget::onSortBypH);
   connect(actionLoadBufferFromFile, &QAction::triggered, this, &BuffersInputWidget::onLoadBufferFromFile);
   connect(actionLoadBufferFromClipboard, &QAction::triggered, this, &BuffersInputWidget::onLoadBufferFromClipboard);
+
+  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &BuffersInputWidget::onScreenChanged); }); /* This must be done from the event queue after the widget is created */
 }
 
 BuffersInputWidget::~BuffersInputWidget()
@@ -199,6 +204,11 @@ void BuffersInputWidget::onRemoveBuffer(BufferWidget *w)
   delete w;
 
   emit buffersChanged();
+}
+
+void BuffersInputWidget::onScreenChanged(QScreen *)
+{
+  setWidgetSizes();
 }
 
 void BuffersInputWidget::onScrollToBottom(const int min, const int max)
