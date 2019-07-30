@@ -44,10 +44,13 @@ As permitted by section 7. *Additional Terms* of The GNU GPLv3 license, the auth
 Authors
 ---
 Bohuslav Gaš (1)   
-Jana Šteflová (1)    
-Vlastimil Hruška (2)    
-Milan Boublík (1)    
-Pavel Dubský (1)
+Jana Šteflová (3)   
+Vlastimil Hruška (3)   
+Milan Boublík (1)   
+Pavel Dubský (1)   
+Martin Ansorge (1)   
+Marijana Pocrnić (2)   
+Kateřina Lorinčíková (1)   
 
 (1)  
 Group of Electromigration and Chromatographic Methods (http://echmet.natur.cuni.cz)
@@ -56,5 +59,8 @@ Department of Physical and Macromolecular Chemistry
 Faculty of Science, Charles University, Czech Republic
 
 (2)  
+Department of Chemistry, Faculty of Science, University of Zagreb, Zagreb, Croatia
+
+(3)  
 Liquid Phase Separations Division, Agilent Technologies Deutschland GmbH & Co. KG   
 Waldbronn, Germany
