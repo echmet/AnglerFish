@@ -234,7 +234,7 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   m_clock.setInterval(2000);
   m_clock.start();
 
-  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &AFMainWindow::onScreenChanged); }); /* This must be done from the event queue after the window is created */
+  QTimer::singleShot(0, this, &AFMainWindow::connectOnScreenChanged); /* This must be done from the event queue after the window is created */
   QTimer::singleShot(0, this, [this]() {
     if (!this->h_gbox.databaseProxy().isAvailable()) {
       QMessageBox mbox{QMessageBox::Warning, tr("Database error"),
@@ -296,6 +296,17 @@ void AFMainWindow::closeEvent(QCloseEvent *evt)
 
   if (mbox.exec() != QMessageBox::Yes)
     evt->ignore();
+}
+
+void AFMainWindow::connectOnScreenChanged()
+{
+  auto w = this->window();
+  if (w == nullptr)
+    return;
+
+  auto wh = w->windowHandle();
+  if (wh != nullptr)
+    connect(wh, &QWindow::screenChanged, this, &AFMainWindow::onScreenChanged);
 }
 
 void AFMainWindow::connectUpdater(SoftwareUpdater *updater)

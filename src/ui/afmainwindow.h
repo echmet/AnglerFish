@@ -39,6 +39,7 @@ protected:
   virtual void closeEvent(QCloseEvent *evt) override;
 
 private:
+  void connectOnScreenChanged();
   void invalidateResults();
   void updatePlotExperimental();
   void setAFWindowTitle();
