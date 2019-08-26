@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(FLATPAK_BUILD "Application is being built as Flatpak package" OFF)
+option(TEST_CRASHHANDLER "Include crash handler test" OFF)
 
 if (WIN32)
     option(ECHMET_FORCE_WINXP "Define target Windows version to Windows XP")
@@ -46,6 +47,7 @@ elseif (UNIX)
 
         add_definitions("-DECHMET_COMPILER_GCC_LIKE")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
 
         if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
@@ -227,7 +229,7 @@ set(AnglerFish_SRCS
 if (WIN32)
     set(AnglerFish_SRCS
         ${AnglerFish_SRCS}
-	AnglerFish.rc)
+        AnglerFish.rc)
 endif ()
 
 if (WIN32)
@@ -252,8 +254,14 @@ else ()
 endif ()
 
 if (CMAKE_BUILD_TYPE MATCHES DEBUG)
+    if (TEST_CRASHHANDLER)
+        add_definitions("-DUSE_CRASHHANDLER -DAF_TEST_CRASHHANDLER")
+    endif ()
 else ()
     add_definitions("-DUSE_CRASHHANDLER")
+    if (TEST_CRASHHANDLER)
+        add_definitions("-DAF_TEST_CRASHHANDLER")
+    endif ()
 endif ()
 
 if (WIN32)

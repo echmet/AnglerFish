@@ -143,6 +143,11 @@ AFMainWindow::AFMainWindow(gearbox::Gearbox &gbox,
   ui->qtb_mainToolBar->addWidget(m_qpb_toggleInputPanel);
   ui->qtb_mainToolBar->addWidget(m_qpb_toggleGraphLegend);
 
+#ifdef AF_TEST_CRASHHANDLER
+  auto crashAction = ui->menuAdvanced->addAction("Crash me!");
+  connect(crashAction, &QAction::triggered, this, []() { abort(); });
+#endif // AF_TEST_CRASHHANDLER
+
   m_saveDlg.setAcceptMode(QFileDialog::AcceptSave);
 
   setupIcons();
