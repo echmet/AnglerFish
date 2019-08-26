@@ -29,7 +29,7 @@ CrashHandlerDialog::CrashHandlerDialog(const bool postCrash, QWidget *parent) :
     m_apologyMessage = m_apologyMessagePartOneDuring;
   }
 
-  m_apologyMessage += m_apologyMessagePartTwo.arg(postCrash ? QObject::tr("last") : QObject::tr("current"));
+  m_apologyMessage += m_apologyMessagePartTwo;
 
   connect(ui->qpb_ok, &QPushButton::clicked, this, &CrashHandlerDialog::onOkClicked);
   connect(ui->qpb_reportToDevelopers, &QPushButton::clicked, this, &CrashHandlerDialog::onReportToDevelopersClicked);
@@ -55,17 +55,20 @@ void CrashHandlerDialog::onReportToDevelopersClicked()
 
 void CrashHandlerDialog::setBacktrace(const QString &backtrace)
 {
-  QString mails;
+  QString mails{};
 
   for (const auto &dev : Globals::DEVELOPERS) {
-    if (dev.reportBugs)
-      mails.append(QString("%1;").arg(dev.mail.toHtmlEscaped()));
+    if (dev.reportBugs) {
+      if (!mails.isEmpty())
+        mails.append(",");
+      mails.append(QString{"%1"}.arg(dev.mail.toHtmlEscaped()));
+    }
   }
 
-  QString debugInfo = QString("Version: %1\n\nBacktrace:\n%2").arg(Globals::VERSION_STRING()).arg(backtrace);
-  m_mailToDevelopers = QString("mailto:%1?subject=%2&body=%3")
+  QString debugInfo = QString{"Version: %1\n\nBacktrace:\n%2"}.arg(Globals::VERSION_STRING()).arg(backtrace);
+  m_mailToDevelopers = QString{"mailto:%1?subject=%2&body=%3"}
                                .arg(mails)
-                               .arg(QString("%1 (%2 %3) crash report").arg(Globals::SOFTWARE_NAME).arg(QGuiApplication::platformName()).arg(QSysInfo::buildCpuArchitecture()))
+                               .arg(QString{"%1 (%2 %3) crash report"}.arg(Globals::SOFTWARE_NAME).arg(QGuiApplication::platformName()).arg(QSysInfo::buildCpuArchitecture()))
                                .arg(debugInfo.toHtmlEscaped());
 
   ui->ql_message->setText(m_apologyMessage);
