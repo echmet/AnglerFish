@@ -98,7 +98,7 @@ private slots:
   void onOpenDatabase();
   void onSave();
   void onSaveAs();
-  void onScreenChanged(QScreen *scr);
+  void onScreenChanged(QScreen *screen);
   void onSetDebuggingOutput();
   void onShowProvisional();
   void onSummarize();

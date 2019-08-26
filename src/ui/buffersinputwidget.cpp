@@ -215,8 +215,11 @@ void BuffersInputWidget::onRemoveBuffer(BufferWidget *w)
   emit buffersChanged();
 }
 
-void BuffersInputWidget::onScreenChanged(QScreen *)
+void BuffersInputWidget::onScreenChanged(QScreen *screen)
 {
+  if (screen == nullptr)
+    return;
+
   setWidgetSizes();
 }
 

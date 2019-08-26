@@ -565,8 +565,11 @@ void AFMainWindow::onSaveAs()
   }
 }
 
-void AFMainWindow::onScreenChanged(QScreen *)
+void AFMainWindow::onScreenChanged(QScreen *screen)
 {
+  if (screen == nullptr)
+    return;
+
   setWidgetSizes();
 }
 
