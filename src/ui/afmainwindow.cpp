@@ -312,6 +312,8 @@ void AFMainWindow::connectOnScreenChanged()
   auto wh = w->windowHandle();
   if (wh != nullptr)
     connect(wh, &QWindow::screenChanged, this, &AFMainWindow::onScreenChanged);
+
+  m_bufInpWidget->connectOnScreenChanged();
 }
 
 void AFMainWindow::connectUpdater(SoftwareUpdater *updater)

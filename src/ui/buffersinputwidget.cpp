@@ -57,13 +57,22 @@ BuffersInputWidget::BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent) 
   connect(ui->qpb_sortBypH, &QPushButton::clicked, this, &BuffersInputWidget::onSortBypH);
   connect(actionLoadBufferFromFile, &QAction::triggered, this, &BuffersInputWidget::onLoadBufferFromFile);
   connect(actionLoadBufferFromClipboard, &QAction::triggered, this, &BuffersInputWidget::onLoadBufferFromClipboard);
-
-  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &BuffersInputWidget::onScreenChanged); }); /* This must be done from the event queue after the widget is created */
 }
 
 BuffersInputWidget::~BuffersInputWidget()
 {
   delete ui;
+}
+
+void BuffersInputWidget::connectOnScreenChanged()
+{
+  auto w = this->window();
+  if (w == nullptr)
+    return;
+
+  auto wh = w->windowHandle();
+  if (wh != nullptr)
+    connect(wh, &QWindow::screenChanged, this, &BuffersInputWidget::onScreenChanged);
 }
 
 void BuffersInputWidget::handleAddedBuffer(gearbox::ChemicalBuffer &buffer)

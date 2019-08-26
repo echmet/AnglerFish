@@ -24,6 +24,8 @@ public:
   explicit BuffersInputWidget(gearbox::Gearbox &gbox, QWidget *parent = nullptr);
   ~BuffersInputWidget();
 
+  void connectOnScreenChanged();
+
 private:
   void handleAddedBuffer(gearbox::ChemicalBuffer &buffer);
   void setWidgetSizes();
