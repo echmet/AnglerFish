@@ -28,8 +28,6 @@ ExperimentalMobilityWidget::ExperimentalMobilityWidget(const int num, QWidget *p
   connect(ui->qle_value, &FloatingValueLineEdit::editingFinished, this, [this]() { emit this->dataChanged(); });
 
   setWidgetSizes();
-
-  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &ExperimentalMobilityWidget::onScreenChanged); }); /* This must be done from the event queue after the window is created */
 }
 
 ExperimentalMobilityWidget::~ExperimentalMobilityWidget()
@@ -37,8 +35,22 @@ ExperimentalMobilityWidget::~ExperimentalMobilityWidget()
   delete ui;
 }
 
-void ExperimentalMobilityWidget::onScreenChanged()
+void ExperimentalMobilityWidget::connectOnScreenChanged()
 {
+  auto w = this->window();
+  if (w == nullptr)
+    return;
+
+  auto wh = w->windowHandle();
+  if (wh != nullptr)
+    connect(wh, &QWindow::screenChanged, this, &ExperimentalMobilityWidget::onScreenChanged);
+}
+
+void ExperimentalMobilityWidget::onScreenChanged(QScreen *screen)
+{
+  if (screen == nullptr)
+    return;
+
   setWidgetSizes();
 }
 

@@ -188,6 +188,7 @@ void BufferWidget::onAddExpValue()
 
   connect(w, &ExperimentalMobilityWidget::removeMe, this, &BufferWidget::onRemoveExpValue);
   connect(w, &ExperimentalMobilityWidget::dataChanged, this, &BufferWidget::updateExperimentalMobilities);
+  w->connectOnScreenChanged();
 
   updateExperimentalMobilities();
 }
@@ -292,6 +293,7 @@ void BufferWidget::setExpValues()
 
     connect(w, &ExperimentalMobilityWidget::removeMe, this, &BufferWidget::onRemoveExpValue);
     connect(w, &ExperimentalMobilityWidget::dataChanged, this, &BufferWidget::updateExperimentalMobilities);
+    w->connectOnScreenChanged();
   }
 
   updateExperimentalMobilities();

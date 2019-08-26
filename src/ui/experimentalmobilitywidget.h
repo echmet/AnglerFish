@@ -14,6 +14,7 @@ public:
   explicit ExperimentalMobilityWidget(const int num, QWidget *parent = nullptr);
   ~ExperimentalMobilityWidget();
 
+  void connectOnScreenChanged();
   void setNumber(const int num);
   void setValue(const double v);
   double value(bool &ok) const;
@@ -25,7 +26,7 @@ private:
   Ui::ExperimentalMobilityWidget *ui;
 
 private slots:
-  void onScreenChanged();
+  void onScreenChanged(QScreen *screen);
 
 signals:
   void dataChanged();
