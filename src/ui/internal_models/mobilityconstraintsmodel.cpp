@@ -26,8 +26,8 @@ MobilityConstraintsModel::MobilityConstraintsModel(const gearbox::LimitMobilityC
                                                    const QPalette &palette,
                                                    QObject *parent) :
   QAbstractTableModel{parent},
-  m_defBrush{palette.foreground()},
-  m_invalBrush{palette.foreground()},
+  m_defBrush{palette.windowText()},
+  m_invalBrush{palette.windowText()},
   h_backend{backend},
   h_gbox{gbox},
   h_palette{palette}
