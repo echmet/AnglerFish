@@ -124,16 +124,11 @@ void BufferCompositionWidget::onRemoveConstituent()
   if (indexes.empty())
     return;
 
-  const int max = indexes.size() > 1 ? 1 : indexes.size();
-
-  for (int idx = 0; idx < max; idx++) {
-    const QModelIndex &midx = indexes.at(idx);
-    if (midx.isValid()) {
-      const QString name = m_model->remove(midx.row());
-      const auto _name = name.toStdString();
-      h_gdmProxy.erase(_name);
-
-    }
+  const auto &midx = indexes.constFirst();
+  if (midx.isValid()) {
+    const QString name = m_model->remove(midx.row());
+    const auto _name = name.toStdString();
+    h_gdmProxy.erase(_name);
   }
 
   emit compositionChanged();
